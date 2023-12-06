@@ -1,0 +1,7 @@
+--language=c++
+-std=c++11
+-Wall
+-Wextra
+-DNINJA_PYTHON="python"
+-I./build-cmake/
+-I./build-cmake/_deps/googletest-src/googletest/include/
