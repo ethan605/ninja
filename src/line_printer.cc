@@ -22,10 +22,10 @@
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x4
 #endif
 #else
-#include <unistd.h>
 #include <sys/ioctl.h>
-#include <termios.h>
 #include <sys/time.h>
+#include <termios.h>
+#include <unistd.h>
 #endif
 
 #include "util.h"
@@ -51,7 +51,8 @@ LinePrinter::LinePrinter() : have_blank_line_(true), console_locked_(false) {
   if (supports_color_) {
     DWORD mode;
     if (GetConsoleMode(console_, &mode)) {
-      if (!SetConsoleMode(console_, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+      if (!SetConsoleMode(console_,
+                          mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
         supports_color_ = false;
       }
     }

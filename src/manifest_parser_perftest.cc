@@ -15,19 +15,21 @@
 // Tests manifest parser performance.  Expects to be run in ninja's root
 // directory.
 
-#include <numeric>
-
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <numeric>
+
 #ifdef _WIN32
-#include "getopt.h"
 #include <direct.h>
-#elif defined(_AIX)
+
 #include "getopt.h"
+#elif defined(_AIX)
 #include <unistd.h>
+
+#include "getopt.h"
 #else
 #include <getopt.h>
 #include <unistd.h>
@@ -49,7 +51,8 @@ bool WriteFakeManifests(const string& dir, string* err) {
     return mtime != -1;
 
   string command = "python misc/write_fake_manifests.py " + dir;
-  printf("Creating manifest data..."); fflush(stdout);
+  printf("Creating manifest data...");
+  fflush(stdout);
   int exit_code = system(command.c_str());
   printf("done.\n");
   if (exit_code != 0)
@@ -86,12 +89,13 @@ int main(int argc, char* argv[]) {
       break;
     case 'h':
     default:
-      printf("usage: manifest_parser_perftest\n"
-"\n"
-"options:\n"
-"  -f     only measure manifest load time, not command evaluation time\n"
-             );
-    return 1;
+      printf(
+          "usage: manifest_parser_perftest\n"
+          "\n"
+          "options:\n"
+          "  -f     only measure manifest load time, not command evaluation "
+          "time\n");
+      return 1;
     }
   }
 

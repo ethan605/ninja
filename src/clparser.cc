@@ -14,9 +14,10 @@
 
 #include "clparser.h"
 
-#include <algorithm>
 #include <assert.h>
 #include <string.h>
+
+#include <algorithm>
 
 #include "metrics.h"
 #include "string_piece_util.h"
@@ -69,11 +70,9 @@ bool CLParser::IsSystemInclude(string path) {
 bool CLParser::FilterInputFilename(string line) {
   transform(line.begin(), line.end(), line.begin(), ToLowerASCII);
   // TODO: other extensions, like .asm?
-  return EndsWith(line, ".c") ||
-      EndsWith(line, ".cc") ||
-      EndsWith(line, ".cxx") ||
-      EndsWith(line, ".cpp") ||
-      EndsWith(line, ".c++");
+  return EndsWith(line, ".c") || EndsWith(line, ".cc") ||
+         EndsWith(line, ".cxx") || EndsWith(line, ".cpp") ||
+         EndsWith(line, ".c++");
 }
 
 // static

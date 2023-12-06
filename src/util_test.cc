@@ -274,8 +274,9 @@ TEST(CanonicalizePath, TooManyComponents) {
   uint64_t slash_bits;
 
   // 64 is OK.
-  path = "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./"
-         "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./x.h";
+  path =
+      "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./"
+      "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./x.h";
   CanonicalizePath(&path, &slash_bits);
   EXPECT_EQ(slash_bits, 0x0);
 
@@ -290,8 +291,9 @@ TEST(CanonicalizePath, TooManyComponents) {
   EXPECT_EQ(slash_bits, 0xffffffff);
 
   // 65 is OK if #component is less than 60 after path canonicalization.
-  path = "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./"
-         "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./x/y.h";
+  path =
+      "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./"
+      "a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./a/./x/y.h";
   CanonicalizePath(&path, &slash_bits);
   EXPECT_EQ(slash_bits, 0x0);
 
@@ -304,10 +306,10 @@ TEST(CanonicalizePath, TooManyComponents) {
   CanonicalizePath(&path, &slash_bits);
   EXPECT_EQ(slash_bits, 0x1ffffffff);
 
-
   // 59 after canonicalization is OK.
-  path = "a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/"
-         "a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/x/y.h";
+  path =
+      "a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/"
+      "a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/x/y.h";
   EXPECT_EQ(58, std::count(path.begin(), path.end(), '/'));
   CanonicalizePath(&path, &slash_bits);
   EXPECT_EQ(slash_bits, 0x0);
@@ -401,8 +403,9 @@ TEST(StripAnsiEscapeCodes, EscapeAtEnd) {
 
 TEST(StripAnsiEscapeCodes, StripColors) {
   // An actual clang warning.
-  string input = "\33[1maffixmgr.cxx:286:15: \33[0m\33[0;1;35mwarning: "
-                 "\33[0m\33[1musing the result... [-Wparentheses]\33[0m";
+  string input =
+      "\33[1maffixmgr.cxx:286:15: \33[0m\33[0;1;35mwarning: "
+      "\33[0m\33[1musing the result... [-Wparentheses]\33[0m";
   string stripped = StripAnsiEscapeCodes(input);
   EXPECT_EQ("affixmgr.cxx:286:15: warning: using the result... [-Wparentheses]",
             stripped);

@@ -14,13 +14,13 @@
 
 #include "disk_interface.h"
 
-#include <algorithm>
-
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include <algorithm>
 
 #ifdef _WIN32
 #include <direct.h>  // _mkdir
@@ -69,7 +69,7 @@ TimeStamp TimeStampFromFileTime(const FILETIME& filetime) {
   // We don't much care about epoch correctness but we do want the
   // resulting value to fit in a 64-bit integer.
   uint64_t mtime = ((uint64_t)filetime.dwHighDateTime << 32) |
-    ((uint64_t)filetime.dwLowDateTime);
+                   ((uint64_t)filetime.dwLowDateTime);
   // 1600 epoch -> 2000 epoch (subtract 400 years).
   return (TimeStamp)mtime - 12622770400LL * (1000000000LL / 100);
 }
@@ -87,13 +87,14 @@ TimeStamp StatSingleFile(const string& path, string* err) {
 }
 
 bool IsWindows7OrLater() {
-  OSVERSIONINFOEX version_info =
-      { sizeof(OSVERSIONINFOEX), 6, 1, 0, 0, {0}, 0, 0, 0, 0, 0};
+  OSVERSIONINFOEX version_info = {
+    sizeof(OSVERSIONINFOEX), 6, 1, 0, 0, { 0 }, 0, 0, 0, 0, 0
+  };
   DWORDLONG comparison = 0;
   VER_SET_CONDITION(comparison, VER_MAJORVERSION, VER_GREATER_EQUAL);
   VER_SET_CONDITION(comparison, VER_MINORVERSION, VER_GREATER_EQUAL);
-  return VerifyVersionInfo(
-      &version_info, VER_MAJORVERSION | VER_MINORVERSION, comparison);
+  return VerifyVersionInfo(&version_info, VER_MAJORVERSION | VER_MINORVERSION,
+                           comparison);
 }
 
 bool StatAllFilesInDir(const string& dir, map<string, TimeStamp>* stamps,
@@ -125,8 +126,8 @@ bool StatAllFilesInDir(const string& dir, map<string, TimeStamp>* stamps,
       continue;
     }
     transform(lowername.begin(), lowername.end(), lowername.begin(), ::tolower);
-    stamps->insert(make_pair(lowername,
-                             TimeStampFromFileTime(ffd.ftLastWriteTime)));
+    stamps->insert(
+        make_pair(lowername, TimeStampFromFileTime(ffd.ftLastWriteTime)));
   } while (FindNextFileA(find_handle, &ffd));
   FindClose(find_handle);
   return true;
@@ -158,9 +159,9 @@ bool DiskInterface::MakeDirs(const string& path) {
 }
 
 // RealDiskInterface -----------------------------------------------------------
-RealDiskInterface::RealDiskInterface() 
+RealDiskInterface::RealDiskInterface()
 #ifdef _WIN32
-: use_cache_(false), long_paths_enabled_(false) {
+    : use_cache_(false), long_paths_enabled_(false) {
   setlocale(LC_ALL, "");
 
   // Probe ntdll.dll for RtlAreLongPathsEnabled, and call it if it exists.
@@ -175,7 +176,8 @@ RealDiskInterface::RealDiskInterface()
   }
 }
 #else
-{}
+{
+}
 #endif
 
 TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
@@ -239,10 +241,10 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
 #elif defined(__APPLE__)
   return ((int64_t)st.st_mtimespec.tv_sec * 1000000000LL +
           st.st_mtimespec.tv_nsec);
-#elif defined(st_mtime) // A macro, so we're likely on modern POSIX.
-  return (int64_t)st.st_mtim.tv_sec * 1000000000LL + st.st_mtim.tv_nsec;
+#elif defined(st_mtime)  // A macro, so we're likely on modern POSIX.
+return (int64_t)st.st_mtim.tv_sec * 1000000000LL + st.st_mtim.tv_nsec;
 #else
-  return (int64_t)st.st_mtime * 1000000000LL + st.st_mtimensec;
+return (int64_t)st.st_mtime * 1000000000LL + st.st_mtimensec;
 #endif
 #endif
 }
@@ -250,21 +252,21 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
 bool RealDiskInterface::WriteFile(const string& path, const string& contents) {
   FILE* fp = fopen(path.c_str(), "w");
   if (fp == NULL) {
-    Error("WriteFile(%s): Unable to create file. %s",
-          path.c_str(), strerror(errno));
+    Error("WriteFile(%s): Unable to create file. %s", path.c_str(),
+          strerror(errno));
     return false;
   }
 
-  if (fwrite(contents.data(), 1, contents.length(), fp) < contents.length())  {
-    Error("WriteFile(%s): Unable to write to the file. %s",
-          path.c_str(), strerror(errno));
+  if (fwrite(contents.data(), 1, contents.length(), fp) < contents.length()) {
+    Error("WriteFile(%s): Unable to write to the file. %s", path.c_str(),
+          strerror(errno));
     fclose(fp);
     return false;
   }
 
   if (fclose(fp) == EOF) {
-    Error("WriteFile(%s): Unable to close the file. %s",
-          path.c_str(), strerror(errno));
+    Error("WriteFile(%s): Unable to close the file. %s", path.c_str(),
+          strerror(errno));
     return false;
   }
 
@@ -283,12 +285,14 @@ bool RealDiskInterface::MakeDir(const string& path) {
 }
 
 FileReader::Status RealDiskInterface::ReadFile(const string& path,
-                                               string* contents,
-                                               string* err) {
+                                               string* contents, string* err) {
   switch (::ReadFile(path, contents, err)) {
-  case 0:       return Okay;
-  case -ENOENT: return NotFound;
-  default:      return OtherError;
+  case 0:
+    return Okay;
+  case -ENOENT:
+    return NotFound;
+  default:
+    return OtherError;
   }
 }
 
@@ -308,7 +312,7 @@ int RealDiskInterface::RemoveFile(const string& path) {
     SetFileAttributesA(path.c_str(), attributes & ~FILE_ATTRIBUTE_READONLY);
   }
   if (attributes & FILE_ATTRIBUTE_DIRECTORY) {
-    // remove() deletes both files and directories. On Windows we have to 
+    // remove() deletes both files and directories. On Windows we have to
     // select the correct function (DeleteFile will yield Permission Denied when
     // used on a directory)
     // This fixes the behavior of ninja -t clean in some cases
@@ -336,11 +340,11 @@ int RealDiskInterface::RemoveFile(const string& path) {
 #else
   if (remove(path.c_str()) < 0) {
     switch (errno) {
-      case ENOENT:
-        return 1;
-      default:
-        Error("remove(%s): %s", path.c_str(), strerror(errno));
-        return -1;
+    case ENOENT:
+      return 1;
+    default:
+      Error("remove(%s): %s", path.c_str(), strerror(errno));
+      return -1;
     }
   }
 #endif

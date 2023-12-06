@@ -14,9 +14,9 @@
 
 #include "includes_normalize.h"
 
-#include <algorithm>
-
 #include <direct.h>
+
+#include <algorithm>
 
 #include "string_piece_util.h"
 #include "test.h"
@@ -109,10 +109,8 @@ TEST(IncludesNormalize, LongInvalidPath) {
   // Too long, won't be canonicalized. Ensure doesn't crash.
   string result, err;
   IncludesNormalize normalizer(".");
-  EXPECT_FALSE(
-      normalizer.Normalize(kLongInputString, &result, &err));
+  EXPECT_FALSE(normalizer.Normalize(kLongInputString, &result, &err));
   EXPECT_EQ("path too long", err);
-
 
   // Construct max size path having cwd prefix.
   // kExactlyMaxPath = "$cwd\\a\\aaaa...aaaa\0";

@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "msvc_helper.h"
-
 #include <windows.h>
 
+#include "msvc_helper.h"
 #include "util.h"
 
 using namespace std;
@@ -68,14 +67,12 @@ int CLWrapper::Run(const string& command, string* output) {
   startup_info.dwFlags |= STARTF_USESTDHANDLES;
 
   if (!CreateProcessA(NULL, (char*)command.c_str(), NULL, NULL,
-                      /* inherit handles */ TRUE, 0,
-                      env_block_, NULL,
+                      /* inherit handles */ TRUE, 0, env_block_, NULL,
                       &startup_info, &process_info)) {
     Win32Fatal("CreateProcess");
   }
 
-  if (!CloseHandle(nul) ||
-      !CloseHandle(stdout_write)) {
+  if (!CloseHandle(nul) || !CloseHandle(stdout_write)) {
     Win32Fatal("CloseHandle");
   }
 
@@ -98,8 +95,7 @@ int CLWrapper::Run(const string& command, string* output) {
   if (!GetExitCodeProcess(process_info.hProcess, &exit_code))
     Win32Fatal("GetExitCodeProcess");
 
-  if (!CloseHandle(stdout_read) ||
-      !CloseHandle(process_info.hProcess) ||
+  if (!CloseHandle(stdout_read) || !CloseHandle(process_info.hProcess) ||
       !CloseHandle(process_info.hThread)) {
     Win32Fatal("CloseHandle");
   }

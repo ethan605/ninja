@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "subprocess.h"
-
 #include <assert.h>
 #include <stdio.h>
 
 #include <algorithm>
 
+#include "subprocess.h"
 #include "util.h"
 
 using namespace std;
 
-Subprocess::Subprocess(bool use_console) : child_(NULL) , overlapped_(),
-                                           is_reading_(false),
-                                           use_console_(use_console) {
-}
+Subprocess::Subprocess(bool use_console)
+    : child_(NULL), overlapped_(), is_reading_(false),
+      use_console_(use_console) {}
 
 Subprocess::~Subprocess() {
   if (pipe_) {
@@ -40,14 +38,12 @@ Subprocess::~Subprocess() {
 
 HANDLE Subprocess::SetupPipe(HANDLE ioport) {
   char pipe_name[100];
-  snprintf(pipe_name, sizeof(pipe_name),
-           "\\\\.\\pipe\\ninja_pid%lu_sp%p", GetCurrentProcessId(), this);
+  snprintf(pipe_name, sizeof(pipe_name), "\\\\.\\pipe\\ninja_pid%lu_sp%p",
+           GetCurrentProcessId(), this);
 
-  pipe_ = ::CreateNamedPipeA(pipe_name,
-                             PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
-                             PIPE_TYPE_BYTE,
-                             PIPE_UNLIMITED_INSTANCES,
-                             0, 0, INFINITE, NULL);
+  pipe_ = ::CreateNamedPipeA(
+      pipe_name, PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED, PIPE_TYPE_BYTE,
+      PIPE_UNLIMITED_INSTANCES, 0, 0, INFINITE, NULL);
   if (pipe_ == INVALID_HANDLE_VALUE)
     Win32Fatal("CreateNamedPipe");
 
@@ -65,8 +61,8 @@ HANDLE Subprocess::SetupPipe(HANDLE ioport) {
       CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
   HANDLE output_write_child;
   if (!DuplicateHandle(GetCurrentProcess(), output_write_handle,
-                       GetCurrentProcess(), &output_write_child,
-                       0, TRUE, DUPLICATE_SAME_ACCESS)) {
+                       GetCurrentProcess(), &output_write_child, 0, TRUE,
+                       DUPLICATE_SAME_ACCESS)) {
     Win32Fatal("DuplicateHandle");
   }
   CloseHandle(output_write_handle);
@@ -110,8 +106,7 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
   // Do not prepend 'cmd /c' on Windows, this breaks command
   // lines greater than 8,191 chars.
   if (!CreateProcessA(NULL, (char*)command.c_str(), NULL, NULL,
-                      /* inherit handles */ TRUE, process_flags,
-                      NULL, NULL,
+                      /* inherit handles */ TRUE, process_flags, NULL, NULL,
                       &startup_info, &process_info)) {
     DWORD error = GetLastError();
     if (error == ERROR_FILE_NOT_FOUND) {
@@ -123,7 +118,8 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
       CloseHandle(nul);
       pipe_ = NULL;
       // child_ is already NULL;
-      buf_ = "CreateProcess failed: The system cannot find the file "
+      buf_ =
+          "CreateProcess failed: The system cannot find the file "
           "specified.\n";
       return true;
     } else {
@@ -170,8 +166,8 @@ void Subprocess::OnPipeReady() {
 
   memset(&overlapped_, 0, sizeof(overlapped_));
   is_reading_ = true;
-  if (!::ReadFile(pipe_, overlapped_buf_, sizeof(overlapped_buf_),
-                  &bytes, &overlapped_)) {
+  if (!::ReadFile(pipe_, overlapped_buf_, sizeof(overlapped_buf_), &bytes,
+                  &overlapped_)) {
     if (GetLastError() == ERROR_BROKEN_PIPE) {
       CloseHandle(pipe_);
       pipe_ = NULL;
@@ -198,9 +194,9 @@ ExitStatus Subprocess::Finish() {
   CloseHandle(child_);
   child_ = NULL;
 
-  return exit_code == 0              ? ExitSuccess :
-         exit_code == CONTROL_C_EXIT ? ExitInterrupted :
-                                       ExitFailure;
+  return exit_code == 0                ? ExitSuccess
+         : exit_code == CONTROL_C_EXIT ? ExitInterrupted
+                                       : ExitFailure;
 }
 
 bool Subprocess::Done() const {
@@ -238,8 +234,8 @@ BOOL WINAPI SubprocessSet::NotifyInterrupted(DWORD dwCtrlType) {
   return FALSE;
 }
 
-Subprocess *SubprocessSet::Add(const string& command, bool use_console) {
-  Subprocess *subprocess = new Subprocess(use_console);
+Subprocess* SubprocessSet::Add(const string& command, bool use_console) {
+  Subprocess* subprocess = new Subprocess(use_console);
   if (!subprocess->Start(this, command)) {
     delete subprocess;
     return 0;
@@ -262,8 +258,8 @@ bool SubprocessSet::DoWork() {
       Win32Fatal("GetQueuedCompletionStatus");
   }
 
-  if (!subproc) // A NULL subproc indicates that we were interrupted and is
-                // delivered by NotifyInterrupted above.
+  if (!subproc)  // A NULL subproc indicates that we were interrupted and is
+                 // delivered by NotifyInterrupted above.
     return true;
 
   subproc->OnPipeReady();
@@ -289,8 +285,8 @@ Subprocess* SubprocessSet::NextFinished() {
 }
 
 void SubprocessSet::Clear() {
-  for (vector<Subprocess*>::iterator i = running_.begin();
-       i != running_.end(); ++i) {
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
+       ++i) {
     // Since the foreground process is in our process group, it will receive a
     // CTRL_C_EVENT or CTRL_BREAK_EVENT at the same time as us.
     if ((*i)->child_ && !(*i)->use_console_) {
@@ -300,8 +296,8 @@ void SubprocessSet::Clear() {
       }
     }
   }
-  for (vector<Subprocess*>::iterator i = running_.begin();
-       i != running_.end(); ++i)
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
+       ++i)
     delete *i;
   running_.clear();
 }

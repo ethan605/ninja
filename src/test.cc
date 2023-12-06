@@ -16,15 +16,15 @@
 #include <direct.h>  // Has to be before util.h is included.
 #endif
 
-#include "test.h"
+#include <errno.h>
+#include <stdlib.h>
 
 #include <algorithm>
 
-#include <errno.h>
-#include <stdlib.h>
+#include "test.h"
 #ifdef _WIN32
-#include <windows.h>
 #include <io.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
@@ -36,10 +36,10 @@
 
 #ifdef _AIX
 extern "C" {
-        // GCC "helpfully" strips the definition of mkdtemp out on AIX.
-        // The function is still present, so if we define it ourselves
-        // it will work perfectly fine.
-        extern char* mkdtemp(char* name_template);
+// GCC "helpfully" strips the definition of mkdtemp out on AIX.
+// The function is still present, so if we define it ourselves
+// it will work perfectly fine.
+extern char* mkdtemp(char* name_template);
 }
 #endif
 
@@ -88,8 +88,8 @@ StateTestWithBuiltinRules::StateTestWithBuiltinRules() {
 
 void StateTestWithBuiltinRules::AddCatRule(State* state) {
   AssertParse(state,
-"rule cat\n"
-"  command = cat $in > $out\n");
+              "rule cat\n"
+              "  command = cat $in > $out\n");
 }
 
 Node* StateTestWithBuiltinRules::GetNode(const string& path) {
@@ -97,8 +97,7 @@ Node* StateTestWithBuiltinRules::GetNode(const string& path) {
   return state_.GetNode(path, 0);
 }
 
-void AssertParse(State* state, const char* input,
-                 ManifestParserOptions opts) {
+void AssertParse(State* state, const char* input, ManifestParserOptions opts) {
   ManifestParser parser(state, NULL, opts);
   string err;
   EXPECT_TRUE(parser.ParseTest(input, &err));
@@ -119,8 +118,7 @@ void VerifyGraph(const State& state) {
     for (vector<Node*>::const_iterator in_node = (*e)->inputs_.begin();
          in_node != (*e)->inputs_.end(); ++in_node) {
       const vector<Edge*>& out_edges = (*in_node)->out_edges();
-      EXPECT_NE(find(out_edges.begin(), out_edges.end(), *e),
-                out_edges.end());
+      EXPECT_NE(find(out_edges.begin(), out_edges.end(), *e), out_edges.end());
     }
     // Check that the edge's outputs have the edge as in-edge.
     for (vector<Node*>::const_iterator out_node = (*e)->outputs_.begin();
@@ -142,8 +140,7 @@ void VerifyGraph(const State& state) {
   EXPECT_EQ(node_edge_set, edge_set);
 }
 
-void VirtualFileSystem::Create(const string& path,
-                               const string& contents) {
+void VirtualFileSystem::Create(const string& path, const string& contents) {
   files_[path].mtime = now_;
   files_[path].contents = contents;
   files_created_.insert(path);
@@ -169,8 +166,7 @@ bool VirtualFileSystem::MakeDir(const string& path) {
 }
 
 FileReader::Status VirtualFileSystem::ReadFile(const string& path,
-                                               string* contents,
-                                               string* err) {
+                                               string* contents, string* err) {
   files_read_.push_back(path);
   FileMap::iterator i = files_.find(path);
   if (i != files_.end()) {
@@ -182,8 +178,8 @@ FileReader::Status VirtualFileSystem::ReadFile(const string& path,
 }
 
 int VirtualFileSystem::RemoveFile(const string& path) {
-  if (find(directories_made_.begin(), directories_made_.end(), path)
-      != directories_made_.end())
+  if (find(directories_made_.begin(), directories_made_.end(), path) !=
+      directories_made_.end())
     return -1;
   FileMap::iterator i = files_.find(path);
   if (i != files_.end()) {

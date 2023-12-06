@@ -14,10 +14,11 @@
 
 #include "graph.h"
 
-#include <algorithm>
-#include <deque>
 #include <assert.h>
 #include <stdio.h>
+
+#include <algorithm>
+#include <deque>
 
 #include "build_log.h"
 #include "debug_flags.h"
@@ -66,13 +67,14 @@ bool DependencyScan::RecomputeDirty(Node* initial_node,
     if (!RecomputeNodeDirty(node, &stack, &new_validation_nodes, err))
       return false;
     nodes.insert(nodes.end(), new_validation_nodes.begin(),
-                              new_validation_nodes.end());
+                 new_validation_nodes.end());
     if (!new_validation_nodes.empty()) {
       assert(validation_nodes &&
-          "validations require RecomputeDirty to be called with validation_nodes");
+             "validations require RecomputeDirty to be called with "
+             "validation_nodes");
       validation_nodes->insert(validation_nodes->end(),
-                           new_validation_nodes.begin(),
-                           new_validation_nodes.end());
+                               new_validation_nodes.begin(),
+                               new_validation_nodes.end());
     }
   }
 
@@ -161,8 +163,8 @@ bool DependencyScan::RecomputeNodeDirty(Node* node, std::vector<Node*>* stack,
   // cycle detector if the validation node depends on this node.
   // RecomputeDirty will add the validation nodes to the initial nodes
   // and recurse into them.
-  validation_nodes->insert(validation_nodes->end(),
-      edge->validations_.begin(), edge->validations_.end());
+  validation_nodes->insert(validation_nodes->end(), edge->validations_.begin(),
+                           edge->validations_.end());
 
   // Visit all inputs; we're dirty if any of the inputs are dirty.
   Node* most_recent_input = NULL;
@@ -276,8 +278,7 @@ bool DependencyScan::RecomputeOutputsDirty(Edge* edge, Node* most_recent_input,
 
 bool DependencyScan::RecomputeOutputDirty(const Edge* edge,
                                           const Node* most_recent_input,
-                                          const string& command,
-                                          Node* output) {
+                                          const string& command, Node* output) {
   if (edge->is_phony()) {
     // Phony edges don't write any output.  Outputs are only dirty if
     // there are no inputs and we're missing the output.
@@ -318,12 +319,13 @@ bool DependencyScan::RecomputeOutputDirty(const Edge* edge,
   }
 
   // Dirty if the output is older than the input.
-  if (!used_restat && most_recent_input && output->mtime() < most_recent_input->mtime()) {
-    EXPLAIN("output %s older than most recent input %s "
-            "(%" PRId64 " vs %" PRId64 ")",
-            output->path().c_str(),
-            most_recent_input->path().c_str(),
-            output->mtime(), most_recent_input->mtime());
+  if (!used_restat && most_recent_input &&
+      output->mtime() < most_recent_input->mtime()) {
+    EXPLAIN(
+        "output %s older than most recent input %s "
+        "(%" PRId64 " vs %" PRId64 ")",
+        output->path().c_str(), most_recent_input->path().c_str(),
+        output->mtime(), most_recent_input->mtime());
     return true;
   }
 
@@ -333,8 +335,8 @@ bool DependencyScan::RecomputeOutputDirty(const Edge* edge,
       if (!generator &&
           BuildLog::LogEntry::HashCommand(command) != entry->command_hash) {
         // May also be dirty due to the command changing since the last build.
-        // But if this is a generator rule, the command changing does not make us
-        // dirty.
+        // But if this is a generator rule, the command changing does not make
+        // us dirty.
         EXPLAIN("command line changed for %s", output->path().c_str());
         return true;
       }
@@ -345,7 +347,8 @@ bool DependencyScan::RecomputeOutputDirty(const Edge* edge,
         // exited with an error or was interrupted. If this was a restat rule,
         // then we only check the recorded mtime against the most recent input
         // mtime and ignore the actual output's mtime above.
-        EXPLAIN("recorded mtime of %s older than most recent input %s (%" PRId64 " vs %" PRId64 ")",
+        EXPLAIN("recorded mtime of %s older than most recent input %s (%" PRId64
+                " vs %" PRId64 ")",
                 output->path().c_str(), most_recent_input->path().c_str(),
                 entry->mtime, most_recent_input->mtime());
         return true;
@@ -370,8 +373,8 @@ bool DependencyScan::LoadDyndeps(Node* node, DyndepFile* ddf,
 }
 
 bool Edge::AllInputsReady() const {
-  for (vector<Node*>::const_iterator i = inputs_.begin();
-       i != inputs_.end(); ++i) {
+  for (vector<Node*>::const_iterator i = inputs_.begin(); i != inputs_.end();
+       ++i) {
     if ((*i)->in_edge() && !(*i)->in_edge()->outputs_ready())
       return false;
   }
@@ -388,7 +391,8 @@ struct EdgeEnv : public Env {
 
   /// Given a span of Nodes, construct a list of paths suitable for a command
   /// line.
-  std::string MakePathList(const Node* const* span, size_t size, char sep) const;
+  std::string MakePathList(const Node* const* span, size_t size,
+                           char sep) const;
 
  private:
   std::vector<std::string> lookups_;
@@ -399,8 +403,8 @@ struct EdgeEnv : public Env {
 
 string EdgeEnv::LookupVariable(const string& var) {
   if (var == "in" || var == "in_newline") {
-    int explicit_deps_count = edge_->inputs_.size() - edge_->implicit_deps_ -
-      edge_->order_only_deps_;
+    int explicit_deps_count =
+        edge_->inputs_.size() - edge_->implicit_deps_ - edge_->order_only_deps_;
     return MakePathList(edge_->inputs_.data(), explicit_deps_count,
                         var == "in" ? ' ' : '\n');
   } else if (var == "out") {
@@ -584,7 +588,7 @@ bool Edge::maybe_phonycycle_diagnostic() const {
   // of the form "build a: phony ... a ...".   Restrict our
   // "phonycycle" diagnostic option to the form it used.
   return is_phony() && outputs_.size() == 1 && implicit_outs_ == 0 &&
-      implicit_deps_ == 0;
+         implicit_deps_ == 0;
 }
 
 // static
@@ -603,9 +607,8 @@ string Node::PathDecanonicalized(const string& path, uint64_t slash_bits) {
 }
 
 void Node::Dump(const char* prefix) const {
-  printf("%s <%s 0x%p> mtime: %" PRId64 "%s, (:%s), ",
-         prefix, path().c_str(), this,
-         mtime(), exists() ? "" : " (:missing)",
+  printf("%s <%s 0x%p> mtime: %" PRId64 "%s, (:%s), ", prefix, path().c_str(),
+         this, mtime(), exists() ? "" : " (:missing)",
          dirty() ? " dirty" : " clean");
   if (in_edge()) {
     in_edge()->Dump("in-edge: ");
@@ -671,9 +674,8 @@ bool ImplicitDepLoader::LoadDepFile(Edge* edge, const string& path,
     return false;
   }
 
-  DepfileParser depfile(depfile_parser_options_
-                        ? *depfile_parser_options_
-                        : DepfileParserOptions());
+  DepfileParser depfile(depfile_parser_options_ ? *depfile_parser_options_
+                                                : DepfileParserOptions());
   string depfile_err;
   if (!depfile.Parse(&content, &depfile_err)) {
     *err = path + ": " + depfile_err;
@@ -704,8 +706,10 @@ bool ImplicitDepLoader::LoadDepFile(Edge* edge, const string& path,
   for (std::vector<StringPiece>::iterator o = depfile.outs_.begin();
        o != depfile.outs_.end(); ++o) {
     matches m(o);
-    if (std::find_if(edge->outputs_.begin(), edge->outputs_.end(), m) == edge->outputs_.end()) {
-      *err = path + ": depfile mentions '" + o->AsString() + "' as an output, but no such output was declared";
+    if (std::find_if(edge->outputs_.begin(), edge->outputs_.end(), m) ==
+        edge->outputs_.end()) {
+      *err = path + ": depfile mentions '" + o->AsString() +
+             "' as an output, but no such output was declared";
       return false;
     }
   }
@@ -743,7 +747,8 @@ bool ImplicitDepLoader::LoadDepsFromLog(Edge* edge, string* err) {
 
   // Deps are invalid if the output is newer than the deps.
   if (output->mtime() > deps->mtime) {
-    EXPLAIN("stored deps info out of date for '%s' (%" PRId64 " vs %" PRId64 ")",
+    EXPLAIN("stored deps info out of date for '%s' (%" PRId64 " vs %" PRId64
+            ")",
             output->path().c_str(), deps->mtime, output->mtime());
     return false;
   }

@@ -26,9 +26,7 @@ using namespace std;
 
 DyndepParser::DyndepParser(State* state, FileReader* file_reader,
                            DyndepFile* dyndep_file)
-    : Parser(state, file_reader)
-    , dyndep_file_(dyndep_file) {
-}
+    : Parser(state, file_reader), dyndep_file_(dyndep_file) {}
 
 bool DyndepParser::Parse(const string& filename, const string& input,
                          string* err) {
@@ -67,8 +65,7 @@ bool DyndepParser::Parse(const string& filename, const string& input,
     case Lexer::NEWLINE:
       break;
     default:
-      return lexer_.Error(string("unexpected ") + Lexer::TokenName(token),
-                          err);
+      return lexer_.Error(string("unexpected ") + Lexer::TokenName(token), err);
     }
   }
   return false;  // not reached
@@ -87,7 +84,7 @@ bool DyndepParser::ParseDyndepVersion(string* err) {
   ParseVersion(version, &major, &minor);
   if (major != 1 || minor != 0) {
     return lexer_.Error(
-      string("unsupported 'ninja_dyndep_version = ") + version + "'", err);
+        string("unsupported 'ninja_dyndep_version = ") + version + "'", err);
     return false;
   }
   return true;
@@ -124,7 +121,7 @@ bool DyndepParser::ParseEdge(string* err) {
       return lexer_.Error("no build statement exists for '" + path + "'", err);
     Edge* edge = node->in_edge();
     std::pair<DyndepFile::iterator, bool> res =
-      dyndep_file_->insert(DyndepFile::value_type(edge, Dyndeps()));
+        dyndep_file_->insert(DyndepFile::value_type(edge, Dyndeps()));
     if (!res.second)
       return lexer_.Error("multiple statements for '" + path + "'", err);
     dyndeps = &res.first->second;

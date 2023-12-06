@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "build_log.h"
+#include <stdlib.h>
+#include <time.h>
 
 #include <algorithm>
 
-#include <stdlib.h>
-#include <time.h>
+#include "build_log.h"
 
 using namespace std;
 
@@ -27,7 +27,7 @@ int random(int low, int high) {
 
 void RandomCommand(char** s) {
   int len = random(5, 100);
-  *s = new char[len+1];
+  *s = new char[len + 1];
   for (int i = 0; i < len; ++i)
     (*s)[i] = (char)random(32, 127);
   (*s)[len] = '\0';
@@ -52,11 +52,10 @@ int main() {
   int collision_count = 0;
   for (int i = 1; i < N; ++i) {
     if (hashes[i - 1].first == hashes[i].first) {
-      if (strcmp(commands[hashes[i - 1].second],
-                 commands[hashes[i].second]) != 0) {
+      if (strcmp(commands[hashes[i - 1].second], commands[hashes[i].second]) !=
+          0) {
         printf("collision!\n  string 1: '%s'\n  string 2: '%s'\n",
-               commands[hashes[i - 1].second],
-               commands[hashes[i].second]);
+               commands[hashes[i - 1].second], commands[hashes[i].second]);
         collision_count++;
       }
     }

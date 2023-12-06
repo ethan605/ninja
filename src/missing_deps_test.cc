@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "missing_deps.h"
+
 #include <memory>
 
 #include "deps_log.h"
 #include "graph.h"
-#include "missing_deps.h"
 #include "state.h"
 #include "test.h"
 

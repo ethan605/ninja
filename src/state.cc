@@ -53,9 +53,8 @@ void Pool::RetrieveReadyEdges(EdgeSet* ready_queue) {
 
 void Pool::Dump() const {
   printf("%s (%d/%d) ->\n", name_.c_str(), current_use_, depth_);
-  for (DelayedEdges::const_iterator it = delayed_.begin();
-       it != delayed_.end(); ++it)
-  {
+  for (DelayedEdges::const_iterator it = delayed_.begin(); it != delayed_.end();
+       ++it) {
     printf("\t");
     (*it)->Dump();
   }
@@ -116,8 +115,8 @@ Node* State::SpellcheckNode(const string& path) {
   int min_distance = kMaxValidEditDistance + 1;
   Node* result = NULL;
   for (Paths::iterator i = paths_.begin(); i != paths_.end(); ++i) {
-    int distance = EditDistance(
-        i->first, path, kAllowReplacements, kMaxValidEditDistance);
+    int distance =
+        EditDistance(i->first, path, kAllowReplacements, kMaxValidEditDistance);
     if (distance < min_distance && i->second) {
       min_distance = distance;
       result = i->second;
@@ -163,8 +162,8 @@ bool State::AddDefault(StringPiece path, string* err) {
 vector<Node*> State::RootNodes(string* err) const {
   vector<Node*> root_nodes;
   // Search for nodes with no output.
-  for (vector<Edge*>::const_iterator e = edges_.begin();
-       e != edges_.end(); ++e) {
+  for (vector<Edge*>::const_iterator e = edges_.begin(); e != edges_.end();
+       ++e) {
     for (vector<Node*>::const_iterator out = (*e)->outputs_.begin();
          out != (*e)->outputs_.end(); ++out) {
       if ((*out)->out_edges().empty())
@@ -195,17 +194,15 @@ void State::Reset() {
 void State::Dump() {
   for (Paths::iterator i = paths_.begin(); i != paths_.end(); ++i) {
     Node* node = i->second;
-    printf("%s %s [id:%d]\n",
-           node->path().c_str(),
-           node->status_known() ? (node->dirty() ? "dirty" : "clean")
-                                : "unknown",
-           node->id());
+    printf(
+        "%s %s [id:%d]\n", node->path().c_str(),
+        node->status_known() ? (node->dirty() ? "dirty" : "clean") : "unknown",
+        node->id());
   }
   if (!pools_.empty()) {
     printf("resource_pools:\n");
     for (map<string, Pool*>::const_iterator it = pools_.begin();
-         it != pools_.end(); ++it)
-    {
+         it != pools_.end(); ++it) {
       if (!it->second->name().empty()) {
         it->second->Dump();
       }
