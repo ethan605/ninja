@@ -43,9 +43,9 @@ NORETURN void Fatal(const char* msg, ...);
 #elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__GNUC__) && \
     __GNUC__ >= 7
 #define NINJA_FALLTHROUGH [[gnu::fallthrough]]
-#elif defined(__GNUC__) && __GNUC__ >= 7 // gcc 7
-#define NINJA_FALLTHROUGH __attribute__ ((fallthrough))
-#else // C++11 on gcc 6, and all other cases
+#elif defined(__GNUC__) && __GNUC__ >= 7  // gcc 7
+#define NINJA_FALLTHROUGH __attribute__((fallthrough))
+#else  // C++11 on gcc 6, and all other cases
 #define NINJA_FALLTHROUGH
 #endif
 

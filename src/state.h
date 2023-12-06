@@ -39,7 +39,7 @@ struct Rule;
 /// completes).
 struct Pool {
   Pool(const std::string& name, int depth)
-    : name_(name), current_use_(0), depth_(depth), delayed_() {}
+      : name_(name), current_use_(0), depth_(depth), delayed_() {}
 
   // A depth of 0 is infinite
   bool is_valid() const { return depth_ >= 0; }
@@ -77,8 +77,10 @@ struct Pool {
 
   struct WeightedEdgeCmp {
     bool operator()(const Edge* a, const Edge* b) const {
-      if (!a) return b;
-      if (!b) return false;
+      if (!a)
+        return b;
+      if (!b)
+        return false;
       int weight_diff = a->weight() - b->weight();
       return ((weight_diff < 0) || (weight_diff == 0 && EdgeCmp()(a, b)));
     }

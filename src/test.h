@@ -56,9 +56,7 @@ struct VirtualFileSystem : public DiskInterface {
 
   /// Tick "time" forwards; subsequent file operations will be newer than
   /// previous ones.
-  int Tick() {
-    return ++now_;
-  }
+  int Tick() { return ++now_; }
 
   // DiskInterface
   virtual TimeStamp Stat(const std::string& path, std::string* err) const;
@@ -126,4 +124,4 @@ struct ScopedFilePath {
   bool released_ = false;
 };
 
-#endif // NINJA_TEST_H_
+#endif  // NINJA_TEST_H_

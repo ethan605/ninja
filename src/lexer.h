@@ -90,7 +90,7 @@ struct Lexer {
   /// Construct an error message with context.
   bool Error(const std::string& message, std::string* err);
 
-private:
+ private:
   /// Skip past whitespace (called after each read token/ident/etc.).
   void EatWhitespace();
 
@@ -103,4 +103,4 @@ private:
   const char* last_token_;
 };
 
-#endif // NINJA_LEXER_H_
+#endif  // NINJA_LEXER_H_

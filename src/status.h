@@ -25,7 +25,8 @@
 /// completion fraction, printing updates.
 struct Status {
   virtual void PlanHasTotalEdges(int total) = 0;
-  virtual void BuildEdgeStarted(const Edge* edge, int64_t start_time_millis) = 0;
+  virtual void BuildEdgeStarted(const Edge* edge,
+                                int64_t start_time_millis) = 0;
   virtual void BuildEdgeFinished(Edge* edge, int64_t end_time_millis,
                                  bool success, const std::string& output) = 0;
   virtual void BuildLoadDyndeps() = 0;
@@ -36,7 +37,7 @@ struct Status {
   virtual void Warning(const char* msg, ...) = 0;
   virtual void Error(const char* msg, ...) = 0;
 
-  virtual ~Status() { }
+  virtual ~Status() {}
 };
 
 /// Implementation of the Status interface that prints the status as
@@ -55,7 +56,7 @@ struct StatusPrinter : Status {
   virtual void Warning(const char* msg, ...);
   virtual void Error(const char* msg, ...);
 
-  virtual ~StatusPrinter() { }
+  virtual ~StatusPrinter() {}
 
   /// Format the progress status string by replacing the placeholders.
   /// See the user manual for more information about the available
@@ -79,8 +80,8 @@ struct StatusPrinter : Status {
   /// The custom progress status format to use.
   const char* progress_status_format_;
 
-  template<size_t S>
-  void SnprintfRate(double rate, char(&buf)[S], const char* format) const {
+  template <size_t S>
+  void SnprintfRate(double rate, char (&buf)[S], const char* format) const {
     if (rate == -1)
       snprintf(buf, S, "?");
     else
@@ -104,7 +105,7 @@ struct StatusPrinter : Status {
         rate_ = times_.size() / ((times_.back() - times_.front()) / 1e3);
     }
 
-  private:
+   private:
     double rate_;
     const size_t N;
     std::queue<double> times_;
@@ -114,4 +115,4 @@ struct StatusPrinter : Status {
   mutable SlidingRateInfo current_rate_;
 };
 
-#endif // NINJA_STATUS_H_
+#endif  // NINJA_STATUS_H_

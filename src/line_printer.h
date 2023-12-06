@@ -16,6 +16,7 @@
 #define NINJA_LINE_PRINTER_H_
 
 #include <stddef.h>
+
 #include <string>
 
 /// Prints lines of text, possibly overprinting previously printed lines
@@ -28,10 +29,7 @@ struct LinePrinter {
 
   bool supports_color() const { return supports_color_; }
 
-  enum LineType {
-    FULL,
-    ELIDE
-  };
+  enum LineType { FULL, ELIDE };
   /// Overprints the current line. If type is ELIDE, elides to_print to fit on
   /// one line.
   void Print(std::string to_print, LineType type);
@@ -70,7 +68,7 @@ struct LinePrinter {
 #endif
 
   /// Print the given data to the console, or buffer it if it is locked.
-  void PrintOrBuffer(const char *data, size_t size);
+  void PrintOrBuffer(const char* data, size_t size);
 };
 
 #endif  // NINJA_LINE_PRINTER_H_

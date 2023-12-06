@@ -26,11 +26,7 @@ struct FileReader {
   virtual ~FileReader() {}
 
   /// Result of ReadFile.
-  enum Status {
-    Okay,
-    NotFound,
-    OtherError
-  };
+  enum Status { Okay, NotFound, OtherError };
 
   /// Read and store in given string.  On success, return Okay.
   /// On error, return another Status and fill |err|.
@@ -42,7 +38,7 @@ struct FileReader {
 ///
 /// Abstract so it can be mocked out for tests.  The real implementation
 /// is RealDiskInterface.
-struct DiskInterface: public FileReader {
+struct DiskInterface : public FileReader {
   /// stat() a file, returning the mtime, or 0 if missing and -1 on
   /// other errors.
   virtual TimeStamp Stat(const std::string& path, std::string* err) const = 0;

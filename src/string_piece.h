@@ -15,9 +15,9 @@
 #ifndef NINJA_STRINGPIECE_H_
 #define NINJA_STRINGPIECE_H_
 
-#include <string>
-
 #include <string.h>
+
+#include <string>
 
 /// StringPiece represents a slice of a string whose memory is managed
 /// externally.  It is useful for reducing the number of std::strings
@@ -37,9 +37,7 @@ struct StringPiece {
     return len_ == other.len_ && memcmp(str_, other.str_, len_) == 0;
   }
 
-  bool operator!=(const StringPiece& other) const {
-    return !(*this == other);
-  }
+  bool operator!=(const StringPiece& other) const { return !(*this == other); }
 
   /// Convert the slice into a full-fledged std::string, copying the
   /// data into a new string.
@@ -47,21 +45,13 @@ struct StringPiece {
     return len_ ? std::string(str_, len_) : std::string();
   }
 
-  const_iterator begin() const {
-    return str_;
-  }
+  const_iterator begin() const { return str_; }
 
-  const_iterator end() const {
-    return str_ + len_;
-  }
+  const_iterator end() const { return str_ + len_; }
 
-  char operator[](size_t pos) const {
-    return str_[pos];
-  }
+  char operator[](size_t pos) const { return str_[pos]; }
 
-  size_t size() const {
-    return len_;
-  }
+  size_t size() const { return len_; }
 
   const char* str_;
   size_t len_;

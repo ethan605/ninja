@@ -15,10 +15,10 @@
 #ifndef NINJA_DEPS_LOG_H_
 #define NINJA_DEPS_LOG_H_
 
+#include <stdio.h>
+
 #include <string>
 #include <vector>
-
-#include <stdio.h>
 
 #include "load_status.h"
 #include "timestamp.h"
@@ -79,7 +79,7 @@ struct DepsLog {
   struct Deps {
     Deps(int64_t mtime, int node_count)
         : mtime(mtime), node_count(node_count), nodes(new Node*[node_count]) {}
-    ~Deps() { delete [] nodes; }
+    ~Deps() { delete[] nodes; }
     TimeStamp mtime;
     int node_count;
     Node** nodes;
