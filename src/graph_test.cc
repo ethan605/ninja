@@ -27,8 +27,7 @@ struct GraphTest : public StateTestWithBuiltinRules {
 };
 
 TEST_F(GraphTest, MissingImplicit) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build out: cat in | implicit\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out: cat in | implicit\n"));
   fs_.Create("in", "");
   fs_.Create("out", "");
 
@@ -43,8 +42,7 @@ TEST_F(GraphTest, MissingImplicit) {
 }
 
 TEST_F(GraphTest, ModifiedImplicit) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build out: cat in | implicit\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out: cat in | implicit\n"));
   fs_.Create("in", "");
   fs_.Create("out", "");
   fs_.Tick();
@@ -80,13 +78,12 @@ TEST_F(GraphTest, FunkyMakefilePath) {
 }
 
 TEST_F(GraphTest, ExplicitImplicit) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule catdep\n"
-                  "  depfile = $out.d\n"
-                  "  command = cat $in > $out\n"
-                  "build implicit.h: cat data\n"
-                  "build out.o: catdep foo.cc || implicit.h\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule catdep\n"
+                                      "  depfile = $out.d\n"
+                                      "  command = cat $in > $out\n"
+                                      "build implicit.h: cat data\n"
+                                      "build out.o: catdep foo.cc || implicit.h\n"));
   fs_.Create("implicit.h", "");
   fs_.Create("foo.cc", "");
   fs_.Create("out.o.d", "out.o: implicit.h\n");
@@ -105,8 +102,7 @@ TEST_F(GraphTest, ExplicitImplicit) {
 }
 
 TEST_F(GraphTest, ImplicitOutputParse) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build out | out.imp: cat in\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out | out.imp: cat in\n"));
 
   Edge* edge = GetNode("out")->in_edge();
   EXPECT_EQ(2, edge->outputs_.size());
@@ -117,8 +113,7 @@ TEST_F(GraphTest, ImplicitOutputParse) {
 }
 
 TEST_F(GraphTest, ImplicitOutputMissing) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build out | out.imp: cat in\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out | out.imp: cat in\n"));
   fs_.Create("in", "");
   fs_.Create("out", "");
 
@@ -131,8 +126,7 @@ TEST_F(GraphTest, ImplicitOutputMissing) {
 }
 
 TEST_F(GraphTest, ImplicitOutputOutOfDate) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build out | out.imp: cat in\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out | out.imp: cat in\n"));
   fs_.Create("out.imp", "");
   fs_.Tick();
   fs_.Create("in", "");
@@ -214,9 +208,7 @@ TEST_F(GraphTest, RootNodes) {
 }
 
 TEST_F(GraphTest, CollectInputs) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "build out$ 1: cat in1 in2 in$ with$ space | implicit || order_only\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build out$ 1: cat in1 in2 in$ with$ space | implicit || order_only\n"));
 
   std::vector<std::string> inputs;
   Edge* edge = GetNode("out 1")->in_edge();
@@ -247,16 +239,13 @@ TEST_F(GraphTest, CollectInputs) {
 }
 
 TEST_F(GraphTest, VarInOutPathEscaping) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_, "build a$ b: cat no'space with$ space$$ no\"space2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build a$ b: cat no'space with$ space$$ no\"space2\n"));
 
   Edge* edge = GetNode("a b")->in_edge();
 #ifdef _WIN32
-  EXPECT_EQ("cat no'space \"with space$\" \"no\\\"space2\" > \"a b\"",
-            edge->EvaluateCommand());
+  EXPECT_EQ("cat no'space \"with space$\" \"no\\\"space2\" > \"a b\"", edge->EvaluateCommand());
 #else
-  EXPECT_EQ("cat 'no'\\''space' 'with space$' 'no\"space2' > 'a b'",
-            edge->EvaluateCommand());
+  EXPECT_EQ("cat 'no'\\''space' 'with space$' 'no\"space2' > 'a b'", edge->EvaluateCommand());
 #endif
 }
 

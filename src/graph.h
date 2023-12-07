@@ -38,9 +38,8 @@ struct State;
 /// it's dirty, mtime, etc.
 struct Node {
   Node(const std::string& path, uint64_t slash_bits)
-      : path_(path), slash_bits_(slash_bits), mtime_(-1),
-        exists_(ExistenceStatusUnknown), dirty_(false), dyndep_pending_(false),
-        in_edge_(NULL), id_(-1) {}
+      : path_(path), slash_bits_(slash_bits), mtime_(-1), exists_(ExistenceStatusUnknown), dirty_(false),
+        dyndep_pending_(false), in_edge_(NULL), id_(-1) {}
 
   /// Return false on error.
   bool Stat(DiskInterface* disk_interface, std::string* err);
@@ -76,11 +75,8 @@ struct Node {
 
   const std::string& path() const { return path_; }
   /// Get |path()| but use slash_bits to convert back to original slash styles.
-  std::string PathDecanonicalized() const {
-    return PathDecanonicalized(path_, slash_bits_);
-  }
-  static std::string PathDecanonicalized(const std::string& path,
-                                         uint64_t slash_bits);
+  std::string PathDecanonicalized() const { return PathDecanonicalized(path_, slash_bits_); }
+  static std::string PathDecanonicalized(const std::string& path, uint64_t slash_bits);
   uint64_t slash_bits() const { return slash_bits_; }
 
   TimeStamp mtime() const { return mtime_; }
@@ -99,21 +95,15 @@ struct Node {
   /// instead of being a regular input or output from the Ninja manifest.
   bool generated_by_dep_loader() const { return generated_by_dep_loader_; }
 
-  void set_generated_by_dep_loader(bool value) {
-    generated_by_dep_loader_ = value;
-  }
+  void set_generated_by_dep_loader(bool value) { generated_by_dep_loader_ = value; }
 
   int id() const { return id_; }
   void set_id(int id) { id_ = id; }
 
   const std::vector<Edge*>& out_edges() const { return out_edges_; }
-  const std::vector<Edge*>& validation_out_edges() const {
-    return validation_out_edges_;
-  }
+  const std::vector<Edge*>& validation_out_edges() const { return validation_out_edges_; }
   void AddOutEdge(Edge* edge) { out_edges_.push_back(edge); }
-  void AddValidationOutEdge(Edge* edge) {
-    validation_out_edges_.push_back(edge);
-  }
+  void AddValidationOutEdge(Edge* edge) { validation_out_edges_.push_back(edge); }
 
   void Dump(const char* prefix = "") const;
 
@@ -177,11 +167,9 @@ struct Edge {
   enum VisitMark { VisitNone, VisitInStack, VisitDone };
 
   Edge()
-      : rule_(NULL), pool_(NULL), dyndep_(NULL), env_(NULL), mark_(VisitNone),
-        id_(0), outputs_ready_(false), deps_loaded_(false),
-        deps_missing_(false), generated_by_dep_loader_(false),
-        command_start_time_(0), implicit_deps_(0), order_only_deps_(0),
-        implicit_outs_(0) {}
+      : rule_(NULL), pool_(NULL), dyndep_(NULL), env_(NULL), mark_(VisitNone), id_(0), outputs_ready_(false),
+        deps_loaded_(false), deps_missing_(false), generated_by_dep_loader_(false), command_start_time_(0),
+        implicit_deps_(0), order_only_deps_(0), implicit_outs_(0) {}
 
   /// Return true if all inputs' in-edges are ready.
   bool AllInputsReady() const;
@@ -238,12 +226,9 @@ struct Edge {
   int implicit_deps_;
   int order_only_deps_;
   bool is_implicit(size_t index) {
-    return index >= inputs_.size() - order_only_deps_ - implicit_deps_ &&
-           !is_order_only(index);
+    return index >= inputs_.size() - order_only_deps_ - implicit_deps_ && !is_order_only(index);
   }
-  bool is_order_only(size_t index) {
-    return index >= inputs_.size() - order_only_deps_;
-  }
+  bool is_order_only(size_t index) { return index >= inputs_.size() - order_only_deps_; }
 
   // There are two types of outputs.
   // 1) explicit outs, which show up as $out on the command line;
@@ -251,9 +236,7 @@ struct Edge {
   // These are stored in outputs_ in that order, and we keep a count of
   // #2 to use when we need to access the various subsets.
   int implicit_outs_;
-  bool is_implicit_out(size_t index) const {
-    return index >= outputs_.size() - implicit_outs_;
-  }
+  bool is_implicit_out(size_t index) const { return index >= outputs_.size() - implicit_outs_; }
 
   bool is_phony() const;
   bool use_console() const;
@@ -261,9 +244,7 @@ struct Edge {
 };
 
 struct EdgeCmp {
-  bool operator()(const Edge* a, const Edge* b) const {
-    return a->id_ < b->id_;
-  }
+  bool operator()(const Edge* a, const Edge* b) const { return a->id_ < b->id_; }
 };
 
 typedef std::set<Edge*, EdgeCmp> EdgeSet;
@@ -271,8 +252,7 @@ typedef std::set<Edge*, EdgeCmp> EdgeSet;
 /// ImplicitDepLoader loads implicit dependencies, as referenced via the
 /// "depfile" attribute in build files.
 struct ImplicitDepLoader {
-  ImplicitDepLoader(State* state, DepsLog* deps_log,
-                    DiskInterface* disk_interface,
+  ImplicitDepLoader(State* state, DepsLog* deps_log, DiskInterface* disk_interface,
                     DepfileParserOptions const* depfile_parser_options)
       : state_(state), disk_interface_(disk_interface), deps_log_(deps_log),
         depfile_parser_options_(depfile_parser_options) {}
@@ -287,9 +267,7 @@ struct ImplicitDepLoader {
  protected:
   /// Process loaded implicit dependencies for \a edge and update the graph
   /// @return false on error (without filling \a err if info is just missing)
-  virtual bool ProcessDepfileDeps(Edge* edge,
-                                  std::vector<StringPiece>* depfile_ins,
-                                  std::string* err);
+  virtual bool ProcessDepfileDeps(Edge* edge, std::vector<StringPiece>* depfile_ins, std::string* err);
 
   /// Load implicit dependencies for \a edge from a depfile attribute.
   /// @return false on error (without filling \a err if info is just missing).
@@ -312,12 +290,10 @@ struct ImplicitDepLoader {
 /// DependencyScan manages the process of scanning the files in a graph
 /// and updating the dirty/outputs_ready state of all the nodes and edges.
 struct DependencyScan {
-  DependencyScan(State* state, BuildLog* build_log, DepsLog* deps_log,
-                 DiskInterface* disk_interface,
+  DependencyScan(State* state, BuildLog* build_log, DepsLog* deps_log, DiskInterface* disk_interface,
                  DepfileParserOptions const* depfile_parser_options)
       : build_log_(build_log), disk_interface_(disk_interface),
-        dep_loader_(state, deps_log, disk_interface, depfile_parser_options),
-        dyndep_loader_(state, disk_interface) {}
+        dep_loader_(state, deps_log, disk_interface, depfile_parser_options), dyndep_loader_(state, disk_interface) {}
 
   /// Update the |dirty_| state of the given nodes by transitively inspecting
   /// their input edges.
@@ -326,13 +302,11 @@ struct DependencyScan {
   /// state accordingly.
   /// Appends any validation nodes found to the nodes parameter.
   /// Returns false on failure.
-  bool RecomputeDirty(Node* node, std::vector<Node*>* validation_nodes,
-                      std::string* err);
+  bool RecomputeDirty(Node* node, std::vector<Node*>* validation_nodes, std::string* err);
 
   /// Recompute whether any output of the edge is dirty, if so sets |*dirty|.
   /// Returns false on failure.
-  bool RecomputeOutputsDirty(Edge* edge, Node* most_recent_input, bool* dirty,
-                             std::string* err);
+  bool RecomputeOutputsDirty(Edge* edge, Node* most_recent_input, bool* dirty, std::string* err);
 
   BuildLog* build_log() const { return build_log_; }
   void set_build_log(BuildLog* log) { build_log_ = log; }
@@ -347,15 +321,13 @@ struct DependencyScan {
   bool LoadDyndeps(Node* node, DyndepFile* ddf, std::string* err) const;
 
  private:
-  bool RecomputeNodeDirty(Node* node, std::vector<Node*>* stack,
-                          std::vector<Node*>* validation_nodes,
+  bool RecomputeNodeDirty(Node* node, std::vector<Node*>* stack, std::vector<Node*>* validation_nodes,
                           std::string* err);
   bool VerifyDAG(Node* node, std::vector<Node*>* stack, std::string* err);
 
   /// Recompute whether a given single output should be marked dirty.
   /// Returns true if so.
-  bool RecomputeOutputDirty(const Edge* edge, const Node* most_recent_input,
-                            const std::string& command, Node* output);
+  bool RecomputeOutputDirty(const Edge* edge, const Node* most_recent_input, const std::string& command, Node* output);
 
   BuildLog* build_log_;
   DiskInterface* disk_interface_;

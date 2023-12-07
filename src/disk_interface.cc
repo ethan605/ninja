@@ -49,8 +49,7 @@ string DirName(const string& path) {
   string::size_type slash_pos = path.find_last_of(kPathSeparators);
   if (slash_pos == string::npos)
     return string();  // Nothing to do.
-  while (slash_pos > 0 &&
-         std::find(kPathSeparators, kEnd, path[slash_pos - 1]) != kEnd)
+  while (slash_pos > 0 && std::find(kPathSeparators, kEnd, path[slash_pos - 1]) != kEnd)
     --slash_pos;
   return path.substr(0, slash_pos);
 }
@@ -68,8 +67,7 @@ TimeStamp TimeStampFromFileTime(const FILETIME& filetime) {
   // FILETIME is in 100-nanosecond increments since the Windows epoch.
   // We don't much care about epoch correctness but we do want the
   // resulting value to fit in a 64-bit integer.
-  uint64_t mtime = ((uint64_t)filetime.dwHighDateTime << 32) |
-                   ((uint64_t)filetime.dwLowDateTime);
+  uint64_t mtime = ((uint64_t)filetime.dwHighDateTime << 32) | ((uint64_t)filetime.dwLowDateTime);
   // 1600 epoch -> 2000 epoch (subtract 400 years).
   return (TimeStamp)mtime - 12622770400LL * (1000000000LL / 100);
 }
@@ -87,33 +85,25 @@ TimeStamp StatSingleFile(const string& path, string* err) {
 }
 
 bool IsWindows7OrLater() {
-  OSVERSIONINFOEX version_info = {
-    sizeof(OSVERSIONINFOEX), 6, 1, 0, 0, { 0 }, 0, 0, 0, 0, 0
-  };
+  OSVERSIONINFOEX version_info = { sizeof(OSVERSIONINFOEX), 6, 1, 0, 0, { 0 }, 0, 0, 0, 0, 0 };
   DWORDLONG comparison = 0;
   VER_SET_CONDITION(comparison, VER_MAJORVERSION, VER_GREATER_EQUAL);
   VER_SET_CONDITION(comparison, VER_MINORVERSION, VER_GREATER_EQUAL);
-  return VerifyVersionInfo(&version_info, VER_MAJORVERSION | VER_MINORVERSION,
-                           comparison);
+  return VerifyVersionInfo(&version_info, VER_MAJORVERSION | VER_MINORVERSION, comparison);
 }
 
-bool StatAllFilesInDir(const string& dir, map<string, TimeStamp>* stamps,
-                       string* err) {
+bool StatAllFilesInDir(const string& dir, map<string, TimeStamp>* stamps, string* err) {
   // FindExInfoBasic is 30% faster than FindExInfoStandard.
   static bool can_use_basic_info = IsWindows7OrLater();
   // This is not in earlier SDKs.
-  const FINDEX_INFO_LEVELS kFindExInfoBasic =
-      static_cast<FINDEX_INFO_LEVELS>(1);
-  FINDEX_INFO_LEVELS level =
-      can_use_basic_info ? kFindExInfoBasic : FindExInfoStandard;
+  const FINDEX_INFO_LEVELS kFindExInfoBasic = static_cast<FINDEX_INFO_LEVELS>(1);
+  FINDEX_INFO_LEVELS level = can_use_basic_info ? kFindExInfoBasic : FindExInfoStandard;
   WIN32_FIND_DATAA ffd;
-  HANDLE find_handle = FindFirstFileExA((dir + "\\*").c_str(), level, &ffd,
-                                        FindExSearchNameMatch, NULL, 0);
+  HANDLE find_handle = FindFirstFileExA((dir + "\\*").c_str(), level, &ffd, FindExSearchNameMatch, NULL, 0);
 
   if (find_handle == INVALID_HANDLE_VALUE) {
     DWORD win_err = GetLastError();
-    if (win_err == ERROR_FILE_NOT_FOUND || win_err == ERROR_PATH_NOT_FOUND ||
-        win_err == ERROR_DIRECTORY)
+    if (win_err == ERROR_FILE_NOT_FOUND || win_err == ERROR_PATH_NOT_FOUND || win_err == ERROR_DIRECTORY)
       return true;
     *err = "FindFirstFileExA(" + dir + "): " + GetLastErrorString();
     return false;
@@ -126,8 +116,7 @@ bool StatAllFilesInDir(const string& dir, map<string, TimeStamp>* stamps,
       continue;
     }
     transform(lowername.begin(), lowername.end(), lowername.begin(), ::tolower);
-    stamps->insert(
-        make_pair(lowername, TimeStampFromFileTime(ffd.ftLastWriteTime)));
+    stamps->insert(make_pair(lowername, TimeStampFromFileTime(ffd.ftLastWriteTime)));
   } while (FindNextFileA(find_handle, &ffd));
   FindClose(find_handle);
   return true;
@@ -168,8 +157,7 @@ RealDiskInterface::RealDiskInterface()
   HINSTANCE ntdll_lib = ::GetModuleHandleW(L"ntdll");
   if (ntdll_lib) {
     typedef BOOLEAN(WINAPI FunctionType)();
-    auto* func_ptr = reinterpret_cast<FunctionType*>(
-        ::GetProcAddress(ntdll_lib, "RtlAreLongPathsEnabled"));
+    auto* func_ptr = reinterpret_cast<FunctionType*>(::GetProcAddress(ntdll_lib, "RtlAreLongPathsEnabled"));
     if (func_ptr) {
       long_paths_enabled_ = (*func_ptr)();
     }
@@ -185,11 +173,9 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
 #ifdef _WIN32
   // MSDN: "Naming Files, Paths, and Namespaces"
   // http://msdn.microsoft.com/en-us/library/windows/desktop/aa365247(v=vs.85).aspx
-  if (!path.empty() && !AreLongPathsEnabled() && path[0] != '\\' &&
-      path.size() > MAX_PATH) {
+  if (!path.empty() && !AreLongPathsEnabled() && path[0] != '\\' && path.size() > MAX_PATH) {
     ostringstream err_stream;
-    err_stream << "Stat(" << path << "): Filename longer than " << MAX_PATH
-               << " characters";
+    err_stream << "Stat(" << path << "): Filename longer than " << MAX_PATH << " characters";
     *err = err_stream.str();
     return -1;
   }
@@ -239,8 +225,7 @@ TimeStamp RealDiskInterface::Stat(const string& path, string* err) const {
 #if defined(_AIX)
   return (int64_t)st.st_mtime * 1000000000LL + st.st_mtime_n;
 #elif defined(__APPLE__)
-  return ((int64_t)st.st_mtimespec.tv_sec * 1000000000LL +
-          st.st_mtimespec.tv_nsec);
+  return ((int64_t)st.st_mtimespec.tv_sec * 1000000000LL + st.st_mtimespec.tv_nsec);
 #elif defined(st_mtime)  // A macro, so we're likely on modern POSIX.
 return (int64_t)st.st_mtim.tv_sec * 1000000000LL + st.st_mtim.tv_nsec;
 #else
@@ -252,21 +237,18 @@ return (int64_t)st.st_mtime * 1000000000LL + st.st_mtimensec;
 bool RealDiskInterface::WriteFile(const string& path, const string& contents) {
   FILE* fp = fopen(path.c_str(), "w");
   if (fp == NULL) {
-    Error("WriteFile(%s): Unable to create file. %s", path.c_str(),
-          strerror(errno));
+    Error("WriteFile(%s): Unable to create file. %s", path.c_str(), strerror(errno));
     return false;
   }
 
   if (fwrite(contents.data(), 1, contents.length(), fp) < contents.length()) {
-    Error("WriteFile(%s): Unable to write to the file. %s", path.c_str(),
-          strerror(errno));
+    Error("WriteFile(%s): Unable to write to the file. %s", path.c_str(), strerror(errno));
     fclose(fp);
     return false;
   }
 
   if (fclose(fp) == EOF) {
-    Error("WriteFile(%s): Unable to close the file. %s", path.c_str(),
-          strerror(errno));
+    Error("WriteFile(%s): Unable to close the file. %s", path.c_str(), strerror(errno));
     return false;
   }
 
@@ -284,8 +266,7 @@ bool RealDiskInterface::MakeDir(const string& path) {
   return true;
 }
 
-FileReader::Status RealDiskInterface::ReadFile(const string& path,
-                                               string* contents, string* err) {
+FileReader::Status RealDiskInterface::ReadFile(const string& path, string* contents, string* err) {
   switch (::ReadFile(path, contents, err)) {
   case 0:
     return Okay;

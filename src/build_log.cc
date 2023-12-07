@@ -120,10 +120,8 @@ uint64_t BuildLog::LogEntry::HashCommand(StringPiece command) {
 
 BuildLog::LogEntry::LogEntry(const string& output) : output(output) {}
 
-BuildLog::LogEntry::LogEntry(const string& output, uint64_t command_hash,
-                             int start_time, int end_time, TimeStamp mtime)
-    : output(output), command_hash(command_hash), start_time(start_time),
-      end_time(end_time), mtime(mtime) {}
+BuildLog::LogEntry::LogEntry(const string& output, uint64_t command_hash, int start_time, int end_time, TimeStamp mtime)
+    : output(output), command_hash(command_hash), start_time(start_time), end_time(end_time), mtime(mtime) {}
 
 BuildLog::BuildLog() : log_file_(NULL), needs_recompaction_(false) {}
 
@@ -131,8 +129,7 @@ BuildLog::~BuildLog() {
   Close();
 }
 
-bool BuildLog::OpenForWrite(const string& path, const BuildLogUser& user,
-                            string* err) {
+bool BuildLog::OpenForWrite(const string& path, const BuildLogUser& user, string* err) {
   if (needs_recompaction_) {
     if (!Recompact(path, user, err))
       return false;
@@ -144,12 +141,10 @@ bool BuildLog::OpenForWrite(const string& path, const BuildLogUser& user,
   return true;
 }
 
-bool BuildLog::RecordCommand(Edge* edge, int start_time, int end_time,
-                             TimeStamp mtime) {
+bool BuildLog::RecordCommand(Edge* edge, int start_time, int end_time, TimeStamp mtime) {
   string command = edge->EvaluateCommand(true);
   uint64_t command_hash = LogEntry::HashCommand(command);
-  for (vector<Node*>::iterator out = edge->outputs_.begin();
-       out != edge->outputs_.end(); ++out) {
+  for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
     const string& path = (*out)->path();
     Entries::iterator i = entries_.find(path);
     LogEntry* log_entry;
@@ -211,8 +206,7 @@ bool BuildLog::OpenForWriteIfNeeded() {
 }
 
 struct LineReader {
-  explicit LineReader(FILE* file)
-      : file_(file), buf_end_(buf_), line_start_(buf_), line_end_(NULL) {
+  explicit LineReader(FILE* file) : file_(file), buf_end_(buf_), line_start_(buf_), line_end_(NULL) {
     memset(buf_, 0, sizeof(buf_));
   }
 
@@ -388,13 +382,11 @@ BuildLog::LogEntry* BuildLog::LookupByOutput(const string& path) {
 }
 
 bool BuildLog::WriteEntry(FILE* f, const LogEntry& entry) {
-  return fprintf(f, "%d\t%d\t%" PRId64 "\t%s\t%" PRIx64 "\n", entry.start_time,
-                 entry.end_time, entry.mtime, entry.output.c_str(),
-                 entry.command_hash) > 0;
+  return fprintf(f, "%d\t%d\t%" PRId64 "\t%s\t%" PRIx64 "\n", entry.start_time, entry.end_time, entry.mtime,
+                 entry.output.c_str(), entry.command_hash) > 0;
 }
 
-bool BuildLog::Recompact(const string& path, const BuildLogUser& user,
-                         string* err) {
+bool BuildLog::Recompact(const string& path, const BuildLogUser& user, string* err) {
   METRIC_RECORD(".ninja_log recompact");
 
   Close();
@@ -442,10 +434,8 @@ bool BuildLog::Recompact(const string& path, const BuildLogUser& user,
   return true;
 }
 
-bool BuildLog::Restat(const StringPiece path,
-                      const DiskInterface& disk_interface,
-                      const int output_count, char** outputs,
-                      std::string* const err) {
+bool BuildLog::Restat(const StringPiece path, const DiskInterface& disk_interface, const int output_count,
+                      char** outputs, std::string* const err) {
   METRIC_RECORD(".ninja_log restat");
 
   Close();

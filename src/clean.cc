@@ -24,10 +24,9 @@
 
 using namespace std;
 
-Cleaner::Cleaner(State* state, const BuildConfig& config,
-                 DiskInterface* disk_interface)
-    : state_(state), config_(config), dyndep_loader_(state, disk_interface),
-      cleaned_files_count_(0), disk_interface_(disk_interface), status_(0) {}
+Cleaner::Cleaner(State* state, const BuildConfig& config, DiskInterface* disk_interface)
+    : state_(state), config_(config), dyndep_loader_(state, disk_interface), cleaned_files_count_(0),
+      disk_interface_(disk_interface), status_(0) {}
 
 int Cleaner::RemoveFile(const string& path) {
   return disk_interface_->RemoveFile(path);
@@ -99,16 +98,14 @@ int Cleaner::CleanAll(bool generator) {
   Reset();
   PrintHeader();
   LoadDyndeps();
-  for (vector<Edge*>::iterator e = state_->edges_.begin();
-       e != state_->edges_.end(); ++e) {
+  for (vector<Edge*>::iterator e = state_->edges_.begin(); e != state_->edges_.end(); ++e) {
     // Do not try to remove phony targets
     if ((*e)->is_phony())
       continue;
     // Do not remove generator's files unless generator specified.
     if (!generator && (*e)->GetBindingBool("generator"))
       continue;
-    for (vector<Node*>::iterator out_node = (*e)->outputs_.begin();
-         out_node != (*e)->outputs_.end(); ++out_node) {
+    for (vector<Node*>::iterator out_node = (*e)->outputs_.begin(); out_node != (*e)->outputs_.end(); ++out_node) {
       Remove((*out_node)->path());
     }
 
@@ -121,8 +118,7 @@ int Cleaner::CleanAll(bool generator) {
 int Cleaner::CleanDead(const BuildLog::Entries& entries) {
   Reset();
   PrintHeader();
-  for (BuildLog::Entries::const_iterator i = entries.begin();
-       i != entries.end(); ++i) {
+  for (BuildLog::Entries::const_iterator i = entries.begin(); i != entries.end(); ++i) {
     Node* n = state_->LookupNode(i->first);
     // Detecting stale outputs works as follows:
     //
@@ -148,8 +144,7 @@ void Cleaner::DoCleanTarget(Node* target) {
       Remove(target->path());
       RemoveEdgeFiles(e);
     }
-    for (vector<Node*>::iterator n = e->inputs_.begin(); n != e->inputs_.end();
-         ++n) {
+    for (vector<Node*>::iterator n = e->inputs_.begin(); n != e->inputs_.end(); ++n) {
       Node* next = *n;
       // call DoCleanTarget recursively if this node has not been visited
       if (cleaned_.count(next) == 0) {
@@ -217,11 +212,9 @@ int Cleaner::CleanTargets(int target_count, char* targets[]) {
 void Cleaner::DoCleanRule(const Rule* rule) {
   assert(rule);
 
-  for (vector<Edge*>::iterator e = state_->edges_.begin();
-       e != state_->edges_.end(); ++e) {
+  for (vector<Edge*>::iterator e = state_->edges_.begin(); e != state_->edges_.end(); ++e) {
     if ((*e)->rule().name() == rule->name()) {
-      for (vector<Node*>::iterator out_node = (*e)->outputs_.begin();
-           out_node != (*e)->outputs_.end(); ++out_node) {
+      for (vector<Node*>::iterator out_node = (*e)->outputs_.begin(); out_node != (*e)->outputs_.end(); ++out_node) {
         Remove((*out_node)->path());
         RemoveEdgeFiles(*e);
       }
@@ -285,8 +278,7 @@ void Cleaner::Reset() {
 
 void Cleaner::LoadDyndeps() {
   // Load dyndep files that exist, before they are cleaned.
-  for (vector<Edge*>::iterator e = state_->edges_.begin();
-       e != state_->edges_.end(); ++e) {
+  for (vector<Edge*>::iterator e = state_->edges_.begin(); e != state_->edges_.end(); ++e) {
     if (Node* dyndep = (*e)->dyndep_) {
       // Capture and ignore errors loading the dyndep file.
       // We clean as much of the graph as we know.

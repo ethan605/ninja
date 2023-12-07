@@ -25,10 +25,8 @@
 /// completion fraction, printing updates.
 struct Status {
   virtual void PlanHasTotalEdges(int total) = 0;
-  virtual void BuildEdgeStarted(const Edge* edge,
-                                int64_t start_time_millis) = 0;
-  virtual void BuildEdgeFinished(Edge* edge, int64_t end_time_millis,
-                                 bool success, const std::string& output) = 0;
+  virtual void BuildEdgeStarted(const Edge* edge, int64_t start_time_millis) = 0;
+  virtual void BuildEdgeFinished(Edge* edge, int64_t end_time_millis, bool success, const std::string& output) = 0;
   virtual void BuildLoadDyndeps() = 0;
   virtual void BuildStarted() = 0;
   virtual void BuildFinished() = 0;
@@ -46,8 +44,7 @@ struct StatusPrinter : Status {
   explicit StatusPrinter(const BuildConfig& config);
   virtual void PlanHasTotalEdges(int total);
   virtual void BuildEdgeStarted(const Edge* edge, int64_t start_time_millis);
-  virtual void BuildEdgeFinished(Edge* edge, int64_t end_time_millis,
-                                 bool success, const std::string& output);
+  virtual void BuildEdgeFinished(Edge* edge, int64_t end_time_millis, bool success, const std::string& output);
   virtual void BuildLoadDyndeps();
   virtual void BuildStarted();
   virtual void BuildFinished();
@@ -63,8 +60,7 @@ struct StatusPrinter : Status {
   /// placeholders.
   /// @param progress_status_format The format of the progress status.
   /// @param status The status of the edge.
-  std::string FormatProgressStatus(const char* progress_status_format,
-                                   int64_t time_millis) const;
+  std::string FormatProgressStatus(const char* progress_status_format, int64_t time_millis) const;
 
  private:
   void PrintStatus(const Edge* edge, int64_t time_millis);

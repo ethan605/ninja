@@ -40,8 +40,7 @@ struct StateTestWithBuiltinRules : public testing::Test {
   State state_;
 };
 
-void AssertParse(State* state, const char* input,
-                 ManifestParserOptions = ManifestParserOptions());
+void AssertParse(State* state, const char* input, ManifestParserOptions = ManifestParserOptions());
 void AssertHash(const char* expected, uint64_t actual);
 void VerifyGraph(const State& state);
 
@@ -62,8 +61,7 @@ struct VirtualFileSystem : public DiskInterface {
   virtual TimeStamp Stat(const std::string& path, std::string* err) const;
   virtual bool WriteFile(const std::string& path, const std::string& contents);
   virtual bool MakeDir(const std::string& path);
-  virtual Status ReadFile(const std::string& path, std::string* contents,
-                          std::string* err);
+  virtual Status ReadFile(const std::string& path, std::string* contents, std::string* err);
   virtual int RemoveFile(const std::string& path);
 
   /// An entry for a single in-memory file.

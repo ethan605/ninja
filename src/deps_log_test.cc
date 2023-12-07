@@ -358,13 +358,10 @@ TEST_F(DepsLogTest, InvalidHeader) {
     "# ninjadeps\n\001\002",         // Truncated version int.
     "# ninjadeps\n\001\002\003\004"  // Invalid version int.
   };
-  for (size_t i = 0; i < sizeof(kInvalidHeaders) / sizeof(kInvalidHeaders[0]);
-       ++i) {
+  for (size_t i = 0; i < sizeof(kInvalidHeaders) / sizeof(kInvalidHeaders[0]); ++i) {
     FILE* deps_log = fopen(kTestFilename, "wb");
     ASSERT_TRUE(deps_log != NULL);
-    ASSERT_EQ(
-        strlen(kInvalidHeaders[i]),
-        fwrite(kInvalidHeaders[i], 1, strlen(kInvalidHeaders[i]), deps_log));
+    ASSERT_EQ(strlen(kInvalidHeaders[i]), fwrite(kInvalidHeaders[i], 1, strlen(kInvalidHeaders[i]), deps_log));
     ASSERT_EQ(0, fclose(deps_log));
 
     string err;
@@ -429,8 +426,7 @@ TEST_F(DepsLogTest, Truncated) {
 
     // Count how many non-NULL deps entries there are.
     int new_deps_count = 0;
-    for (vector<DepsLog::Deps*>::const_iterator i = log.deps().begin();
-         i != log.deps().end(); ++i) {
+    for (vector<DepsLog::Deps*>::const_iterator i = log.deps().begin(); i != log.deps().end(); ++i) {
       if (*i)
         ++new_deps_count;
     }
@@ -533,8 +529,7 @@ TEST_F(DepsLogTest, ReverseDepsNodes) {
   log.Close();
 
   Node* rev_deps = log.GetFirstReverseDepsNode(state.GetNode("foo.h", 0));
-  EXPECT_TRUE(rev_deps == state.GetNode("out.o", 0) ||
-              rev_deps == state.GetNode("out2.o", 0));
+  EXPECT_TRUE(rev_deps == state.GetNode("out.o", 0) || rev_deps == state.GetNode("out2.o", 0));
 
   rev_deps = log.GetFirstReverseDepsNode(state.GetNode("bar.h", 0));
   EXPECT_TRUE(rev_deps == state.GetNode("out.o", 0));

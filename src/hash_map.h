@@ -65,9 +65,7 @@ struct hash<StringPiece> {
   typedef StringPiece argument_type;
   typedef size_t result_type;
 
-  size_t operator()(StringPiece key) const {
-    return MurmurHash2(key.str_, key.len_);
-  }
+  size_t operator()(StringPiece key) const { return MurmurHash2(key.str_, key.len_); }
 };
 }  // namespace std
 

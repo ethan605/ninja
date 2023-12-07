@@ -42,8 +42,7 @@ struct DyndepFile : public std::map<Edge*, Dyndeps> {};
 /// DyndepLoader loads dynamically discovered dependencies, as
 /// referenced via the "dyndep" attribute in build files.
 struct DyndepLoader {
-  DyndepLoader(State* state, DiskInterface* disk_interface)
-      : state_(state), disk_interface_(disk_interface) {}
+  DyndepLoader(State* state, DiskInterface* disk_interface) : state_(state), disk_interface_(disk_interface) {}
 
   /// Load a dyndep file from the given node's path and update the
   /// build graph with the new information.  One overload accepts

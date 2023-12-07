@@ -71,8 +71,7 @@ int main(int argc, char* argv[]) {
         max = times[i];
     }
 
-    printf("min %.1fus  max %.1fus  avg %.1fus\n", min, max,
-           total / times.size());
+    printf("min %.1fus  max %.1fus  avg %.1fus\n", min, max, total / times.size());
   }
 
   return 0;

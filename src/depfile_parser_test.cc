@@ -32,8 +32,7 @@ bool DepfileParserTest::Parse(const char* input, string* err) {
 
 TEST_F(DepfileParserTest, Basic) {
   string err;
-  EXPECT_TRUE(Parse(
-      "build/ninja.o: ninja.cc ninja.h eval_env.h manifest_parser.h\n", &err));
+  EXPECT_TRUE(Parse("build/ninja.o: ninja.cc ninja.h eval_env.h manifest_parser.h\n", &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("build/ninja.o", parser_.outs_[0].AsString());
@@ -84,8 +83,7 @@ TEST_F(DepfileParserTest, BackSlashes) {
             &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
-  EXPECT_EQ("Project\\Dir\\Build\\Release8\\Foo\\Foo.res",
-            parser_.outs_[0].AsString());
+  EXPECT_EQ("Project\\Dir\\Build\\Release8\\Foo\\Foo.res", parser_.outs_[0].AsString());
   EXPECT_EQ(4u, parser_.ins_.size());
 }
 
@@ -107,8 +105,7 @@ TEST_F(DepfileParserTest, MultipleBackslashes) {
   // Other backslashes remain untouched (including 2N backslashes followed by
   // space).
   string err;
-  EXPECT_TRUE(
-      Parse("a\\ b\\#c.h: \\\\\\\\\\  \\\\\\\\ \\\\share\\info\\\\#1", &err));
+  EXPECT_TRUE(Parse("a\\ b\\#c.h: \\\\\\\\\\  \\\\\\\\ \\\\share\\info\\\\#1", &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("a b#c.h", parser_.outs_[0].AsString());
@@ -139,11 +136,9 @@ TEST_F(DepfileParserTest, EscapedColons) {
             &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
-  EXPECT_EQ("c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.o",
-            parser_.outs_[0].AsString());
+  EXPECT_EQ("c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.o", parser_.outs_[0].AsString());
   ASSERT_EQ(1u, parser_.ins_.size());
-  EXPECT_EQ("c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.h",
-            parser_.ins_[0].AsString());
+  EXPECT_EQ("c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.h", parser_.ins_[0].AsString());
 }
 
 TEST_F(DepfileParserTest, EscapedTargetColon) {
@@ -175,13 +170,11 @@ TEST_F(DepfileParserTest, SpecialChars) {
             &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
-  EXPECT_EQ("C:/Program Files (x86)/Microsoft crtdefs.h",
-            parser_.outs_[0].AsString());
+  EXPECT_EQ("C:/Program Files (x86)/Microsoft crtdefs.h", parser_.outs_[0].AsString());
   ASSERT_EQ(5u, parser_.ins_.size());
   EXPECT_EQ("en@quot.header~", parser_.ins_[0].AsString());
   EXPECT_EQ("t+t-x!=1", parser_.ins_[1].AsString());
-  EXPECT_EQ("openldap/slapd.d/cn=config/cn=schema/cn={0}core.ldif",
-            parser_.ins_[2].AsString());
+  EXPECT_EQ("openldap/slapd.d/cn=config/cn=schema/cn={0}core.ldif", parser_.ins_[2].AsString());
   EXPECT_EQ("Fu\303\244ball", parser_.ins_[3].AsString());
   EXPECT_EQ("a[1]b@2%c", parser_.ins_[4].AsString());
 }

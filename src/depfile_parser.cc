@@ -21,8 +21,7 @@
 
 using namespace std;
 
-DepfileParser::DepfileParser(DepfileParserOptions options)
-    : options_(options) {}
+DepfileParser::DepfileParser(DepfileParserOptions options) : options_(options) {}
 
 // A note on backslashes in Makefiles, from reading the docs:
 // Backslash-newline is the line continuation character.
@@ -67,6 +66,8 @@ bool DepfileParser::Parse(string* content, string* err) {
 
       {
         unsigned char yych;
+
+        // clang-format off
         static const unsigned char yybm[] = {
           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
           0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -88,6 +89,8 @@ bool DepfileParser::Parse(string* content, string* err) {
           128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
           128, 128, 128, 128,
         };
+        // clang-format on
+
         yych = *in;
         if (yybm[0 + yych] & 128) {
           goto yy9;
@@ -352,8 +355,7 @@ bool DepfileParser::Parse(string* content, string* err) {
     if (len > 0) {
       StringPiece piece = StringPiece(filename, len);
       // If we've seen this as an input before, skip it.
-      std::vector<StringPiece>::iterator pos =
-          std::find(ins_.begin(), ins_.end(), piece);
+      std::vector<StringPiece>::iterator pos = std::find(ins_.begin(), ins_.end(), piece);
       if (pos == ins_.end()) {
         if (is_dependency) {
           if (poisoned_input) {

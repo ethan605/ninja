@@ -100,16 +100,14 @@ TEST_F(DiskInterfaceTest, StatExistingFileWithLongPath) {
   string err;
   char currentdir[32767];
   _getcwd(currentdir, sizeof(currentdir));
-  const string filename =
-      string(currentdir) +
-      "\\filename_with_256_characters_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\
+  const string filename = string(currentdir) +
+                          "\\filename_with_256_characters_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\
 xxxxxxxxxxxxxxxxxxxxx";
   const string prefixed = "\\\\?\\" + filename;
   ASSERT_TRUE(Touch(prefixed.c_str()));
-  EXPECT_GT(disk_.Stat(disk_.AreLongPathsEnabled() ? filename : prefixed, &err),
-            1);
+  EXPECT_GT(disk_.Stat(disk_.AreLongPathsEnabled() ? filename : prefixed, &err), 1);
   EXPECT_EQ("", err);
 }
 #endif
@@ -128,10 +126,8 @@ TEST_F(DiskInterfaceTest, StatExistingDir) {
   EXPECT_EQ("", err);
 
   EXPECT_EQ(disk_.Stat("subdir", &err), disk_.Stat("subdir/.", &err));
-  EXPECT_EQ(disk_.Stat("subdir", &err),
-            disk_.Stat("subdir/subsubdir/..", &err));
-  EXPECT_EQ(disk_.Stat("subdir/subsubdir", &err),
-            disk_.Stat("subdir/subsubdir/.", &err));
+  EXPECT_EQ(disk_.Stat("subdir", &err), disk_.Stat("subdir/subsubdir/..", &err));
+  EXPECT_EQ(disk_.Stat("subdir/subsubdir", &err), disk_.Stat("subdir/subsubdir/.", &err));
 }
 
 #ifdef _WIN32
@@ -173,14 +169,12 @@ TEST_F(DiskInterfaceTest, StatCache) {
                   // https://github.com/ninja-build/ninja/pull/1423
   EXPECT_EQ(disk_.Stat("subdir", &err), disk_.Stat("subdir/.", &err));
   EXPECT_EQ("", err);
-  EXPECT_EQ(disk_.Stat("subdir", &err),
-            disk_.Stat("subdir/subsubdir/..", &err));
+  EXPECT_EQ(disk_.Stat("subdir", &err), disk_.Stat("subdir/subsubdir/..", &err));
 #endif
   EXPECT_EQ("", err);
   EXPECT_EQ(disk_.Stat("..", &err), parent_stat_uncached);
   EXPECT_EQ("", err);
-  EXPECT_EQ(disk_.Stat("subdir/subsubdir", &err),
-            disk_.Stat("subdir/subsubdir/.", &err));
+  EXPECT_EQ(disk_.Stat("subdir/subsubdir", &err), disk_.Stat("subdir/subsubdir/.", &err));
   EXPECT_EQ("", err);
 
   // Test error cases.

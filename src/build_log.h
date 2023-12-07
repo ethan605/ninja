@@ -47,10 +47,8 @@ struct BuildLog {
 
   /// Prepares writing to the log file without actually opening it - that will
   /// happen when/if it's needed
-  bool OpenForWrite(const std::string& path, const BuildLogUser& user,
-                    std::string* err);
-  bool RecordCommand(Edge* edge, int start_time, int end_time,
-                     TimeStamp mtime = 0);
+  bool OpenForWrite(const std::string& path, const BuildLogUser& user, std::string* err);
+  bool RecordCommand(Edge* edge, int start_time, int end_time, TimeStamp mtime = 0);
   void Close();
 
   /// Load the on-disk log.
@@ -67,14 +65,12 @@ struct BuildLog {
 
     // Used by tests.
     bool operator==(const LogEntry& o) {
-      return output == o.output && command_hash == o.command_hash &&
-             start_time == o.start_time && end_time == o.end_time &&
-             mtime == o.mtime;
+      return output == o.output && command_hash == o.command_hash && start_time == o.start_time &&
+             end_time == o.end_time && mtime == o.mtime;
     }
 
     explicit LogEntry(const std::string& output);
-    LogEntry(const std::string& output, uint64_t command_hash, int start_time,
-             int end_time, TimeStamp mtime);
+    LogEntry(const std::string& output, uint64_t command_hash, int start_time, int end_time, TimeStamp mtime);
   };
 
   /// Lookup a previously-run command by its output path.
@@ -84,12 +80,11 @@ struct BuildLog {
   bool WriteEntry(FILE* f, const LogEntry& entry);
 
   /// Rewrite the known log entries, throwing away old data.
-  bool Recompact(const std::string& path, const BuildLogUser& user,
-                 std::string* err);
+  bool Recompact(const std::string& path, const BuildLogUser& user, std::string* err);
 
   /// Restat all outputs in the log
-  bool Restat(StringPiece path, const DiskInterface& disk_interface,
-              int output_count, char** outputs, std::string* err);
+  bool Restat(StringPiece path, const DiskInterface& disk_interface, int output_count, char** outputs,
+              std::string* err);
 
   typedef ExternalStringHashMap<LogEntry*>::Type Entries;
   const Entries& entries() const { return entries_; }

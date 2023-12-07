@@ -31,17 +31,14 @@ enum PhonyCycleAction {
 };
 
 struct ManifestParserOptions {
-  ManifestParserOptions()
-      : dupe_edge_action_(kDupeEdgeActionWarn),
-        phony_cycle_action_(kPhonyCycleActionWarn) {}
+  ManifestParserOptions() : dupe_edge_action_(kDupeEdgeActionWarn), phony_cycle_action_(kPhonyCycleActionWarn) {}
   DupeEdgeAction dupe_edge_action_;
   PhonyCycleAction phony_cycle_action_;
 };
 
 /// Parses .ninja files.
 struct ManifestParser : public Parser {
-  ManifestParser(State* state, FileReader* file_reader,
-                 ManifestParserOptions options = ManifestParserOptions());
+  ManifestParser(State* state, FileReader* file_reader, ManifestParserOptions options = ManifestParserOptions());
 
   /// Parse a text string of input.  Used by tests.
   bool ParseTest(const std::string& input, std::string* err) {
@@ -51,8 +48,7 @@ struct ManifestParser : public Parser {
 
  private:
   /// Parse a file, given its contents as a string.
-  bool Parse(const std::string& filename, const std::string& input,
-             std::string* err);
+  bool Parse(const std::string& filename, const std::string& input, std::string* err);
 
   /// Parse various statement types.
   bool ParsePool(std::string* err);

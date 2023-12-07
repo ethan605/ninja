@@ -25,9 +25,7 @@
 using namespace std;
 
 struct CompareEdgesByOutput {
-  static bool cmp(const Edge* a, const Edge* b) {
-    return a->outputs_[0]->path() < b->outputs_[0]->path();
-  }
+  static bool cmp(const Edge* a, const Edge* b) { return a->outputs_[0]->path() < b->outputs_[0]->path(); }
 };
 
 /// Fixture for tests involving Plan.
@@ -258,26 +256,25 @@ TEST_F(PlanTest, ConsolePool) {
 }
 
 TEST_F(PlanTest, PoolsWithDepthTwo) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "pool foobar\n"
-      "  depth = 2\n"
-      "pool bazbin\n"
-      "  depth = 2\n"
-      "rule foocat\n"
-      "  command = cat $in > $out\n"
-      "  pool = foobar\n"
-      "rule bazcat\n"
-      "  command = cat $in > $out\n"
-      "  pool = bazbin\n"
-      "build out1: foocat in\n"
-      "build out2: foocat in\n"
-      "build out3: foocat in\n"
-      "build outb1: bazcat in\n"
-      "build outb2: bazcat in\n"
-      "build outb3: bazcat in\n"
-      "  pool =\n"
-      "build allTheThings: cat out1 out2 out3 outb1 outb2 outb3\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "pool foobar\n"
+                                      "  depth = 2\n"
+                                      "pool bazbin\n"
+                                      "  depth = 2\n"
+                                      "rule foocat\n"
+                                      "  command = cat $in > $out\n"
+                                      "  pool = foobar\n"
+                                      "rule bazcat\n"
+                                      "  command = cat $in > $out\n"
+                                      "  pool = bazbin\n"
+                                      "build out1: foocat in\n"
+                                      "build out2: foocat in\n"
+                                      "build out3: foocat in\n"
+                                      "build outb1: bazcat in\n"
+                                      "build outb2: bazcat in\n"
+                                      "build outb3: bazcat in\n"
+                                      "  pool =\n"
+                                      "build allTheThings: cat out1 out2 out3 outb1 outb2 outb3\n"));
   // Mark all the out* nodes dirty
   for (int i = 0; i < 3; ++i) {
     GetNode("out" + string(1, '1' + static_cast<char>(i)))->MarkDirty();
@@ -340,24 +337,23 @@ TEST_F(PlanTest, PoolsWithDepthTwo) {
 }
 
 TEST_F(PlanTest, PoolWithRedundantEdges) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "pool compile\n"
-                  "  depth = 1\n"
-                  "rule gen_foo\n"
-                  "  command = touch foo.cpp\n"
-                  "rule gen_bar\n"
-                  "  command = touch bar.cpp\n"
-                  "rule echo\n"
-                  "  command = echo $out > $out\n"
-                  "build foo.cpp.obj: echo foo.cpp || foo.cpp\n"
-                  "  pool = compile\n"
-                  "build bar.cpp.obj: echo bar.cpp || bar.cpp\n"
-                  "  pool = compile\n"
-                  "build libfoo.a: echo foo.cpp.obj bar.cpp.obj\n"
-                  "build foo.cpp: gen_foo\n"
-                  "build bar.cpp: gen_bar\n"
-                  "build all: phony libfoo.a\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "pool compile\n"
+                                      "  depth = 1\n"
+                                      "rule gen_foo\n"
+                                      "  command = touch foo.cpp\n"
+                                      "rule gen_bar\n"
+                                      "  command = touch bar.cpp\n"
+                                      "rule echo\n"
+                                      "  command = echo $out > $out\n"
+                                      "build foo.cpp.obj: echo foo.cpp || foo.cpp\n"
+                                      "  pool = compile\n"
+                                      "build bar.cpp.obj: echo bar.cpp || bar.cpp\n"
+                                      "  pool = compile\n"
+                                      "build libfoo.a: echo foo.cpp.obj bar.cpp.obj\n"
+                                      "build foo.cpp: gen_foo\n"
+                                      "build bar.cpp: gen_bar\n"
+                                      "build all: phony libfoo.a\n"));
   GetNode("foo.cpp")->MarkDirty();
   GetNode("foo.cpp.obj")->MarkDirty();
   GetNode("bar.cpp")->MarkDirty();
@@ -470,8 +466,7 @@ TEST_F(PlanTest, PoolWithFailingEdge) {
 
 /// Fake implementation of CommandRunner, useful for tests.
 struct FakeCommandRunner : public CommandRunner {
-  explicit FakeCommandRunner(VirtualFileSystem* fs)
-      : max_active_edges_(1), fs_(fs) {}
+  explicit FakeCommandRunner(VirtualFileSystem* fs) : max_active_edges_(1), fs_(fs) {}
 
   // CommandRunner impl
   virtual bool CanRunMore() const;
@@ -515,9 +510,8 @@ struct BuildTest : public StateTestWithBuiltinRules, public BuildLogUser {
   /// Rebuild target in the 'working tree' (fs_).
   /// State of command_runner_ and logs contents (if specified) ARE MODIFIED.
   /// Handy to check for NOOP builds, and higher-level rebuild tests.
-  void RebuildTarget(const string& target, const char* manifest,
-                     const char* log_path = NULL, const char* deps_path = NULL,
-                     State* state = NULL);
+  void RebuildTarget(const string& target, const char* manifest, const char* log_path = NULL,
+                     const char* deps_path = NULL, State* state = NULL);
 
   // Mark a path dirty.
   void Dirty(const string& path);
@@ -535,8 +529,7 @@ struct BuildTest : public StateTestWithBuiltinRules, public BuildLogUser {
   Builder builder_;
 };
 
-void BuildTest::RebuildTarget(const string& target, const char* manifest,
-                              const char* log_path, const char* deps_path,
+void BuildTest::RebuildTarget(const string& target, const char* manifest, const char* log_path, const char* deps_path,
                               State* state) {
   State local_state, *pstate = &local_state;
   if (state)
@@ -579,21 +572,16 @@ bool FakeCommandRunner::CanRunMore() const {
 
 bool FakeCommandRunner::StartCommand(Edge* edge) {
   assert(active_edges_.size() < max_active_edges_);
-  assert(find(active_edges_.begin(), active_edges_.end(), edge) ==
-         active_edges_.end());
+  assert(find(active_edges_.begin(), active_edges_.end(), edge) == active_edges_.end());
   commands_ran_.push_back(edge->EvaluateCommand());
-  if (edge->rule().name() == "cat" || edge->rule().name() == "cat_rsp" ||
-      edge->rule().name() == "cat_rsp_out" || edge->rule().name() == "cc" ||
-      edge->rule().name() == "cp_multi_msvc" ||
-      edge->rule().name() == "cp_multi_gcc" || edge->rule().name() == "touch" ||
-      edge->rule().name() == "touch-interrupt" ||
+  if (edge->rule().name() == "cat" || edge->rule().name() == "cat_rsp" || edge->rule().name() == "cat_rsp_out" ||
+      edge->rule().name() == "cc" || edge->rule().name() == "cp_multi_msvc" || edge->rule().name() == "cp_multi_gcc" ||
+      edge->rule().name() == "touch" || edge->rule().name() == "touch-interrupt" ||
       edge->rule().name() == "touch-fail-tick2") {
-    for (vector<Node*>::iterator out = edge->outputs_.begin();
-         out != edge->outputs_.end(); ++out) {
+    for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
       fs_->Create((*out)->path(), "");
     }
-  } else if (edge->rule().name() == "true" || edge->rule().name() == "fail" ||
-             edge->rule().name() == "interrupt" ||
+  } else if (edge->rule().name() == "true" || edge->rule().name() == "fail" || edge->rule().name() == "interrupt" ||
              edge->rule().name() == "console") {
     // Don't do anything.
   } else if (edge->rule().name() == "cp") {
@@ -601,22 +589,19 @@ bool FakeCommandRunner::StartCommand(Edge* edge) {
     assert(edge->outputs_.size() == 1);
     string content;
     string err;
-    if (fs_->ReadFile(edge->inputs_[0]->path(), &content, &err) ==
-        DiskInterface::Okay)
+    if (fs_->ReadFile(edge->inputs_[0]->path(), &content, &err) == DiskInterface::Okay)
       fs_->WriteFile(edge->outputs_[0]->path(), content);
   } else if (edge->rule().name() == "touch-implicit-dep-out") {
     string dep = edge->GetBinding("test_dependency");
     fs_->Tick();
     fs_->Create(dep, "");
     fs_->Tick();
-    for (vector<Node*>::iterator out = edge->outputs_.begin();
-         out != edge->outputs_.end(); ++out) {
+    for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
       fs_->Create((*out)->path(), "");
     }
   } else if (edge->rule().name() == "touch-out-implicit-dep") {
     string dep = edge->GetBinding("test_dependency");
-    for (vector<Node*>::iterator out = edge->outputs_.begin();
-         out != edge->outputs_.end(); ++out) {
+    for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
       fs_->Create((*out)->path(), "");
     }
     fs_->Tick();
@@ -630,8 +615,7 @@ bool FakeCommandRunner::StartCommand(Edge* edge) {
       fs_->Create(dep, "");
     }
     string contents;
-    for (vector<Node*>::iterator out = edge->outputs_.begin();
-         out != edge->outputs_.end(); ++out) {
+    for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
       contents += (*out)->path() + ": " + dep + "\n";
       fs_->Create((*out)->path(), "");
     }
@@ -640,8 +624,7 @@ bool FakeCommandRunner::StartCommand(Edge* edge) {
     string dep = edge->GetBinding("test_dependency");
     string depfile = edge->GetUnescapedDepfile();
     string contents;
-    for (vector<Node*>::iterator out = edge->outputs_.begin();
-         out != edge->outputs_.end(); ++out) {
+    for (vector<Node*>::iterator out = edge->outputs_.begin(); out != edge->outputs_.end(); ++out) {
       fs_->Tick();
       fs_->Tick();
       fs_->Tick();
@@ -675,8 +658,7 @@ bool FakeCommandRunner::WaitForCommand(Result* result) {
   Edge* edge = *edge_iter;
   result->edge = edge;
 
-  if (edge->rule().name() == "interrupt" ||
-      edge->rule().name() == "touch-interrupt") {
+  if (edge->rule().name() == "interrupt" || edge->rule().name() == "touch-interrupt") {
     result->status = ExitInterrupted;
     return true;
   }
@@ -692,14 +674,12 @@ bool FakeCommandRunner::WaitForCommand(Result* result) {
 
   if (edge->rule().name() == "cp_multi_msvc") {
     const std::string prefix = edge->GetBinding("msvc_deps_prefix");
-    for (std::vector<Node*>::iterator in = edge->inputs_.begin();
-         in != edge->inputs_.end(); ++in) {
+    for (std::vector<Node*>::iterator in = edge->inputs_.begin(); in != edge->inputs_.end(); ++in) {
       result->output += prefix + (*in)->path() + '\n';
     }
   }
 
-  if (edge->rule().name() == "fail" ||
-      (edge->rule().name() == "touch-fail-tick2" && fs_->now_ == 2))
+  if (edge->rule().name() == "fail" || (edge->rule().name() == "touch-fail-tick2" && fs_->now_ == 2))
     result->status = ExitFailure;
   else
     result->status = ExitSuccess;
@@ -723,10 +703,8 @@ bool FakeCommandRunner::WaitForCommand(Result* result) {
   const string& verify_active_edge = edge->GetBinding("verify_active_edge");
   if (!verify_active_edge.empty()) {
     bool verify_active_edge_found = false;
-    for (vector<Edge*>::iterator i = active_edges_.begin();
-         i != active_edges_.end(); ++i) {
-      if (!(*i)->outputs_.empty() &&
-          (*i)->outputs_[0]->path() == verify_active_edge) {
+    for (vector<Edge*>::iterator i = active_edges_.begin(); i != active_edges_.end(); ++i) {
+      if (!(*i)->outputs_.empty() && (*i)->outputs_[0]->path() == verify_active_edge) {
         verify_active_edge_found = true;
       }
     }
@@ -913,8 +891,7 @@ TEST_F(BuildTest, MissingInput) {
   string err;
   Dirty("in1");
   EXPECT_FALSE(builder_.AddTarget("cat1", &err));
-  EXPECT_EQ("'in1', needed by 'cat1', missing and no known rule to make it",
-            err);
+  EXPECT_EQ("'in1', needed by 'cat1', missing and no known rule to make it", err);
 }
 
 TEST_F(BuildTest, MissingTarget) {
@@ -936,11 +913,9 @@ TEST_F(BuildTest, MakeDirs) {
   string err;
 
 #ifdef _WIN32
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build subdir\\dir2\\file: cat in1\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build subdir\\dir2\\file: cat in1\n"));
 #else
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, "build subdir/dir2/file: cat in1\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, "build subdir/dir2/file: cat in1\n"));
 #endif
   EXPECT_TRUE(builder_.AddTarget("subdir/dir2/file", &err));
 
@@ -954,10 +929,9 @@ TEST_F(BuildTest, MakeDirs) {
 
 TEST_F(BuildTest, DepFileMissing) {
   string err;
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cc\n  command = cc $in\n  depfile = $out.d\n"
-                  "build fo$ o.o: cc foo.c\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cc\n  command = cc $in\n  depfile = $out.d\n"
+                                      "build fo$ o.o: cc foo.c\n"));
   fs_.Create("foo.c", "");
 
   EXPECT_TRUE(builder_.AddTarget("fo o.o", &err));
@@ -969,10 +943,9 @@ TEST_F(BuildTest, DepFileMissing) {
 TEST_F(BuildTest, DepFileOK) {
   string err;
   int orig_edges = state_.edges_.size();
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cc\n  command = cc $in\n  depfile = $out.d\n"
-                  "build foo.o: cc foo.c\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cc\n  command = cc $in\n  depfile = $out.d\n"
+                                      "build foo.o: cc foo.c\n"));
   Edge* edge = state_.edges_.back();
 
   fs_.Create("foo.c", "");
@@ -1005,10 +978,9 @@ TEST_F(BuildTest, DepFileOK) {
 
 TEST_F(BuildTest, DepFileParseError) {
   string err;
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cc\n  command = cc $in\n  depfile = $out.d\n"
-                  "build foo.o: cc foo.c\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cc\n  command = cc $in\n  depfile = $out.d\n"
+                                      "build foo.o: cc foo.c\n"));
   fs_.Create("foo.c", "");
   fs_.Create("foo.o.d", "randomtext\n");
   EXPECT_FALSE(builder_.AddTarget("foo.o", &err));
@@ -1040,10 +1012,9 @@ TEST_F(BuildTest, EncounterReadyTwice) {
 
 TEST_F(BuildTest, OrderOnlyDeps) {
   string err;
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cc\n  command = cc $in\n  depfile = $out.d\n"
-                  "build foo.o: cc foo.c || otherfile\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cc\n  command = cc $in\n  depfile = $out.d\n"
+                                      "build foo.o: cc foo.c || otherfile\n"));
   Edge* edge = state_.edges_.back();
 
   fs_.Create("foo.c", "");
@@ -1160,16 +1131,14 @@ TEST_F(BuildTest, RebuildOrderOnlyDeps) {
 TEST_F(BuildTest, DepFileCanonicalize) {
   string err;
   int orig_edges = state_.edges_.size();
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cc\n  command = cc $in\n  depfile = $out.d\n"
-                  "build gen/stuff\\things/foo.o: cc x\\y/z\\foo.c\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cc\n  command = cc $in\n  depfile = $out.d\n"
+                                      "build gen/stuff\\things/foo.o: cc x\\y/z\\foo.c\n"));
 
   fs_.Create("x/y/z/foo.c", "");
   GetNode("bar.h")->MarkDirty();  // Mark bar.h as missing.
   // Note, different slashes from manifest.
-  fs_.Create("gen/stuff\\things/foo.o.d",
-             "gen\\stuff\\things\\foo.o: blah.h bar.h\n");
+  fs_.Create("gen/stuff\\things/foo.o.d", "gen\\stuff\\things\\foo.o: blah.h bar.h\n");
   EXPECT_TRUE(builder_.AddTarget("gen/stuff/things/foo.o", &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, fs_.files_read_.size());
@@ -1518,13 +1487,12 @@ TEST_F(BuildWithLogTest, ImplicitGeneratedOutOfDate) {
 }
 
 TEST_F(BuildWithLogTest, ImplicitGeneratedOutOfDate2) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule touch-implicit-dep-out\n"
-      "  command = sleep 1 ; touch $test_dependency ; sleep 1 ; touch $out\n"
-      "  generator = 1\n"
-      "build out.imp: touch-implicit-dep-out | inimp inimp2\n"
-      "  test_dependency = inimp\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule touch-implicit-dep-out\n"
+                                      "  command = sleep 1 ; touch $test_dependency ; sleep 1 ; touch $out\n"
+                                      "  generator = 1\n"
+                                      "build out.imp: touch-implicit-dep-out | inimp inimp2\n"
+                                      "  test_dependency = inimp\n"));
   fs_.Create("inimp", "");
   fs_.Create("out.imp", "");
   fs_.Tick();
@@ -1873,16 +1841,15 @@ TEST_F(BuildWithLogTest, RestatMissingInput) {
 }
 
 TEST_F(BuildWithLogTest, RestatInputChangesDueToRule) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule generate-depfile\n"
-                  "  command = sleep 1 ; touch $touch_dependency; touch $out ; "
-                  "echo \"$out: $test_dependency\" > $depfile\n"
-                  "build out1: generate-depfile || cat1\n"
-                  "  test_dependency = in2\n"
-                  "  touch_dependency = 1\n"
-                  "  restat = 1\n"
-                  "  depfile = out.d\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule generate-depfile\n"
+                                      "  command = sleep 1 ; touch $touch_dependency; touch $out ; "
+                                      "echo \"$out: $test_dependency\" > $depfile\n"
+                                      "build out1: generate-depfile || cat1\n"
+                                      "  test_dependency = in2\n"
+                                      "  touch_dependency = 1\n"
+                                      "  restat = 1\n"
+                                      "  depfile = out.d\n"));
 
   // Perform the first build. out1 is a restat rule, so its recorded mtime in
   // the build log should be the time the command completes, not the time the
@@ -1922,13 +1889,12 @@ TEST_F(BuildWithLogTest, RestatInputChangesDueToRule) {
 }
 
 TEST_F(BuildWithLogTest, GeneratedPlainDepfileMtime) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule generate-depfile\n"
-      "  command = touch $out ; echo \"$out: $test_dependency\" > $depfile\n"
-      "build out: generate-depfile\n"
-      "  test_dependency = inimp\n"
-      "  depfile = out.d\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule generate-depfile\n"
+                                      "  command = touch $out ; echo \"$out: $test_dependency\" > $depfile\n"
+                                      "build out: generate-depfile\n"
+                                      "  test_dependency = inimp\n"
+                                      "  depfile = out.d\n"));
   fs_.Create("inimp", "");
   fs_.Tick();
 
@@ -1985,22 +1951,21 @@ TEST_F(BuildDryRun, AllCommandsShown) {
 // Test that RSP files are created when & where appropriate and deleted after
 // successful execution.
 TEST_F(BuildTest, RspFileSuccess) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cat_rsp\n"
-                  "  command = cat $rspfile > $out\n"
-                  "  rspfile = $rspfile\n"
-                  "  rspfile_content = $long_command\n"
-                  "rule cat_rsp_out\n"
-                  "  command = cat $rspfile > $out\n"
-                  "  rspfile = $out.rsp\n"
-                  "  rspfile_content = $long_command\n"
-                  "build out1: cat in\n"
-                  "build out2: cat_rsp in\n"
-                  "  rspfile = out 2.rsp\n"
-                  "  long_command = Some very long command\n"
-                  "build out$ 3: cat_rsp_out in\n"
-                  "  long_command = Some very long command\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cat_rsp\n"
+                                      "  command = cat $rspfile > $out\n"
+                                      "  rspfile = $rspfile\n"
+                                      "  rspfile_content = $long_command\n"
+                                      "rule cat_rsp_out\n"
+                                      "  command = cat $rspfile > $out\n"
+                                      "  rspfile = $out.rsp\n"
+                                      "  rspfile_content = $long_command\n"
+                                      "build out1: cat in\n"
+                                      "build out2: cat_rsp in\n"
+                                      "  rspfile = out 2.rsp\n"
+                                      "  long_command = Some very long command\n"
+                                      "build out$ 3: cat_rsp_out in\n"
+                                      "  long_command = Some very long command\n"));
 
   fs_.Create("out1", "");
   fs_.Create("out2", "");
@@ -2038,15 +2003,14 @@ TEST_F(BuildTest, RspFileSuccess) {
 
 // Test that RSP file is created but not removed for commands, which fail
 TEST_F(BuildTest, RspFileFailure) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule fail\n"
-                  "  command = fail\n"
-                  "  rspfile = $rspfile\n"
-                  "  rspfile_content = $long_command\n"
-                  "build out: fail in\n"
-                  "  rspfile = out.rsp\n"
-                  "  long_command = Another very long command\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule fail\n"
+                                      "  command = fail\n"
+                                      "  rspfile = $rspfile\n"
+                                      "  rspfile_content = $long_command\n"
+                                      "build out: fail in\n"
+                                      "  rspfile = out.rsp\n"
+                                      "  long_command = Another very long command\n"));
 
   fs_.Create("out", "");
   fs_.Tick();
@@ -2079,15 +2043,14 @@ TEST_F(BuildTest, RspFileFailure) {
 // Test that contents of the RSP file behaves like a regular part of
 // command line, i.e. triggers a rebuild if changed
 TEST_F(BuildWithLogTest, RspFileCmdLineChange) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cat_rsp\n"
-                  "  command = cat $rspfile > $out\n"
-                  "  rspfile = $rspfile\n"
-                  "  rspfile_content = $long_command\n"
-                  "build out: cat_rsp in\n"
-                  "  rspfile = out.rsp\n"
-                  "  long_command = Original very long command\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cat_rsp\n"
+                                      "  command = cat $rspfile > $out\n"
+                                      "  rspfile = $rspfile\n"
+                                      "  rspfile_content = $long_command\n"
+                                      "build out: cat_rsp in\n"
+                                      "  rspfile = out.rsp\n"
+                                      "  long_command = Original very long command\n"));
 
   fs_.Create("out", "");
   fs_.Tick();
@@ -2112,9 +2075,7 @@ TEST_F(BuildWithLogTest, RspFileCmdLineChange) {
   // (to simulate a change in the command line between 2 builds)
   BuildLog::LogEntry* log_entry = build_log_.LookupByOutput("out");
   ASSERT_TRUE(NULL != log_entry);
-  ASSERT_NO_FATAL_FAILURE(
-      AssertHash("cat out.rsp > out;rspfile=Original very long command",
-                 log_entry->command_hash));
+  ASSERT_NO_FATAL_FAILURE(AssertHash("cat out.rsp > out;rspfile=Original very long command", log_entry->command_hash));
   log_entry->command_hash++;  // Change the command hash to something else.
   // Now expect the target to be rebuilt
   command_runner_.commands_ran_.clear();
@@ -2161,8 +2122,7 @@ TEST_F(BuildTest, InterruptCleanup) {
 
 TEST_F(BuildTest, StatFailureAbortsBuild) {
   const string kTooLongToStat(400, 'i');
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_, ("build " + kTooLongToStat + ": cat in\n").c_str()));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_, ("build " + kTooLongToStat + ": cat in\n").c_str()));
   fs_.Create("in", "");
 
   // This simulates a stat failure:
@@ -2225,8 +2185,7 @@ TEST_F(BuildTest, StatusFormatElapsed) {
 }
 
 TEST_F(BuildTest, StatusFormatReplacePlaceholder) {
-  EXPECT_EQ("[%/s0/t0/r0/u0/f0]",
-            status_.FormatProgressStatus("[%%/s%s/t%t/r%r/u%u/f%f]", 0));
+  EXPECT_EQ("[%/s0/t0/r0/u0/f0]", status_.FormatProgressStatus("[%%/s%s/t%t/r%r/u%u/f%f]", 0));
 }
 
 TEST_F(BuildTest, FailedDepsParse) {
@@ -2248,8 +2207,7 @@ TEST_F(BuildTest, FailedDepsParse) {
 }
 
 struct BuildWithQueryDepsLogTest : public BuildTest {
-  BuildWithQueryDepsLogTest()
-      : BuildTest(&log_), deps_log_file_("ninja_deps") {}
+  BuildWithQueryDepsLogTest() : BuildTest(&log_), deps_log_file_("ninja_deps") {}
 
   ~BuildWithQueryDepsLogTest() { log_.Close(); }
 
@@ -2285,8 +2243,7 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileMSVC) {
   EXPECT_TRUE(builder_.Build(&err));
   EXPECT_EQ("", err);
   ASSERT_EQ(1u, command_runner_.commands_ran_.size());
-  EXPECT_EQ("echo 'using in1' && for file in out1 out2; do cp in1 $file; done",
-            command_runner_.commands_ran_[0]);
+  EXPECT_EQ("echo 'using in1' && for file in out1 out2; do cp in1 $file; done", command_runner_.commands_ran_[0]);
 
   Node* out1_node = state_.LookupNode("out1");
   DepsLog::Deps* out1_deps = log_.GetDeps(out1_node);
@@ -2301,14 +2258,13 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileMSVC) {
 
 /// Test a GCC-style deps log with multiple outputs.
 TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOneLine) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cp_multi_gcc\n"
-                  "    command = echo '$out: $in' > in.d && for file in $out; "
-                  "do cp in1 $$file; done\n"
-                  "    deps = gcc\n"
-                  "    depfile = in.d\n"
-                  "build out1 out2: cp_multi_gcc in1 in2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cp_multi_gcc\n"
+                                      "    command = echo '$out: $in' > in.d && for file in $out; "
+                                      "do cp in1 $$file; done\n"
+                                      "    deps = gcc\n"
+                                      "    depfile = in.d\n"
+                                      "build out1 out2: cp_multi_gcc in1 in2\n"));
 
   std::string err;
   EXPECT_TRUE(builder_.AddTarget("out1", &err));
@@ -2337,14 +2293,13 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOneLine) {
 
 /// Test a GCC-style deps log with multiple outputs using a line per input.
 TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCMultiLineInput) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cp_multi_gcc\n"
-                  "    command = echo '$out: in1\\n$out: in2' > in.d && for "
-                  "file in $out; do cp in1 $$file; done\n"
-                  "    deps = gcc\n"
-                  "    depfile = in.d\n"
-                  "build out1 out2: cp_multi_gcc in1 in2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cp_multi_gcc\n"
+                                      "    command = echo '$out: in1\\n$out: in2' > in.d && for "
+                                      "file in $out; do cp in1 $$file; done\n"
+                                      "    deps = gcc\n"
+                                      "    depfile = in.d\n"
+                                      "build out1 out2: cp_multi_gcc in1 in2\n"));
 
   std::string err;
   EXPECT_TRUE(builder_.AddTarget("out1", &err));
@@ -2373,14 +2328,13 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCMultiLineInput) {
 
 /// Test a GCC-style deps log with multiple outputs using a line per output.
 TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCMultiLineOutput) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cp_multi_gcc\n"
-                  "    command = echo 'out1: $in\\nout2: $in' > in.d && for "
-                  "file in $out; do cp in1 $$file; done\n"
-                  "    deps = gcc\n"
-                  "    depfile = in.d\n"
-                  "build out1 out2: cp_multi_gcc in1 in2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cp_multi_gcc\n"
+                                      "    command = echo 'out1: $in\\nout2: $in' > in.d && for "
+                                      "file in $out; do cp in1 $$file; done\n"
+                                      "    deps = gcc\n"
+                                      "    depfile = in.d\n"
+                                      "build out1 out2: cp_multi_gcc in1 in2\n"));
 
   std::string err;
   EXPECT_TRUE(builder_.AddTarget("out1", &err));
@@ -2410,14 +2364,13 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCMultiLineOutput) {
 /// Test a GCC-style deps log with multiple outputs mentioning only the main
 /// output.
 TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOnlyMainOutput) {
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cp_multi_gcc\n"
-                  "    command = echo 'out1: $in' > in.d && for file in $out; "
-                  "do cp in1 $$file; done\n"
-                  "    deps = gcc\n"
-                  "    depfile = in.d\n"
-                  "build out1 out2: cp_multi_gcc in1 in2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cp_multi_gcc\n"
+                                      "    command = echo 'out1: $in' > in.d && for file in $out; "
+                                      "do cp in1 $$file; done\n"
+                                      "    deps = gcc\n"
+                                      "    depfile = in.d\n"
+                                      "build out1 out2: cp_multi_gcc in1 in2\n"));
 
   std::string err;
   EXPECT_TRUE(builder_.AddTarget("out1", &err));
@@ -2449,14 +2402,13 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOnlyMainOutput) {
 TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOnlySecondaryOutput) {
   // Note: This ends up short-circuiting the node creation due to the primary
   // output not being present, but it should still work.
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule cp_multi_gcc\n"
-                  "    command = echo 'out2: $in' > in.d && for file in $out; "
-                  "do cp in1 $$file; done\n"
-                  "    deps = gcc\n"
-                  "    depfile = in.d\n"
-                  "build out1 out2: cp_multi_gcc in1 in2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule cp_multi_gcc\n"
+                                      "    command = echo 'out2: $in' > in.d && for file in $out; "
+                                      "do cp in1 $$file; done\n"
+                                      "    deps = gcc\n"
+                                      "    depfile = in.d\n"
+                                      "build out1 out2: cp_multi_gcc in1 in2\n"));
 
   std::string err;
   EXPECT_TRUE(builder_.AddTarget("out1", &err));
@@ -2488,8 +2440,7 @@ TEST_F(BuildWithQueryDepsLogTest, TwoOutputsDepFileGCCOnlySecondaryOutput) {
 /// builder_ it sets up, because we want pristine objects for
 /// each build.
 struct BuildWithDepsLogTest : public BuildTest {
-  BuildWithDepsLogTest()
-      : build_log_file_("build_log"), deps_log_file_("ninja_deps") {}
+  BuildWithDepsLogTest() : build_log_file_("build_log"), deps_log_file_("ninja_deps") {}
 
   virtual void SetUp() {
     BuildTest::SetUp();
@@ -2883,14 +2834,13 @@ TEST_F(BuildWithDepsLogTest, TestInputMtimeRaceConditionWithDepFile) {
 
 /// Check that a restat rule generating a header cancels compilations correctly.
 TEST_F(BuildTest, RestatDepfileDependency) {
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule true\n"
-      "  command = true\n"  // Would be "write if out-of-date" in reality.
-      "  restat = 1\n"
-      "build header.h: true header.in\n"
-      "build out: cat in1\n"
-      "  depfile = in1.d\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule true\n"
+                                      "  command = true\n"  // Would be "write if out-of-date" in reality.
+                                      "  restat = 1\n"
+                                      "build header.h: true header.in\n"
+                                      "build out: cat in1\n"
+                                      "  depfile = in1.d\n"));
 
   fs_.Create("header.h", "");
   fs_.Create("in1.d", "out: header.h");
@@ -3137,8 +3087,7 @@ TEST_F(BuildWithDepsLogTest, DepFileDepsLogCanonicalize) {
     EXPECT_TRUE(builder.AddTarget("a/b/c/d/e/fo o.o", &err));
     ASSERT_EQ("", err);
     // Note, different slashes from manifest.
-    fs_.Create("a/b\\c\\d/e/fo o.o.d",
-               "a\\b\\c\\d\\e\\fo\\ o.o: blah.h bar.h\n");
+    fs_.Create("a/b\\c\\d/e/fo o.o.d", "a\\b\\c\\d\\e\\fo\\ o.o: blah.h bar.h\n");
     EXPECT_TRUE(builder.Build(&err));
     EXPECT_EQ("", err);
 
@@ -3220,13 +3169,11 @@ TEST_F(BuildWithDepsLogTest, RestatMissingDepfileDepslog) {
   fs_.Create("out.d", "out: header.h");
   fs_.Create("header.h", "");
 
-  RebuildTarget("out", manifest, build_log_file_.c_str(),
-                deps_log_file_.c_str());
+  RebuildTarget("out", manifest, build_log_file_.c_str(), deps_log_file_.c_str());
   ASSERT_EQ(2u, command_runner_.commands_ran_.size());
 
   // Sanity: this rebuild should be NOOP
-  RebuildTarget("out", manifest, build_log_file_.c_str(),
-                deps_log_file_.c_str());
+  RebuildTarget("out", manifest, build_log_file_.c_str(), deps_log_file_.c_str());
   ASSERT_EQ(0u, command_runner_.commands_ran_.size());
 
   // Touch 'header.in', blank dependencies log (create a different one).
@@ -3516,18 +3463,17 @@ TEST_F(BuildTest, DyndepBuildDiscoverNewOutputWithMultipleRules2) {
   // Verify that a dyndep file can be built and loaded to discover
   // a new output of an edge that is already the output of another
   // edge also discovered by dyndep.
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule touch\n"
-      "  command = touch $out $out.imp\n"
-      "rule cp\n"
-      "  command = cp $in $out\n"
-      "build dd1: cp dd1-in\n"
-      "build out1: touch || dd1\n"
-      "  dyndep = dd1\n"
-      "build dd2: cp dd2-in || dd1\n"  // make order predictable for test
-      "build out2: touch || dd2\n"
-      "  dyndep = dd2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule touch\n"
+                                      "  command = touch $out $out.imp\n"
+                                      "rule cp\n"
+                                      "  command = cp $in $out\n"
+                                      "build dd1: cp dd1-in\n"
+                                      "build out1: touch || dd1\n"
+                                      "  dyndep = dd1\n"
+                                      "build dd2: cp dd2-in || dd1\n"  // make order predictable for test
+                                      "build out2: touch || dd2\n"
+                                      "  dyndep = dd2\n"));
   fs_.Create("out1", "");
   fs_.Create("out2", "");
   fs_.Create("dd1-in",
@@ -3795,8 +3741,7 @@ TEST_F(BuildTest, DyndepBuildDiscoverCircular) {
   EXPECT_FALSE(builder_.Build(&err));
   // Depending on how the pointers in Plan::ready_ work out, we could have
   // discovered the cycle from either starting point.
-  EXPECT_TRUE(err == "dependency cycle: circ -> in -> circ" ||
-              err == "dependency cycle: in -> circ -> in");
+  EXPECT_TRUE(err == "dependency cycle: circ -> in -> circ" || err == "dependency cycle: in -> circ -> in");
 }
 
 TEST_F(BuildWithLogTest, DyndepBuildDiscoverRestat) {
@@ -3852,18 +3797,17 @@ TEST_F(BuildTest, DyndepBuildDiscoverScheduledEdge) {
   // Verify that a dyndep file can be built and loaded to discover a
   // new input that itself is an output from an edge that has already
   // been scheduled but not finished.  We should not re-schedule it.
-  ASSERT_NO_FATAL_FAILURE(
-      AssertParse(&state_,
-                  "rule touch\n"
-                  "  command = touch $out $out.imp\n"
-                  "rule cp\n"
-                  "  command = cp $in $out\n"
-                  "build out1 | out1.imp: touch\n"
-                  "build zdd: cp zdd-in\n"
-                  "  verify_active_edge = out1\n"  // verify out1 is active when
-                                                   // zdd is finished
-                  "build out2: cp out1 || zdd\n"
-                  "  dyndep = zdd\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule touch\n"
+                                      "  command = touch $out $out.imp\n"
+                                      "rule cp\n"
+                                      "  command = cp $in $out\n"
+                                      "build out1 | out1.imp: touch\n"
+                                      "build zdd: cp zdd-in\n"
+                                      "  verify_active_edge = out1\n"  // verify out1 is active when
+                                                                       // zdd is finished
+                                      "build out2: cp out1 || zdd\n"
+                                      "  dyndep = zdd\n"));
   fs_.Create("zdd-in",
              "ninja_dyndep_version = 1\n"
              "build out2: dyndep | out1.imp\n");
@@ -3899,18 +3843,17 @@ TEST_F(BuildTest, DyndepBuildDiscoverScheduledEdge) {
 TEST_F(BuildTest, DyndepTwoLevelDirect) {
   // Verify that a clean dyndep file can depend on a dirty dyndep file
   // and be loaded properly after the dirty one is built and loaded.
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule touch\n"
-      "  command = touch $out $out.imp\n"
-      "rule cp\n"
-      "  command = cp $in $out\n"
-      "build dd1: cp dd1-in\n"
-      "build out1 | out1.imp: touch || dd1\n"
-      "  dyndep = dd1\n"
-      "build dd2: cp dd2-in || dd1\n"  // direct order-only dep on dd1
-      "build out2: touch || dd2\n"
-      "  dyndep = dd2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule touch\n"
+                                      "  command = touch $out $out.imp\n"
+                                      "rule cp\n"
+                                      "  command = cp $in $out\n"
+                                      "build dd1: cp dd1-in\n"
+                                      "build out1 | out1.imp: touch || dd1\n"
+                                      "  dyndep = dd1\n"
+                                      "build dd2: cp dd2-in || dd1\n"  // direct order-only dep on dd1
+                                      "build out2: touch || dd2\n"
+                                      "  dyndep = dd2\n"));
   fs_.Create("out1.imp", "");
   fs_.Create("out2", "");
   fs_.Create("out2.imp", "");
@@ -3945,18 +3888,17 @@ TEST_F(BuildTest, DyndepTwoLevelIndirect) {
   // Verify that dyndep files can add to an edge new implicit inputs that
   // correspond to implicit outputs added to other edges by other dyndep
   // files on which they (order-only) depend.
-  ASSERT_NO_FATAL_FAILURE(AssertParse(
-      &state_,
-      "rule touch\n"
-      "  command = touch $out $out.imp\n"
-      "rule cp\n"
-      "  command = cp $in $out\n"
-      "build dd1: cp dd1-in\n"
-      "build out1: touch || dd1\n"
-      "  dyndep = dd1\n"
-      "build dd2: cp dd2-in || out1\n"  // indirect order-only dep on dd1
-      "build out2: touch || dd2\n"
-      "  dyndep = dd2\n"));
+  ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
+                                      "rule touch\n"
+                                      "  command = touch $out $out.imp\n"
+                                      "rule cp\n"
+                                      "  command = cp $in $out\n"
+                                      "build dd1: cp dd1-in\n"
+                                      "build out1: touch || dd1\n"
+                                      "  dyndep = dd1\n"
+                                      "build dd2: cp dd2-in || out1\n"  // indirect order-only dep on dd1
+                                      "build out2: touch || dd2\n"
+                                      "  dyndep = dd2\n"));
   fs_.Create("out1.imp", "");
   fs_.Create("out2", "");
   fs_.Create("out2.imp", "");

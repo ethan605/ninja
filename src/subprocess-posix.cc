@@ -36,8 +36,7 @@ extern char** environ;
 
 using namespace std;
 
-Subprocess::Subprocess(bool use_console)
-    : fd_(-1), pid_(-1), use_console_(use_console) {}
+Subprocess::Subprocess(bool use_console) : fd_(-1), pid_(-1), use_console_(use_console) {}
 
 Subprocess::~Subprocess() {
   if (fd_ >= 0)
@@ -90,8 +89,7 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
     // No need to posix_spawnattr_setpgroup(&attr, 0), it's the default.
 
     // Open /dev/null over stdin.
-    err =
-        posix_spawn_file_actions_addopen(&action, 0, "/dev/null", O_RDONLY, 0);
+    err = posix_spawn_file_actions_addopen(&action, 0, "/dev/null", O_RDONLY, 0);
     if (err != 0) {
       Fatal("posix_spawn_file_actions_addopen: %s", strerror(err));
     }
@@ -117,8 +115,7 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
     Fatal("posix_spawnattr_setflags: %s", strerror(err));
 
   const char* spawned_args[] = { "/bin/sh", "-c", command.c_str(), NULL };
-  err = posix_spawn(&pid_, "/bin/sh", &action, &attr,
-                    const_cast<char**>(spawned_args), environ);
+  err = posix_spawn(&pid_, "/bin/sh", &action, &attr, const_cast<char**>(spawned_args), environ);
   if (err != 0)
     Fatal("posix_spawn: %s", strerror(err));
 
@@ -168,8 +165,7 @@ ExitStatus Subprocess::Finish() {
     if (exit == 0)
       return ExitSuccess;
   } else if (WIFSIGNALED(status)) {
-    if (WTERMSIG(status) == SIGINT || WTERMSIG(status) == SIGTERM ||
-        WTERMSIG(status) == SIGHUP)
+    if (WTERMSIG(status) == SIGINT || WTERMSIG(status) == SIGTERM || WTERMSIG(status) == SIGHUP)
       return ExitInterrupted;
   }
   return ExitFailure;
@@ -252,8 +248,7 @@ bool SubprocessSet::DoWork() {
   vector<pollfd> fds;
   nfds_t nfds = 0;
 
-  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
-       ++i) {
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end(); ++i) {
     int fd = (*i)->fd_;
     if (fd < 0)
       continue;
@@ -277,8 +272,7 @@ bool SubprocessSet::DoWork() {
     return true;
 
   nfds_t cur_nfd = 0;
-  for (vector<Subprocess*>::iterator i = running_.begin();
-       i != running_.end();) {
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();) {
     int fd = (*i)->fd_;
     if (fd < 0)
       continue;
@@ -303,8 +297,7 @@ bool SubprocessSet::DoWork() {
   int nfds = 0;
   FD_ZERO(&set);
 
-  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
-       ++i) {
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end(); ++i) {
     int fd = (*i)->fd_;
     if (fd >= 0) {
       FD_SET(fd, &set);
@@ -327,8 +320,7 @@ bool SubprocessSet::DoWork() {
   if (IsInterrupted())
     return true;
 
-  for (vector<Subprocess*>::iterator i = running_.begin();
-       i != running_.end();) {
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();) {
     int fd = (*i)->fd_;
     if (fd >= 0 && FD_ISSET(fd, &set)) {
       (*i)->OnPipeReady();
@@ -354,14 +346,12 @@ Subprocess* SubprocessSet::NextFinished() {
 }
 
 void SubprocessSet::Clear() {
-  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
-       ++i)
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end(); ++i)
     // Since the foreground process is in our process group, it will receive
     // the interruption signal (i.e. SIGINT or SIGTERM) at the same time as us.
     if (!(*i)->use_console_)
       kill(-(*i)->pid_, interrupted_);
-  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end();
-       ++i)
+  for (vector<Subprocess*>::iterator i = running_.begin(); i != running_.end(); ++i)
     delete *i;
   running_.clear();
 }

@@ -151,8 +151,7 @@ TEST_F(SubprocessTest, InterruptParentWithSigHup) {
 TEST_F(SubprocessTest, Console) {
   // Skip test if we don't have the console ourselves.
   if (isatty(0) && isatty(1) && isatty(2)) {
-    Subprocess* subproc =
-        subprocs_.Add("test -t 0 -a -t 1 -a -t 2", /*use_console=*/true);
+    Subprocess* subproc = subprocs_.Add("test -t 0 -a -t 1 -a -t 2", /*use_console=*/true);
     ASSERT_NE((Subprocess*)0, subproc);
 
     while (!subproc->Done()) {
@@ -202,8 +201,7 @@ TEST_F(SubprocessTest, SetWithMulti) {
     ASSERT_EQ("", processes[i]->GetOutput());
   }
 
-  while (!processes[0]->Done() || !processes[1]->Done() ||
-         !processes[2]->Done()) {
+  while (!processes[0]->Done() || !processes[1]->Done() || !processes[2]->Done()) {
     ASSERT_GT(subprocs_.running_.size(), 0u);
     subprocs_.DoWork();
   }
@@ -228,8 +226,7 @@ TEST_F(SubprocessTest, SetWithLots) {
   rlimit rlim;
   ASSERT_EQ(0, getrlimit(RLIMIT_NOFILE, &rlim));
   if (rlim.rlim_cur < kNumProcs) {
-    printf("Raise [ulimit -n] above %u (currently %lu) to make this test go\n",
-           kNumProcs, rlim.rlim_cur);
+    printf("Raise [ulimit -n] above %u (currently %lu) to make this test go\n", kNumProcs, rlim.rlim_cur);
     return;
   }
 

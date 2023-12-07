@@ -26,8 +26,7 @@ bool Parser::Load(const string& filename, string* err, Lexer* parent) {
   METRIC_RECORD_IF(".ninja parse", parent == NULL);
   string contents;
   string read_err;
-  if (file_reader_->ReadFile(filename, &contents, &read_err) !=
-      FileReader::Okay) {
+  if (file_reader_->ReadFile(filename, &contents, &read_err) != FileReader::Okay) {
     *err = "loading '" + filename + "': " + read_err;
     if (parent)
       parent->Error(string(*err), err);

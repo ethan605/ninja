@@ -40,8 +40,7 @@ NORETURN void Fatal(const char* msg, ...);
 #define NINJA_FALLTHROUGH [[fallthrough]]
 #elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__clang__)
 #define NINJA_FALLTHROUGH [[clang::fallthrough]]
-#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__GNUC__) && \
-    __GNUC__ >= 7
+#elif defined(__cplusplus) && __cplusplus >= 201103L && defined(__GNUC__) && __GNUC__ >= 7
 #define NINJA_FALLTHROUGH [[gnu::fallthrough]]
 #elif defined(__GNUC__) && __GNUC__ >= 7  // gcc 7
 #define NINJA_FALLTHROUGH __attribute__((fallthrough))
@@ -84,8 +83,7 @@ void SetCloseOnExec(int fd);
 
 /// Given a misspelled string and a list of correct spellings, returns
 /// the closest match or NULL if there is no close enough match.
-const char* SpellcheckStringV(const std::string& text,
-                              const std::vector<const char*>& words);
+const char* SpellcheckStringV(const std::string& text, const std::vector<const char*>& words);
 
 /// Like SpellcheckStringV, but takes a NULL-terminated list.
 const char* SpellcheckString(const char* text, ...);

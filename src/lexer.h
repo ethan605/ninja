@@ -77,15 +77,11 @@ struct Lexer {
   /// Read a path (complete with $escapes).
   /// Returns false only on error, returned path may be empty if a delimiter
   /// (space, newline) is hit.
-  bool ReadPath(EvalString* path, std::string* err) {
-    return ReadEvalString(path, true, err);
-  }
+  bool ReadPath(EvalString* path, std::string* err) { return ReadEvalString(path, true, err); }
 
   /// Read the value side of a var = value line (complete with $escapes).
   /// Returns false only on error.
-  bool ReadVarValue(EvalString* value, std::string* err) {
-    return ReadEvalString(value, false, err);
-  }
+  bool ReadVarValue(EvalString* value, std::string* err) { return ReadEvalString(value, false, err); }
 
   /// Construct an error message with context.
   bool Error(const std::string& message, std::string* err);

@@ -24,3 +24,4 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: false
 Cpp11BracedListStyle: false
 IndentCaseLabels: false
 DerivePointerBinding: false
+ColumnLimit: 120

@@ -29,8 +29,7 @@ struct DiskInterface;
 
 struct Cleaner {
   /// Build a cleaner object with the given @a disk_interface
-  Cleaner(State* state, const BuildConfig& config,
-          DiskInterface* disk_interface);
+  Cleaner(State* state, const BuildConfig& config, DiskInterface* disk_interface);
 
   /// Clean the given @a target and all the file built for it.
   /// @return non-zero if an error occurs.
@@ -66,8 +65,7 @@ struct Cleaner {
 
   /// @return whether the cleaner is in verbose mode.
   bool IsVerbose() const {
-    return (config_.verbosity != BuildConfig::QUIET &&
-            (config_.verbosity == BuildConfig::VERBOSE || config_.dry_run));
+    return (config_.verbosity != BuildConfig::QUIET && (config_.verbosity == BuildConfig::VERBOSE || config_.dry_run));
   }
 
  private:

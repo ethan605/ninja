@@ -61,8 +61,7 @@ void WriteDepFileOrDie(const char* object_path, const CLParser& parse) {
     Fatal("writing %s", depfile_path.c_str());
   }
   const set<string>& headers = parse.includes_;
-  for (set<string>::const_iterator i = headers.begin(); i != headers.end();
-       ++i) {
+  for (set<string>::const_iterator i = headers.begin(); i != headers.end(); ++i) {
     if (fprintf(depfile, "%s\n", EscapeForDepfile(*i).c_str()) < 0) {
       unlink(object_path);
       fclose(depfile);
@@ -79,8 +78,7 @@ int MSVCHelperMain(int argc, char** argv) {
   const char* output_filename = NULL;
   const char* envfile = NULL;
 
-  const option kLongOptions[] = { { "help", no_argument, NULL, 'h' },
-                                  { NULL, 0, NULL, 0 } };
+  const option kLongOptions[] = { { "help", no_argument, NULL, 'h' }, { NULL, 0, NULL, 0 } };
   int opt;
   string deps_prefix;
   while ((opt = getopt_long(argc, argv, "e:o:p:h", kLongOptions, NULL)) != -1) {

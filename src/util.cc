@@ -294,8 +294,7 @@ void GetShellEscapedString(const string& input, string* result) {
   result->push_back(kQuote);
 
   string::const_iterator span_begin = input.begin();
-  for (string::const_iterator it = input.begin(), end = input.end(); it != end;
-       ++it) {
+  for (string::const_iterator it = input.begin(), end = input.end(); it != end; ++it) {
     if (*it == kQuote) {
       result->append(span_begin, it);
       result->append(kEscapeSequence);
@@ -319,8 +318,7 @@ void GetWin32EscapedString(const string& input, string* result) {
   result->push_back(kQuote);
   size_t consecutive_backslash_count = 0;
   string::const_iterator span_begin = input.begin();
-  for (string::const_iterator it = input.begin(), end = input.end(); it != end;
-       ++it) {
+  for (string::const_iterator it = input.begin(), end = input.end(); it != end; ++it) {
     switch (*it) {
     case kBackslash:
       ++consecutive_backslash_count;
@@ -346,8 +344,8 @@ int ReadFile(const string& path, string* contents, string* err) {
   // This makes a ninja run on a set of 1500 manifest files about 4% faster
   // than using the generic fopen code below.
   err->clear();
-  HANDLE f = ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
-                           OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+  HANDLE f =
+      ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
   if (f == INVALID_HANDLE_VALUE) {
     err->assign(GetLastErrorString());
     return -ENOENT;
@@ -423,17 +421,14 @@ void SetCloseOnExec(int fd) {
 #endif  // ! _WIN32
 }
 
-const char* SpellcheckStringV(const string& text,
-                              const vector<const char*>& words) {
+const char* SpellcheckStringV(const string& text, const vector<const char*>& words) {
   const bool kAllowReplacements = true;
   const int kMaxValidEditDistance = 3;
 
   int min_distance = kMaxValidEditDistance + 1;
   const char* result = NULL;
-  for (vector<const char*>::const_iterator i = words.begin(); i != words.end();
-       ++i) {
-    int distance =
-        EditDistance(*i, text, kAllowReplacements, kMaxValidEditDistance);
+  for (vector<const char*>::const_iterator i = words.begin(); i != words.end(); ++i) {
+    int distance = EditDistance(*i, text, kAllowReplacements, kMaxValidEditDistance);
     if (distance < min_distance) {
       min_distance = distance;
       result = *i;
@@ -460,10 +455,8 @@ string GetLastErrorString() {
   DWORD err = GetLastError();
 
   char* msg_buf;
-  FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                     FORMAT_MESSAGE_IGNORE_INSERTS,
-                 NULL, err, MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT),
-                 (char*)&msg_buf, 0, NULL);
+  FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err,
+                 MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (char*)&msg_buf, 0, NULL);
   string msg = msg_buf;
   LocalFree(msg_buf);
   return msg;
@@ -552,8 +545,7 @@ struct MountPoint {
     root = pieces[3];
     mountPoint = pieces[4];
     options = SplitStringPiece(pieces[5], ',');
-    optionalFields =
-        vector<StringPiece>(&pieces[6], &pieces[optionalStart - 1]);
+    optionalFields = vector<StringPiece>(&pieces[6], &pieces[optionalStart - 1]);
     fsType = pieces[optionalStart];
     mountSource = pieces[optionalStart + 1];
     superOptions = SplitStringPiece(pieces[optionalStart + 2], ',');
@@ -587,8 +579,7 @@ struct CGroupSubSys {
     line[second] = '\0';
     id = atoi(line.c_str());
     name = line.substr(second + 1);
-    vector<StringPiece> pieces =
-        SplitStringPiece(StringPiece(line.c_str() + first + 1), ',');
+    vector<StringPiece> pieces = SplitStringPiece(StringPiece(line.c_str() + first + 1), ',');
     for (size_t i = 0; i < pieces.size(); i++) {
       subsystems.push_back(pieces[i].AsString());
     }
@@ -649,8 +640,7 @@ int ParseCPUFromCGroup() {
   std::pair<int64_t, bool> quota = readCount(cpu->second + "/cpu.cfs_quota_us");
   if (!quota.second || quota.first == -1)
     return -1;
-  std::pair<int64_t, bool> period =
-      readCount(cpu->second + "/cpu.cfs_period_us");
+  std::pair<int64_t, bool> period = readCount(cpu->second + "/cpu.cfs_period_us");
   if (!period.second)
     return -1;
   if (period.first == 0)
@@ -671,17 +661,11 @@ int GetProcessorCount() {
     std::vector<char> buf(len);
     int cores = 0;
     if (GetLogicalProcessorInformationEx(
-            RelationProcessorCore,
-            reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(
-                buf.data()),
-            &len)) {
+            RelationProcessorCore, reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buf.data()), &len)) {
       for (DWORD i = 0; i < len;) {
-        auto info = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(
-            buf.data() + i);
-        if (info->Relationship == RelationProcessorCore &&
-            info->Processor.GroupCount == 1) {
-          for (KAFFINITY core_mask = info->Processor.GroupMask[0].Mask;
-               core_mask; core_mask >>= 1) {
+        auto info = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buf.data() + i);
+        if (info->Relationship == RelationProcessorCore && info->Processor.GroupCount == 1) {
+          for (KAFFINITY core_mask = info->Processor.GroupMask[0].Mask; core_mask; core_mask >>= 1) {
             cores += (core_mask & 1);
           }
         }
@@ -699,10 +683,8 @@ int GetProcessorCount() {
   JOBOBJECT_CPU_RATE_CONTROL_INFORMATION info;
   // reference:
   // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information
-  if (QueryInformationJobObject(NULL, JobObjectCpuRateControlInformation, &info,
-                                sizeof(info), NULL)) {
-    if (info.ControlFlags & (JOB_OBJECT_CPU_RATE_CONTROL_ENABLE |
-                             JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP)) {
+  if (QueryInformationJobObject(NULL, JobObjectCpuRateControlInformation, &info, sizeof(info), NULL)) {
+    if (info.ControlFlags & (JOB_OBJECT_CPU_RATE_CONTROL_ENABLE | JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP)) {
       return cpuCount * info.CpuRate / 10000;
     }
   }
@@ -719,8 +701,7 @@ int GetProcessorCount() {
 #if defined(__FreeBSD__)
   cpuset_t mask;
   CPU_ZERO(&mask);
-  if (cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(mask),
-                         &mask) == 0) {
+  if (cpuset_getaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(mask), &mask) == 0) {
     return CPU_COUNT(&mask);
   }
 #elif defined(CPU_COUNT)
@@ -738,8 +719,7 @@ int GetProcessorCount() {
 }
 
 #if defined(_WIN32) || defined(__CYGWIN__)
-static double CalculateProcessorLoad(uint64_t idle_ticks,
-                                     uint64_t total_ticks) {
+static double CalculateProcessorLoad(uint64_t idle_ticks, uint64_t total_ticks) {
   static uint64_t previous_idle_ticks = 0;
   static uint64_t previous_total_ticks = 0;
   static double previous_load = -0.0;
@@ -755,8 +735,7 @@ static double CalculateProcessorLoad(uint64_t idle_ticks,
     load = previous_load;
   } else {
     // Calculate load.
-    double idle_to_total_ratio =
-        ((double)idle_ticks_since_last_time) / total_ticks_since_last_time;
+    double idle_to_total_ratio = ((double)idle_ticks_since_last_time) / total_ticks_since_last_time;
     double load_since_last_call = 1.0 - idle_to_total_ratio;
 
     // Filter/smooth result when possible.
@@ -782,16 +761,14 @@ static uint64_t FileTimeToTickCount(const FILETIME& ft) {
 
 double GetLoadAverage() {
   FILETIME idle_time, kernel_time, user_time;
-  BOOL get_system_time_succeeded =
-      GetSystemTimes(&idle_time, &kernel_time, &user_time);
+  BOOL get_system_time_succeeded = GetSystemTimes(&idle_time, &kernel_time, &user_time);
 
   double posix_compatible_load;
   if (get_system_time_succeeded) {
     uint64_t idle_ticks = FileTimeToTickCount(idle_time);
 
     // kernel_time from GetSystemTimes already includes idle_time.
-    uint64_t total_ticks =
-        FileTimeToTickCount(kernel_time) + FileTimeToTickCount(user_time);
+    uint64_t total_ticks = FileTimeToTickCount(kernel_time) + FileTimeToTickCount(user_time);
 
     double processor_load = CalculateProcessorLoad(idle_ticks, total_ticks);
     posix_compatible_load = processor_load * GetProcessorCount();
@@ -854,16 +831,14 @@ string ElideMiddle(const string& str, size_t width) {
   string result = str;
   if (result.size() > width) {
     size_t elide_size = (width - kMargin) / 2;
-    result = result.substr(0, elide_size) + "..." +
-             result.substr(result.size() - elide_size, elide_size);
+    result = result.substr(0, elide_size) + "..." + result.substr(result.size() - elide_size, elide_size);
   }
   return result;
 }
 
 bool Truncate(const string& path, size_t size, string* err) {
 #ifdef _WIN32
-  int fh = _sopen(path.c_str(), _O_RDWR | _O_CREAT, _SH_DENYNO,
-                  _S_IREAD | _S_IWRITE);
+  int fh = _sopen(path.c_str(), _O_RDWR | _O_CREAT, _SH_DENYNO, _S_IREAD | _S_IWRITE);
   int success = _chsize(fh, size);
   _close(fh);
 #else

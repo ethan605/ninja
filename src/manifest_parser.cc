@@ -27,14 +27,12 @@
 
 using namespace std;
 
-ManifestParser::ManifestParser(State* state, FileReader* file_reader,
-                               ManifestParserOptions options)
+ManifestParser::ManifestParser(State* state, FileReader* file_reader, ManifestParserOptions options)
     : Parser(state, file_reader), options_(options), quiet_(false) {
   env_ = &state->bindings_;
 }
 
-bool ManifestParser::Parse(const string& filename, const string& input,
-                           string* err) {
+bool ManifestParser::Parse(const string& filename, const string& input, string* err) {
   lexer_.Start(filename, input);
 
   for (;;) {
@@ -156,8 +154,7 @@ bool ManifestParser::ParseRule(string* err) {
     }
   }
 
-  if (rule->bindings_["rspfile"].empty() !=
-      rule->bindings_["rspfile_content"].empty()) {
+  if (rule->bindings_["rspfile"].empty() != rule->bindings_["rspfile_content"].empty()) {
     return lexer_.Error(
         "rspfile and rspfile_content need to be "
         "both specified",
@@ -373,8 +370,7 @@ bool ManifestParser::ParseEdge(string* err) {
   edge->order_only_deps_ = order_only;
 
   edge->validations_.reserve(validations.size());
-  for (std::vector<EvalString>::iterator v = validations.begin();
-       v != validations.end(); ++v) {
+  for (std::vector<EvalString>::iterator v = validations.begin(); v != validations.end(); ++v) {
     string path = v->Evaluate(env);
     if (path.empty())
       return lexer_.Error("empty path", err);
@@ -383,15 +379,13 @@ bool ManifestParser::ParseEdge(string* err) {
     state_->AddValidation(edge, path, slash_bits);
   }
 
-  if (options_.phony_cycle_action_ == kPhonyCycleActionWarn &&
-      edge->maybe_phonycycle_diagnostic()) {
+  if (options_.phony_cycle_action_ == kPhonyCycleActionWarn && edge->maybe_phonycycle_diagnostic()) {
     // CMake 2.8.12.x and 3.0.x incorrectly write phony build statements
     // that reference themselves.  Ninja used to tolerate these in the
     // build graph but that has since been fixed.  Filter them out to
     // support users of those old CMake versions.
     Node* out = edge->outputs_[0];
-    vector<Node*>::iterator new_end =
-        remove(edge->inputs_.begin(), edge->inputs_.end(), out);
+    vector<Node*>::iterator new_end = remove(edge->inputs_.begin(), edge->inputs_.end(), out);
     if (new_end != edge->inputs_.end()) {
       edge->inputs_.erase(new_end, edge->inputs_.end());
       if (!quiet_) {
@@ -412,8 +406,7 @@ bool ManifestParser::ParseEdge(string* err) {
     CanonicalizePath(&dyndep, &slash_bits);
     edge->dyndep_ = state_->GetNode(dyndep, slash_bits);
     edge->dyndep_->set_dyndep_pending(true);
-    vector<Node*>::iterator dgi =
-        std::find(edge->inputs_.begin(), edge->inputs_.end(), edge->dyndep_);
+    vector<Node*>::iterator dgi = std::find(edge->inputs_.begin(), edge->inputs_.end(), edge->dyndep_);
     if (dgi == edge->inputs_.end()) {
       return lexer_.Error("dyndep '" + dyndep + "' is not an input", err);
     }

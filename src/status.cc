@@ -27,9 +27,8 @@
 using namespace std;
 
 StatusPrinter::StatusPrinter(const BuildConfig& config)
-    : config_(config), started_edges_(0), finished_edges_(0), total_edges_(0),
-      running_edges_(0), time_millis_(0), progress_status_format_(NULL),
-      current_rate_(config.parallelism) {
+    : config_(config), started_edges_(0), finished_edges_(0), total_edges_(0), running_edges_(0), time_millis_(0),
+      progress_status_format_(NULL), current_rate_(config.parallelism) {
   // Don't do anything fancy in verbose mode.
   if (config_.verbosity != BuildConfig::NORMAL)
     printer_.set_smart_terminal(false);
@@ -43,8 +42,7 @@ void StatusPrinter::PlanHasTotalEdges(int total) {
   total_edges_ = total;
 }
 
-void StatusPrinter::BuildEdgeStarted(const Edge* edge,
-                                     int64_t start_time_millis) {
+void StatusPrinter::BuildEdgeStarted(const Edge* edge, int64_t start_time_millis) {
   ++started_edges_;
   ++running_edges_;
   time_millis_ = start_time_millis;
@@ -56,8 +54,7 @@ void StatusPrinter::BuildEdgeStarted(const Edge* edge,
     printer_.SetConsoleLocked(true);
 }
 
-void StatusPrinter::BuildEdgeFinished(Edge* edge, int64_t end_time_millis,
-                                      bool success, const string& output) {
+void StatusPrinter::BuildEdgeFinished(Edge* edge, int64_t end_time_millis, bool success, const string& output) {
   time_millis_ = end_time_millis;
   ++finished_edges_;
 
@@ -75,8 +72,7 @@ void StatusPrinter::BuildEdgeFinished(Edge* edge, int64_t end_time_millis,
   // Print the command that is spewing before printing its output.
   if (!success) {
     string outputs;
-    for (vector<Node*>::const_iterator o = edge->outputs_.begin();
-         o != edge->outputs_.end(); ++o)
+    for (vector<Node*>::const_iterator o = edge->outputs_.begin(); o != edge->outputs_.end(); ++o)
       outputs += (*o)->path() + " ";
 
     if (printer_.supports_color()) {
@@ -147,8 +143,7 @@ void StatusPrinter::BuildFinished() {
   printer_.PrintOnNewLine("");
 }
 
-string StatusPrinter::FormatProgressStatus(const char* progress_status_format,
-                                           int64_t time_millis) const {
+string StatusPrinter::FormatProgressStatus(const char* progress_status_format, int64_t time_millis) const {
   string out;
   char buf[32];
   for (const char* s = progress_status_format; *s != '\0'; ++s) {
@@ -230,8 +225,7 @@ string StatusPrinter::FormatProgressStatus(const char* progress_status_format,
 }
 
 void StatusPrinter::PrintStatus(const Edge* edge, int64_t time_millis) {
-  if (config_.verbosity == BuildConfig::QUIET ||
-      config_.verbosity == BuildConfig::NO_STATUS_UPDATE)
+  if (config_.verbosity == BuildConfig::QUIET || config_.verbosity == BuildConfig::NO_STATUS_UPDATE)
     return;
 
   bool force_full_command = config_.verbosity == BuildConfig::VERBOSE;
@@ -240,11 +234,9 @@ void StatusPrinter::PrintStatus(const Edge* edge, int64_t time_millis) {
   if (to_print.empty() || force_full_command)
     to_print = edge->GetBinding("command");
 
-  to_print =
-      FormatProgressStatus(progress_status_format_, time_millis) + to_print;
+  to_print = FormatProgressStatus(progress_status_format_, time_millis) + to_print;
 
-  printer_.Print(to_print,
-                 force_full_command ? LinePrinter::FULL : LinePrinter::ELIDE);
+  printer_.Print(to_print, force_full_command ? LinePrinter::FULL : LinePrinter::ELIDE);
 }
 
 void StatusPrinter::Warning(const char* msg, ...) {

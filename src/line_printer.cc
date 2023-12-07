@@ -51,8 +51,7 @@ LinePrinter::LinePrinter() : have_blank_line_(true), console_locked_(false) {
   if (supports_color_) {
     DWORD mode;
     if (GetConsoleMode(console_, &mode)) {
-      if (!SetConsoleMode(console_,
-                          mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
+      if (!SetConsoleMode(console_, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) {
         supports_color_ = false;
       }
     }
@@ -83,8 +82,8 @@ void LinePrinter::Print(string to_print, LineType type) {
     GetConsoleScreenBufferInfo(console_, &csbi);
 
     to_print = ElideMiddle(to_print, static_cast<size_t>(csbi.dwSize.X));
-    if (supports_color_) {  // this means ENABLE_VIRTUAL_TERMINAL_PROCESSING
-                            // succeeded
+    if (supports_color_) {                   // this means ENABLE_VIRTUAL_TERMINAL_PROCESSING
+                                             // succeeded
       printf("%s\x1B[K", to_print.c_str());  // Clear to end of line.
       fflush(stdout);
     } else {
@@ -94,9 +93,7 @@ void LinePrinter::Print(string to_print, LineType type) {
       COORD buf_size = { csbi.dwSize.X, 1 };
       COORD zero_zero = { 0, 0 };
       SMALL_RECT target = { csbi.dwCursorPosition.X, csbi.dwCursorPosition.Y,
-                            static_cast<SHORT>(csbi.dwCursorPosition.X +
-                                               csbi.dwSize.X - 1),
-                            csbi.dwCursorPosition.Y };
+                            static_cast<SHORT>(csbi.dwCursorPosition.X + csbi.dwSize.X - 1), csbi.dwCursorPosition.Y };
       vector<CHAR_INFO> char_data(csbi.dwSize.X);
       for (size_t i = 0; i < static_cast<size_t>(csbi.dwSize.X); ++i) {
         char_data[i].Char.AsciiChar = i < to_print.size() ? to_print[i] : ' ';

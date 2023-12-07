@@ -57,14 +57,11 @@ bool DepsLog::OpenForWrite(const string& path, string* err) {
   return true;
 }
 
-bool DepsLog::RecordDeps(Node* node, TimeStamp mtime,
-                         const vector<Node*>& nodes) {
-  return RecordDeps(node, mtime, nodes.size(),
-                    nodes.empty() ? NULL : (Node**)&nodes.front());
+bool DepsLog::RecordDeps(Node* node, TimeStamp mtime, const vector<Node*>& nodes) {
+  return RecordDeps(node, mtime, nodes.size(), nodes.empty() ? NULL : (Node**)&nodes.front());
 }
 
-bool DepsLog::RecordDeps(Node* node, TimeStamp mtime, int node_count,
-                         Node** nodes) {
+bool DepsLog::RecordDeps(Node* node, TimeStamp mtime, int node_count, Node** nodes) {
   // Track whether there's any new data to be recorded.
   bool made_change = false;
 
@@ -166,8 +163,7 @@ LoadStatus DepsLog::Load(const string& path, State* state, string* err) {
   // But the v1 format could sometimes (rarely) end up with invalid data, so
   // don't migrate v1 to v3 to force a rebuild. (v2 only existed for a few days,
   // and there was no release with it, so pretend that it never happened.)
-  if (!valid_header || strcmp(buf, kFileSignature) != 0 ||
-      version != kCurrentVersion) {
+  if (!valid_header || strcmp(buf, kFileSignature) != 0 || version != kCurrentVersion) {
     if (version == 1)
       *err = "deps log version change; rebuilding";
     else
@@ -205,8 +201,7 @@ LoadStatus DepsLog::Load(const string& path, State* state, string* err) {
       int* deps_data = reinterpret_cast<int*>(buf);
       int out_id = deps_data[0];
       TimeStamp mtime;
-      mtime = (TimeStamp)(((uint64_t)(unsigned int)deps_data[2] << 32) |
-                          (uint64_t)(unsigned int)deps_data[1]);
+      mtime = (TimeStamp)(((uint64_t)(unsigned int)deps_data[2] << 32) | (uint64_t)(unsigned int)deps_data[1]);
       deps_data += 3;
       int deps_count = (size / 4) - 3;
 
@@ -337,8 +332,7 @@ bool DepsLog::Recompact(const string& path, string* err) {
     if (!IsDepsEntryLiveFor(nodes_[old_id]))
       continue;
 
-    if (!new_log.RecordDeps(nodes_[old_id], deps->mtime, deps->node_count,
-                            deps->nodes)) {
+    if (!new_log.RecordDeps(nodes_[old_id], deps->mtime, deps->node_count, deps->nodes)) {
       new_log.Close();
       return false;
     }

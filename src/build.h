@@ -75,15 +75,12 @@ struct Plan {
 
   /// Update the build plan to account for modifications made to the graph
   /// by information loaded from a dyndep file.
-  bool DyndepsLoaded(DependencyScan* scan, const Node* node,
-                     const DyndepFile& ddf, std::string* err);
+  bool DyndepsLoaded(DependencyScan* scan, const Node* node, const DyndepFile& ddf, std::string* err);
 
  private:
-  bool RefreshDyndepDependents(DependencyScan* scan, const Node* node,
-                               std::string* err);
+  bool RefreshDyndepDependents(DependencyScan* scan, const Node* node, std::string* err);
   void UnmarkDependents(const Node* node, std::set<Node*>* dependents);
-  bool AddSubTarget(const Node* node, const Node* dependent, std::string* err,
-                    std::set<Edge*>* dyndep_walk);
+  bool AddSubTarget(const Node* node, const Node* dependent, std::string* err, std::set<Edge*>* dyndep_walk);
 
   /// Update plan with knowledge that the given node is up to date.
   /// If the node is a dyndep binding on any of its dependents, this
@@ -153,9 +150,7 @@ struct CommandRunner {
 
 /// Options (e.g. verbosity, parallelism) passed to a build.
 struct BuildConfig {
-  BuildConfig()
-      : verbosity(NORMAL), dry_run(false), parallelism(1), failures_allowed(1),
-        max_load_average(-0.0f) {}
+  BuildConfig() : verbosity(NORMAL), dry_run(false), parallelism(1), failures_allowed(1), max_load_average(-0.0f) {}
 
   enum Verbosity {
     QUIET,             // No output -- used when testing.
@@ -175,9 +170,8 @@ struct BuildConfig {
 
 /// Builder wraps the build process: starting commands, updating status.
 struct Builder {
-  Builder(State* state, const BuildConfig& config, BuildLog* build_log,
-          DepsLog* deps_log, DiskInterface* disk_interface, Status* status,
-          int64_t start_time_millis);
+  Builder(State* state, const BuildConfig& config, BuildLog* build_log, DepsLog* deps_log,
+          DiskInterface* disk_interface, Status* status, int64_t start_time_millis);
   ~Builder();
 
   /// Clean up after interrupted commands by deleting output files.
@@ -215,8 +209,7 @@ struct Builder {
   Status* status_;
 
  private:
-  bool ExtractDeps(CommandRunner::Result* result, const std::string& deps_type,
-                   const std::string& deps_prefix,
+  bool ExtractDeps(CommandRunner::Result* result, const std::string& deps_type, const std::string& deps_prefix,
                    std::vector<Node*>* deps_nodes, std::string* err);
 
   /// Map of running edge to time the edge started running.

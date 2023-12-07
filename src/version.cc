@@ -47,8 +47,7 @@ void CheckNinjaVersion(const string& version) {
     return;
   }
 
-  if ((bin_major == file_major && bin_minor < file_minor) ||
-      bin_major < file_major) {
+  if ((bin_major == file_major && bin_minor < file_minor) || bin_major < file_major) {
     Fatal(
         "ninja version (%s) incompatible with build file "
         "ninja_required_version version (%s).",

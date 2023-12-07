@@ -110,27 +110,24 @@ void AssertHash(const char* expected, uint64_t actual) {
 }
 
 void VerifyGraph(const State& state) {
-  for (vector<Edge*>::const_iterator e = state.edges_.begin();
-       e != state.edges_.end(); ++e) {
+  for (vector<Edge*>::const_iterator e = state.edges_.begin(); e != state.edges_.end(); ++e) {
     // All edges need at least one output.
     EXPECT_FALSE((*e)->outputs_.empty());
     // Check that the edge's inputs have the edge as out-edge.
-    for (vector<Node*>::const_iterator in_node = (*e)->inputs_.begin();
-         in_node != (*e)->inputs_.end(); ++in_node) {
+    for (vector<Node*>::const_iterator in_node = (*e)->inputs_.begin(); in_node != (*e)->inputs_.end(); ++in_node) {
       const vector<Edge*>& out_edges = (*in_node)->out_edges();
       EXPECT_NE(find(out_edges.begin(), out_edges.end(), *e), out_edges.end());
     }
     // Check that the edge's outputs have the edge as in-edge.
-    for (vector<Node*>::const_iterator out_node = (*e)->outputs_.begin();
-         out_node != (*e)->outputs_.end(); ++out_node) {
+    for (vector<Node*>::const_iterator out_node = (*e)->outputs_.begin(); out_node != (*e)->outputs_.end();
+         ++out_node) {
       EXPECT_EQ((*out_node)->in_edge(), *e);
     }
   }
 
   // The union of all in- and out-edges of each nodes should be exactly edges_.
   set<const Edge*> node_edge_set;
-  for (State::Paths::const_iterator p = state.paths_.begin();
-       p != state.paths_.end(); ++p) {
+  for (State::Paths::const_iterator p = state.paths_.begin(); p != state.paths_.end(); ++p) {
     const Node* n = p->second;
     if (n->in_edge())
       node_edge_set.insert(n->in_edge());
@@ -165,8 +162,7 @@ bool VirtualFileSystem::MakeDir(const string& path) {
   return true;  // success
 }
 
-FileReader::Status VirtualFileSystem::ReadFile(const string& path,
-                                               string* contents, string* err) {
+FileReader::Status VirtualFileSystem::ReadFile(const string& path, string* contents, string* err) {
   files_read_.push_back(path);
   FileMap::iterator i = files_.find(path);
   if (i != files_.end()) {
@@ -178,8 +174,7 @@ FileReader::Status VirtualFileSystem::ReadFile(const string& path,
 }
 
 int VirtualFileSystem::RemoveFile(const string& path) {
-  if (find(directories_made_.begin(), directories_made_.end(), path) !=
-      directories_made_.end())
+  if (find(directories_made_.begin(), directories_made_.end(), path) != directories_made_.end())
     return -1;
   FileMap::iterator i = files_.find(path);
   if (i != files_.end()) {
