@@ -17,8 +17,6 @@
 
 #include <string.h>
 
-#include <algorithm>
-
 #include "string_piece.h"
 #include "util.h"
 
@@ -27,8 +25,8 @@ static inline unsigned int MurmurHash2(const void* key, size_t len) {
   static const unsigned int seed = 0xDECAFBAD;
   const unsigned int m = 0x5bd1e995;
   const int r = 24;
-  unsigned int h = seed ^ len;
-  const unsigned char* data = (const unsigned char*)key;
+  auto h = static_cast<unsigned int>(seed ^ len);
+  auto data = static_cast<const unsigned char*>(key);
   while (len >= 4) {
     unsigned int k;
     memcpy(&k, data, sizeof k);
@@ -42,10 +40,10 @@ static inline unsigned int MurmurHash2(const void* key, size_t len) {
   }
   switch (len) {
   case 3:
-    h ^= data[2] << 16;
+    h ^= static_cast<unsigned int>(data[2]) << 16;
     NINJA_FALLTHROUGH;
   case 2:
-    h ^= data[1] << 8;
+    h ^= static_cast<unsigned int>(data[1]) << 8;
     NINJA_FALLTHROUGH;
   case 1:
     h ^= data[0];

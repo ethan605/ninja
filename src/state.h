@@ -23,7 +23,6 @@
 #include "eval_env.h"
 #include "graph.h"
 #include "hash_map.h"
-#include "util.h"
 
 struct Edge;
 struct Node;

@@ -20,6 +20,7 @@
 
 #include "dyndep.h"
 #include "graph.h"
+#include "util.h"
 
 using namespace std;
 

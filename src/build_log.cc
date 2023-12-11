@@ -113,6 +113,8 @@ inline uint64_t MurmurHash64A(const void* key, size_t len) {
 
 }  // namespace
 
+BuildLogUser::~BuildLogUser() {}
+
 // static
 uint64_t BuildLog::LogEntry::HashCommand(StringPiece command) {
   return MurmurHash64A(command.str_, command.len_);

@@ -46,3 +46,5 @@ bool Parser::ExpectToken(Lexer::Token expected, string* err) {
   }
   return true;
 }
+
+Parser::~Parser() {}

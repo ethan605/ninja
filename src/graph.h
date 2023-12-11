@@ -15,7 +15,6 @@
 #ifndef NINJA_GRAPH_H_
 #define NINJA_GRAPH_H_
 
-#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
@@ -23,7 +22,6 @@
 #include "dyndep.h"
 #include "eval_env.h"
 #include "timestamp.h"
-#include "util.h"
 
 struct BuildLog;
 struct DepfileParserOptions;
@@ -226,9 +224,10 @@ struct Edge {
   int implicit_deps_;
   int order_only_deps_;
   bool is_implicit(size_t index) {
-    return index >= inputs_.size() - order_only_deps_ - implicit_deps_ && !is_order_only(index);
+    return index >= inputs_.size() - static_cast<size_t>(order_only_deps_) - static_cast<size_t>(implicit_deps_) &&
+           !is_order_only(index);
   }
-  bool is_order_only(size_t index) { return index >= inputs_.size() - order_only_deps_; }
+  bool is_order_only(size_t index) { return index >= inputs_.size() - static_cast<size_t>(order_only_deps_); }
 
   // There are two types of outputs.
   // 1) explicit outs, which show up as $out on the command line;
@@ -236,7 +235,7 @@ struct Edge {
   // These are stored in outputs_ in that order, and we keep a count of
   // #2 to use when we need to access the various subsets.
   int implicit_outs_;
-  bool is_implicit_out(size_t index) const { return index >= outputs_.size() - implicit_outs_; }
+  bool is_implicit_out(size_t index) const { return index >= outputs_.size() - static_cast<size_t>(implicit_outs_); }
 
   bool is_phony() const;
   bool use_console() const;
@@ -256,6 +255,7 @@ struct ImplicitDepLoader {
                     DepfileParserOptions const* depfile_parser_options)
       : state_(state), disk_interface_(disk_interface), deps_log_(deps_log),
         depfile_parser_options_(depfile_parser_options) {}
+  virtual ~ImplicitDepLoader();
 
   /// Load implicit dependencies for \a edge.
   /// @return false on error (without filling \a err if info is just missing

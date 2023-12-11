@@ -22,13 +22,14 @@
 #include "hash_map.h"
 #include "load_status.h"
 #include "timestamp.h"
-#include "util.h"  // uint64_t
 
 struct DiskInterface;
 struct Edge;
 
 /// Can answer questions about the manifest for the BuildLog.
 struct BuildLogUser {
+  virtual ~BuildLogUser();
+
   /// Return if a given output is no longer part of the build manifest.
   /// This is only called during recompaction and doesn't have to be fast.
   virtual bool IsPathDead(StringPiece s) const = 0;

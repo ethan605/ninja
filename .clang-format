@@ -24,4 +24,5 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: false
 Cpp11BracedListStyle: false
 IndentCaseLabels: false
 DerivePointerBinding: false
+AlignTrailingComments: true
 ColumnLimit: 120

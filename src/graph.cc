@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <deque>
 
 #include "build_log.h"
@@ -378,11 +379,11 @@ struct EdgeEnv : public Env {
 
 string EdgeEnv::LookupVariable(const string& var) {
   if (var == "in" || var == "in_newline") {
-    int explicit_deps_count = edge_->inputs_.size() - edge_->implicit_deps_ - edge_->order_only_deps_;
-    return MakePathList(edge_->inputs_.data(), explicit_deps_count, var == "in" ? ' ' : '\n');
+    int explicit_deps_count = static_cast<int>(edge_->inputs_.size()) - edge_->implicit_deps_ - edge_->order_only_deps_;
+    return MakePathList(edge_->inputs_.data(), static_cast<size_t>(explicit_deps_count), var == "in" ? ' ' : '\n');
   } else if (var == "out") {
-    int explicit_outs_count = edge_->outputs_.size() - edge_->implicit_outs_;
-    return MakePathList(&edge_->outputs_[0], explicit_outs_count, ' ');
+    int explicit_outs_count = static_cast<int>(edge_->outputs_.size()) - edge_->implicit_outs_;
+    return MakePathList(&edge_->outputs_[0], static_cast<size_t>(explicit_outs_count), ' ');
   }
 
   // Technical note about the lookups_ vector.
@@ -717,7 +718,9 @@ bool ImplicitDepLoader::LoadDepsFromLog(Edge* edge, string* err) {
 }
 
 vector<Node*>::iterator ImplicitDepLoader::PreallocateSpace(Edge* edge, int count) {
-  edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_, (size_t)count, 0);
+  edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_, static_cast<size_t>(count), 0);
   edge->implicit_deps_ += count;
   return edge->inputs_.end() - edge->order_only_deps_ - count;
 }
+
+ImplicitDepLoader::~ImplicitDepLoader() {}
