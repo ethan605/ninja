@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "deps_log.h"
-
 #include <sys/stat.h>
+
+#include "deps_log.h"
 #ifndef _WIN32
 #include <unistd.h>
 #endif
@@ -177,11 +177,11 @@ TEST_F(DepsLogTest, DoubleEntry) {
 // Verify that adding the new deps works and can be compacted away.
 TEST_F(DepsLogTest, Recompact) {
   const char kManifest[] =
-      "rule cc\n"
-      "  command = cc\n"
-      "  deps = gcc\n"
-      "build out.o: cc\n"
-      "build other_out.o: cc\n";
+    "rule cc\n"
+    "  command = cc\n"
+    "  deps = gcc\n"
+    "build out.o: cc\n"
+    "build other_out.o: cc\n";
 
   // Write some deps to the file and grab its size.
   int file_size;

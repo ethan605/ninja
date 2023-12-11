@@ -28,11 +28,11 @@ namespace {
 
 void Usage() {
   printf(
-      "usage: ninja -t msvc [options] -- cl.exe /showIncludes /otherArgs\n"
-      "options:\n"
-      "  -e ENVFILE load environment block from ENVFILE as environment\n"
-      "  -o FILE    write output dependency information to FILE.d\n"
-      "  -p STRING  localized prefix of msvc's /showIncludes output\n");
+    "usage: ninja -t msvc [options] -- cl.exe /showIncludes /otherArgs\n"
+    "options:\n"
+    "  -e ENVFILE load environment block from ENVFILE as environment\n"
+    "  -o FILE    write output dependency information to FILE.d\n"
+    "  -p STRING  localized prefix of msvc's /showIncludes output\n");
 }
 
 void PushPathIntoEnvironment(const string& env_block) {
@@ -83,19 +83,19 @@ int MSVCHelperMain(int argc, char** argv) {
   string deps_prefix;
   while ((opt = getopt_long(argc, argv, "e:o:p:h", kLongOptions, NULL)) != -1) {
     switch (opt) {
-    case 'e':
-      envfile = optarg;
-      break;
-    case 'o':
-      output_filename = optarg;
-      break;
-    case 'p':
-      deps_prefix = optarg;
-      break;
-    case 'h':
-    default:
-      Usage();
-      return 0;
+      case 'e':
+        envfile = optarg;
+        break;
+      case 'o':
+        output_filename = optarg;
+        break;
+      case 'p':
+        deps_prefix = optarg;
+        break;
+      case 'h':
+      default:
+        Usage();
+        return 0;
     }
   }
 

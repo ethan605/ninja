@@ -77,8 +77,10 @@ bool DependencyScan::RecomputeDirty(Node* initial_node, std::vector<Node*>* vali
   return true;
 }
 
-bool DependencyScan::RecomputeNodeDirty(Node* node, std::vector<Node*>* stack, std::vector<Node*>* validation_nodes,
-                                        string* err) {
+bool DependencyScan::RecomputeNodeDirty(Node* node,
+  std::vector<Node*>* stack,
+  std::vector<Node*>* validation_nodes,
+  string* err) {
   Edge* edge = node->in_edge();
   if (!edge) {
     // If we already visited this leaf node then we are done.
@@ -264,8 +266,10 @@ bool DependencyScan::RecomputeOutputsDirty(Edge* edge, Node* most_recent_input, 
   return true;
 }
 
-bool DependencyScan::RecomputeOutputDirty(const Edge* edge, const Node* most_recent_input, const string& command,
-                                          Node* output) {
+bool DependencyScan::RecomputeOutputDirty(const Edge* edge,
+  const Node* most_recent_input,
+  const string& command,
+  Node* output) {
   if (edge->is_phony()) {
     // Phony edges don't write any output.  Outputs are only dirty if
     // there are no inputs and we're missing the output.
@@ -306,9 +310,12 @@ bool DependencyScan::RecomputeOutputDirty(const Edge* edge, const Node* most_rec
   // Dirty if the output is older than the input.
   if (!used_restat && most_recent_input && output->mtime() < most_recent_input->mtime()) {
     EXPLAIN(
-        "output %s older than most recent input %s "
-        "(%" PRId64 " vs %" PRId64 ")",
-        output->path().c_str(), most_recent_input->path().c_str(), output->mtime(), most_recent_input->mtime());
+      "output %s older than most recent input %s "
+      "(%" PRId64 " vs %" PRId64 ")",
+      output->path().c_str(),
+      most_recent_input->path().c_str(),
+      output->mtime(),
+      most_recent_input->mtime());
     return true;
   }
 
@@ -330,7 +337,10 @@ bool DependencyScan::RecomputeOutputDirty(const Edge* edge, const Node* most_rec
         // then we only check the recorded mtime against the most recent input
         // mtime and ignore the actual output's mtime above.
         EXPLAIN("recorded mtime of %s older than most recent input %s (%" PRId64 " vs %" PRId64 ")",
-                output->path().c_str(), most_recent_input->path().c_str(), entry->mtime, most_recent_input->mtime());
+          output->path().c_str(),
+          most_recent_input->path().c_str(),
+          entry->mtime,
+          most_recent_input->mtime());
         return true;
       }
     }
@@ -370,7 +380,7 @@ struct EdgeEnv : public Env {
   /// line.
   std::string MakePathList(const Node* const* span, size_t size, char sep) const;
 
- private:
+private:
   std::vector<std::string> lookups_;
   const Edge* const edge_;
   EscapeKind escape_in_out_;
@@ -574,8 +584,13 @@ string Node::PathDecanonicalized(const string& path, uint64_t slash_bits) {
 }
 
 void Node::Dump(const char* prefix) const {
-  printf("%s <%s 0x%p> mtime: %" PRId64 "%s, (:%s), ", prefix, path().c_str(), this, mtime(),
-         exists() ? "" : " (:missing)", dirty() ? " dirty" : " clean");
+  printf("%s <%s 0x%p> mtime: %" PRId64 "%s, (:%s), ",
+    prefix,
+    path().c_str(),
+    this,
+    mtime(),
+    exists() ? "" : " (:missing)",
+    dirty() ? " dirty" : " clean");
   if (in_edge()) {
     in_edge()->Dump("in-edge: ");
   } else {
@@ -588,7 +603,8 @@ void Node::Dump(const char* prefix) const {
   if (!validation_out_edges().empty()) {
     printf(" validation out edges:\n");
     for (std::vector<Edge*>::const_iterator e = validation_out_edges().begin();
-         e != validation_out_edges().end() && *e != NULL; ++e) {
+         e != validation_out_edges().end() && *e != NULL;
+         ++e) {
       (*e)->Dump(" +- ");
     }
   }
@@ -623,14 +639,14 @@ bool ImplicitDepLoader::LoadDepFile(Edge* edge, const string& path, string* err)
   // Read depfile content.  Treat a missing depfile as empty.
   string content;
   switch (disk_interface_->ReadFile(path, &content, err)) {
-  case DiskInterface::Okay:
-    break;
-  case DiskInterface::NotFound:
-    err->clear();
-    break;
-  case DiskInterface::OtherError:
-    *err = "loading '" + path + "': " + *err;
-    return false;
+    case DiskInterface::Okay:
+      break;
+    case DiskInterface::NotFound:
+      err->clear();
+      break;
+    case DiskInterface::OtherError:
+      *err = "loading '" + path + "': " + *err;
+      return false;
   }
   // On a missing depfile: return false and empty *err.
   if (content.empty()) {
@@ -659,8 +675,10 @@ bool ImplicitDepLoader::LoadDepFile(Edge* edge, const string& path, string* err)
   Node* first_output = edge->outputs_[0];
   StringPiece opath = StringPiece(first_output->path());
   if (opath != *primary_out) {
-    EXPLAIN("expected depfile '%s' to mention '%s', got '%s'", path.c_str(), first_output->path().c_str(),
-            primary_out->AsString().c_str());
+    EXPLAIN("expected depfile '%s' to mention '%s', got '%s'",
+      path.c_str(),
+      first_output->path().c_str(),
+      primary_out->AsString().c_str());
     return false;
   }
 
@@ -703,8 +721,10 @@ bool ImplicitDepLoader::LoadDepsFromLog(Edge* edge, string* err) {
 
   // Deps are invalid if the output is newer than the deps.
   if (output->mtime() > deps->mtime) {
-    EXPLAIN("stored deps info out of date for '%s' (%" PRId64 " vs %" PRId64 ")", output->path().c_str(), deps->mtime,
-            output->mtime());
+    EXPLAIN("stored deps info out of date for '%s' (%" PRId64 " vs %" PRId64 ")",
+      output->path().c_str(),
+      deps->mtime,
+      output->mtime());
     return false;
   }
 

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "msvc_helper.h"
-
 #include "test.h"
 #include "util.h"
 

@@ -65,9 +65,9 @@ const EvalString* Rule::GetBinding(const string& key) const {
 
 // static
 bool Rule::IsReservedBinding(const string& var) {
-  return var == "command" || var == "depfile" || var == "dyndep" || var == "description" || var == "deps" ||
-         var == "generator" || var == "pool" || var == "restat" || var == "rspfile" || var == "rspfile_content" ||
-         var == "msvc_deps_prefix";
+  return var == "command" || var == "depfile" || var == "dyndep" || var == "description" || var == "deps"
+         || var == "generator" || var == "pool" || var == "restat" || var == "rspfile" || var == "rspfile_content"
+         || var == "msvc_deps_prefix";
 }
 
 const map<string, const Rule*>& BindingEnv::GetRules() const {

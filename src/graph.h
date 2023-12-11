@@ -36,8 +36,8 @@ struct State;
 /// it's dirty, mtime, etc.
 struct Node {
   Node(const std::string& path, uint64_t slash_bits)
-      : path_(path), slash_bits_(slash_bits), mtime_(-1), exists_(ExistenceStatusUnknown), dirty_(false),
-        dyndep_pending_(false), in_edge_(NULL), id_(-1) {}
+    : path_(path), slash_bits_(slash_bits), mtime_(-1), exists_(ExistenceStatusUnknown), dirty_(false),
+      dyndep_pending_(false), in_edge_(NULL), id_(-1) {}
 
   /// Return false on error.
   bool Stat(DiskInterface* disk_interface, std::string* err);
@@ -105,7 +105,7 @@ struct Node {
 
   void Dump(const char* prefix = "") const;
 
- private:
+private:
   std::string path_;
 
   /// Set bits starting from lowest for backslashes that were normalized to
@@ -165,9 +165,9 @@ struct Edge {
   enum VisitMark { VisitNone, VisitInStack, VisitDone };
 
   Edge()
-      : rule_(NULL), pool_(NULL), dyndep_(NULL), env_(NULL), mark_(VisitNone), id_(0), outputs_ready_(false),
-        deps_loaded_(false), deps_missing_(false), generated_by_dep_loader_(false), command_start_time_(0),
-        implicit_deps_(0), order_only_deps_(0), implicit_outs_(0) {}
+    : rule_(NULL), pool_(NULL), dyndep_(NULL), env_(NULL), mark_(VisitNone), id_(0), outputs_ready_(false),
+      deps_loaded_(false), deps_missing_(false), generated_by_dep_loader_(false), command_start_time_(0),
+      implicit_deps_(0), order_only_deps_(0), implicit_outs_(0) {}
 
   /// Return true if all inputs' in-edges are ready.
   bool AllInputsReady() const;
@@ -224,8 +224,8 @@ struct Edge {
   int implicit_deps_;
   int order_only_deps_;
   bool is_implicit(size_t index) {
-    return index >= inputs_.size() - static_cast<size_t>(order_only_deps_) - static_cast<size_t>(implicit_deps_) &&
-           !is_order_only(index);
+    return index >= inputs_.size() - static_cast<size_t>(order_only_deps_) - static_cast<size_t>(implicit_deps_)
+           && !is_order_only(index);
   }
   bool is_order_only(size_t index) { return index >= inputs_.size() - static_cast<size_t>(order_only_deps_); }
 
@@ -251,10 +251,12 @@ typedef std::set<Edge*, EdgeCmp> EdgeSet;
 /// ImplicitDepLoader loads implicit dependencies, as referenced via the
 /// "depfile" attribute in build files.
 struct ImplicitDepLoader {
-  ImplicitDepLoader(State* state, DepsLog* deps_log, DiskInterface* disk_interface,
-                    DepfileParserOptions const* depfile_parser_options)
-      : state_(state), disk_interface_(disk_interface), deps_log_(deps_log),
-        depfile_parser_options_(depfile_parser_options) {}
+  ImplicitDepLoader(State* state,
+    DepsLog* deps_log,
+    DiskInterface* disk_interface,
+    DepfileParserOptions const* depfile_parser_options)
+    : state_(state), disk_interface_(disk_interface), deps_log_(deps_log),
+      depfile_parser_options_(depfile_parser_options) {}
   virtual ~ImplicitDepLoader();
 
   /// Load implicit dependencies for \a edge.
@@ -264,7 +266,7 @@ struct ImplicitDepLoader {
 
   DepsLog* deps_log() const { return deps_log_; }
 
- protected:
+protected:
   /// Process loaded implicit dependencies for \a edge and update the graph
   /// @return false on error (without filling \a err if info is just missing)
   virtual bool ProcessDepfileDeps(Edge* edge, std::vector<StringPiece>* depfile_ins, std::string* err);
@@ -290,10 +292,13 @@ struct ImplicitDepLoader {
 /// DependencyScan manages the process of scanning the files in a graph
 /// and updating the dirty/outputs_ready state of all the nodes and edges.
 struct DependencyScan {
-  DependencyScan(State* state, BuildLog* build_log, DepsLog* deps_log, DiskInterface* disk_interface,
-                 DepfileParserOptions const* depfile_parser_options)
-      : build_log_(build_log), disk_interface_(disk_interface),
-        dep_loader_(state, deps_log, disk_interface, depfile_parser_options), dyndep_loader_(state, disk_interface) {}
+  DependencyScan(State* state,
+    BuildLog* build_log,
+    DepsLog* deps_log,
+    DiskInterface* disk_interface,
+    DepfileParserOptions const* depfile_parser_options)
+    : build_log_(build_log), disk_interface_(disk_interface),
+      dep_loader_(state, deps_log, disk_interface, depfile_parser_options), dyndep_loader_(state, disk_interface) {}
 
   /// Update the |dirty_| state of the given nodes by transitively inspecting
   /// their input edges.
@@ -320,9 +325,11 @@ struct DependencyScan {
   bool LoadDyndeps(Node* node, std::string* err) const;
   bool LoadDyndeps(Node* node, DyndepFile* ddf, std::string* err) const;
 
- private:
-  bool RecomputeNodeDirty(Node* node, std::vector<Node*>* stack, std::vector<Node*>* validation_nodes,
-                          std::string* err);
+private:
+  bool RecomputeNodeDirty(Node* node,
+    std::vector<Node*>* stack,
+    std::vector<Node*>* validation_nodes,
+    std::string* err);
   bool VerifyDAG(Node* node, std::vector<Node*>* stack, std::string* err);
 
   /// Recompute whether a given single output should be marked dirty.

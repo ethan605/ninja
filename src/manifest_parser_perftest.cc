@@ -84,18 +84,18 @@ int main(int argc, char* argv[]) {
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("fh"))) != -1) {
     switch (opt) {
-    case 'f':
-      measure_command_evaluation = false;
-      break;
-    case 'h':
-    default:
-      printf(
+      case 'f':
+        measure_command_evaluation = false;
+        break;
+      case 'h':
+      default:
+        printf(
           "usage: manifest_parser_perftest\n"
           "\n"
           "options:\n"
           "  -f     only measure manifest load time, not command evaluation "
           "time\n");
-      return 1;
+        return 1;
     }
   }
 

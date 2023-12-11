@@ -58,8 +58,7 @@ static inline unsigned int MurmurHash2(const void* key, size_t len) {
 #include <unordered_map>
 
 namespace std {
-template <>
-struct hash<StringPiece> {
+template<> struct hash<StringPiece> {
   typedef StringPiece argument_type;
   typedef size_t result_type;
 
@@ -71,8 +70,7 @@ struct hash<StringPiece> {
 /// owned externally (typically by the values).  Use like:
 /// ExternalStringHash<Foo*>::Type foos; to make foos into a hash
 /// mapping StringPiece => Foo*.
-template <typename V>
-struct ExternalStringHashMap {
+template<typename V> struct ExternalStringHashMap {
   typedef std::unordered_map<StringPiece, V> Type;
 };
 

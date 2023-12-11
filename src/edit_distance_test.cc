@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "edit_distance.h"
-
 #include "test.h"
 
 TEST(EditDistanceTest, TestEmpty) {

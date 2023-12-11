@@ -38,7 +38,7 @@ struct ScopedMetric {
   explicit ScopedMetric(Metric* metric);
   ~ScopedMetric();
 
- private:
+private:
   Metric* metric_;
   /// Timestamp when the measurement started.
   /// Value is platform-dependent.
@@ -52,7 +52,7 @@ struct Metrics {
   /// Print a summary report to stdout.
   void Report();
 
- private:
+private:
   std::vector<Metric*> metrics_;
 };
 
@@ -63,7 +63,7 @@ int64_t GetTimeMillis();
 /// A simple stopwatch which returns the time
 /// in seconds since Restart() was called.
 struct Stopwatch {
- public:
+public:
   Stopwatch() : started_(0) {}
 
   /// Seconds since Restart() call.
@@ -71,7 +71,7 @@ struct Stopwatch {
 
   void Restart() { started_ = NowRaw(); }
 
- private:
+private:
   uint64_t started_;
   // Return the current time using the native frequency of the high resolution
   // timer.

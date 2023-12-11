@@ -90,7 +90,7 @@ struct Options {
 /// to poke into these, so store them as fields on an object.
 struct NinjaMain : public BuildLogUser {
   NinjaMain(const char* ninja_command, const BuildConfig& config)
-      : ninja_command_(ninja_command), config_(config), start_time_millis_(GetTimeMillis()) {}
+    : ninja_command_(ninja_command), config_(config), start_time_millis_(GetTimeMillis()) {}
 
   /// Command line used to run Ninja.
   const char* ninja_command_;
@@ -214,41 +214,42 @@ struct Tool {
 /// Print usage information.
 void Usage(const BuildConfig& config) {
   fprintf(stderr,
-          "usage: ninja [options] [targets...]\n"
-          "\n"
-          "if targets are unspecified, builds the 'default' target (see manual).\n"
-          "\n"
-          "options:\n"
-          "  --version      print ninja version (\"%s\")\n"
-          "  -v, --verbose  show all command lines while building\n"
-          "  --quiet        don't show progress status, just command output\n"
-          "\n"
-          "  -C DIR   change to DIR before doing anything else\n"
-          "  -f FILE  specify input build file [default=build.ninja]\n"
-          "\n"
-          "  -j N     run N jobs in parallel (0 means infinity) [default=%d on "
-          "this system]\n"
-          "  -k N     keep going until N jobs fail (0 means infinity) [default=1]\n"
-          "  -l N     do not start new jobs if the load average is greater than N\n"
-          "  -n       dry run (don't run commands but act like they succeeded)\n"
-          "\n"
-          "  -d MODE  enable debugging (use '-d list' to list modes)\n"
-          "  -t TOOL  run a subtool (use '-t list' to list subtools)\n"
-          "    terminates toplevel options; further flags are passed to the tool\n"
-          "  -w FLAG  adjust warnings (use '-w list' to list warnings)\n",
-          kNinjaVersion, config.parallelism);
+    "usage: ninja [options] [targets...]\n"
+    "\n"
+    "if targets are unspecified, builds the 'default' target (see manual).\n"
+    "\n"
+    "options:\n"
+    "  --version      print ninja version (\"%s\")\n"
+    "  -v, --verbose  show all command lines while building\n"
+    "  --quiet        don't show progress status, just command output\n"
+    "\n"
+    "  -C DIR   change to DIR before doing anything else\n"
+    "  -f FILE  specify input build file [default=build.ninja]\n"
+    "\n"
+    "  -j N     run N jobs in parallel (0 means infinity) [default=%d on "
+    "this system]\n"
+    "  -k N     keep going until N jobs fail (0 means infinity) [default=1]\n"
+    "  -l N     do not start new jobs if the load average is greater than N\n"
+    "  -n       dry run (don't run commands but act like they succeeded)\n"
+    "\n"
+    "  -d MODE  enable debugging (use '-d list' to list modes)\n"
+    "  -t TOOL  run a subtool (use '-t list' to list subtools)\n"
+    "    terminates toplevel options; further flags are passed to the tool\n"
+    "  -w FLAG  adjust warnings (use '-w list' to list warnings)\n",
+    kNinjaVersion,
+    config.parallelism);
 }
 
 /// Choose a default value for the -j (parallelism) flag.
 int GuessParallelism() {
   switch (int processors = GetProcessorCount()) {
-  case 0:
-  case 1:
-    return 2;
-  case 2:
-    return 3;
-  default:
-    return processors + 2;
+    case 0:
+    case 1:
+      return 2;
+    case 2:
+      return 3;
+    default:
+      return processors + 2;
   }
 }
 
@@ -407,7 +408,8 @@ int NinjaMain::ToolQuery(const Options* options, int argc, char* argv[]) {
       if (!edge->validations_.empty()) {
         printf("  validations:\n");
         for (std::vector<Node*>::iterator validation = edge->validations_.begin();
-             validation != edge->validations_.end(); ++validation) {
+             validation != edge->validations_.end();
+             ++validation) {
           printf("    %s\n", (*validation)->path().c_str());
         }
       }
@@ -536,8 +538,11 @@ int NinjaMain::ToolDeps(const Options* options, int argc, char** argv) {
     TimeStamp mtime = disk_interface.Stat((*it)->path(), &err);
     if (mtime == -1)
       Error("%s", err.c_str());  // Log and ignore Stat() errors;
-    printf("%s: #deps %d, deps mtime %" PRId64 " (%s)\n", (*it)->path().c_str(), deps->node_count, deps->mtime,
-           (!mtime || mtime > deps->mtime ? "STALE" : "VALID"));
+    printf("%s: #deps %d, deps mtime %" PRId64 " (%s)\n",
+      (*it)->path().c_str(),
+      deps->node_count,
+      deps->mtime,
+      (!mtime || mtime > deps->mtime ? "STALE" : "VALID"));
     for (int i = 0; i < deps->node_count; ++i)
       printf("    %s\n", deps->nodes[i]->path().c_str());
     printf("\n");
@@ -617,18 +622,18 @@ int NinjaMain::ToolRules(const Options* options, int argc, char* argv[]) {
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("hd"))) != -1) {
     switch (opt) {
-    case 'd':
-      print_description = true;
-      break;
-    case 'h':
-    default:
-      printf(
+      case 'd':
+        print_description = true;
+        break;
+      case 'h':
+      default:
+        printf(
           "usage: ninja -t rules [options]\n"
           "\n"
           "options:\n"
           "  -d     also print the description of the rule\n"
           "  -h     print this message\n");
-      return 1;
+        return 1;
     }
   }
   argv += optind;
@@ -692,18 +697,18 @@ int NinjaMain::ToolCommands(const Options* options, int argc, char* argv[]) {
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("hs"))) != -1) {
     switch (opt) {
-    case 's':
-      mode = PCM_Single;
-      break;
-    case 'h':
-    default:
-      printf(
+      case 's':
+        mode = PCM_Single;
+        break;
+      case 'h':
+      default:
+        printf(
           "usage: ninja -t commands [options] [targets]\n"
           "\n"
           "options:\n"
           "  -s     only print the final command to build [target], not the "
           "whole chain\n");
-      return 1;
+        return 1;
     }
   }
   argv += optind;
@@ -747,9 +752,9 @@ int NinjaMain::ToolInputs(const Options* options, int argc, char* argv[]) {
   const option kLongOptions[] = { { "help", no_argument, NULL, 'h' }, { NULL, 0, NULL, 0 } };
   while ((opt = getopt_long(argc, argv, "h", kLongOptions, NULL)) != -1) {
     switch (opt) {
-    case 'h':
-    default:
-      // clang-format off
+      case 'h':
+      default:
+        // clang-format off
       printf(
 "Usage '-t inputs [options] [targets]\n"
 "\n"
@@ -757,8 +762,8 @@ int NinjaMain::ToolInputs(const Options* options, int argc, char* argv[]) {
 "explicit, implicit and order-only inputs, but not validation ones.\n\n"
 "Options:\n"
 "  -h, --help   Print this message.\n");
-      // clang-format on
-      return 1;
+        // clang-format on
+        return 1;
     }
   }
   argv += optind;
@@ -799,21 +804,21 @@ int NinjaMain::ToolClean(const Options* options, int argc, char* argv[]) {
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("hgr"))) != -1) {
     switch (opt) {
-    case 'g':
-      generator = true;
-      break;
-    case 'r':
-      clean_rules = true;
-      break;
-    case 'h':
-    default:
-      printf(
+      case 'g':
+        generator = true;
+        break;
+      case 'r':
+        clean_rules = true;
+        break;
+      case 'h':
+      default:
+        printf(
           "usage: ninja -t clean [options] [targets]\n"
           "\n"
           "options:\n"
           "  -g     also clean files marked as ninja generator output\n"
           "  -r     interpret targets as a list of rules to clean instead\n");
-      return 1;
+        return 1;
     }
   }
   argv += optind;
@@ -851,8 +856,9 @@ std::string EvaluateCommandWithRspfile(const Edge* edge, const EvaluateCommandMo
     return command;
 
   size_t index = command.find(rspfile);
-  if (index == 0 || index == string::npos ||
-      (command[index - 1] != '@' && command.find("--option-file=") != index - 14 && command.find("-f ") != index - 3))
+  if (index == 0 || index == string::npos
+      || (command[index - 1] != '@' && command.find("--option-file=") != index - 14
+          && command.find("-f ") != index - 3))
     return command;
 
   string rspfile_content = edge->GetBinding("rspfile_content");
@@ -895,18 +901,18 @@ int NinjaMain::ToolCompilationDatabase(const Options* options, int argc, char* a
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("hx"))) != -1) {
     switch (opt) {
-    case 'x':
-      eval_mode = ECM_EXPAND_RSPFILE;
-      break;
+      case 'x':
+        eval_mode = ECM_EXPAND_RSPFILE;
+        break;
 
-    case 'h':
-    default:
-      printf(
+      case 'h':
+      default:
+        printf(
           "usage: ninja -t compdb [options] [rules]\n"
           "\n"
           "options:\n"
           "  -x     expand @rspfile style response file invocations\n");
-      return 1;
+        return 1;
     }
   }
   argv += optind;
@@ -973,10 +979,10 @@ int NinjaMain::ToolRestat(const Options* options, int argc, char* argv[]) {
   int opt;
   while ((opt = getopt(argc, argv, const_cast<char*>("h"))) != -1) {
     switch (opt) {
-    case 'h':
-    default:
-      printf("usage: ninja -t restat [outputs]\n");
-      return 1;
+      case 'h':
+      default:
+        printf("usage: ninja -t restat [outputs]\n");
+        return 1;
     }
   }
   argv += optind;
@@ -1024,16 +1030,16 @@ int NinjaMain::ToolRestat(const Options* options, int argc, char* argv[]) {
 int NinjaMain::ToolUrtle(const Options* options, int argc, char** argv) {
   // RLE encoded.
   const char* urtle =
-      " 13 ,3;2!2;\n8 ,;<11!;\n5 `'<10!(2`'2!\n11 ,6;, `\\. `\\9 .,c13$ec,.\n6 "
-      ",2;11!>; `. ,;!2> .e8$2\".2 \"?7$e.\n <:<8!'` 2.3,.2` ,3!' ;,(?7\";2!2'<"
-      "; `?6$PF ,;,\n2 `'4!8;<!3'`2 3! ;,`'2`2'3!;4!`2.`!;2 3,2 .<!2'`).\n5 3`5"
-      "'2`9 `!2 `4!><3;5! J2$b,`!>;2!:2!`,d?b`!>\n26 `'-;,(<9!> $F3 )3.:!.2 d\""
-      "2 ) !>\n30 7`2'<3!- \"=-='5 .2 `2-=\",!>\n25 .ze9$er2 .,cd16$bc.'\n22 .e"
-      "14$,26$.\n21 z45$c .\n20 J50$c\n20 14$P\"`?34$b\n20 14$ dbc `2\"?22$?7$c"
-      "\n20 ?18$c.6 4\"8?4\" c8$P\n9 .2,.8 \"20$c.3 ._14 J9$\n .2,2c9$bec,.2 `?"
-      "21$c.3`4%,3%,3 c8$P\"\n22$c2 2\"?21$bc2,.2` .2,c7$P2\",cb\n23$b bc,.2\"2"
-      "?14$2F2\"5?2\",J5$P\" ,zd3$\n24$ ?$3?%3 `2\"2?12$bcucd3$P3\"2 2=7$\n23$P"
-      "\" ,3;<5!>2;,. `4\"6?2\"2 ,9;, `\"?2$\n";
+    " 13 ,3;2!2;\n8 ,;<11!;\n5 `'<10!(2`'2!\n11 ,6;, `\\. `\\9 .,c13$ec,.\n6 "
+    ",2;11!>; `. ,;!2> .e8$2\".2 \"?7$e.\n <:<8!'` 2.3,.2` ,3!' ;,(?7\";2!2'<"
+    "; `?6$PF ,;,\n2 `'4!8;<!3'`2 3! ;,`'2`2'3!;4!`2.`!;2 3,2 .<!2'`).\n5 3`5"
+    "'2`9 `!2 `4!><3;5! J2$b,`!>;2!:2!`,d?b`!>\n26 `'-;,(<9!> $F3 )3.:!.2 d\""
+    "2 ) !>\n30 7`2'<3!- \"=-='5 .2 `2-=\",!>\n25 .ze9$er2 .,cd16$bc.'\n22 .e"
+    "14$,26$.\n21 z45$c .\n20 J50$c\n20 14$P\"`?34$b\n20 14$ dbc `2\"?22$?7$c"
+    "\n20 ?18$c.6 4\"8?4\" c8$P\n9 .2,.8 \"20$c.3 ._14 J9$\n .2,2c9$bec,.2 `?"
+    "21$c.3`4%,3%,3 c8$P\"\n22$c2 2\"?21$bc2,.2` .2,c7$P2\",cb\n23$b bc,.2\"2"
+    "?14$2F2\"5?2\",J5$P\" ,zd3$\n24$ ?$3?%3 `2\"2?12$bcucd3$P3\"2 2=7$\n23$P"
+    "\" ,3;<5!>2;,. `4\"6?2\"2 ,9;, `\"?2$\n";
   int count = 0;
   for (const char* p = urtle; *p; p++) {
     if ('0' <= *p && *p <= '9') {
@@ -1056,11 +1062,15 @@ const Tool* ChooseTool(const string& tool_name) {
     { "msvc", "build helper for MSVC cl.exe (DEPRECATED)", Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolMSVC },
 #endif
     { "clean", "clean built files", Tool::RUN_AFTER_LOAD, &NinjaMain::ToolClean },
-    { "commands", "list all commands required to rebuild given targets", Tool::RUN_AFTER_LOAD,
+    { "commands",
+      "list all commands required to rebuild given targets",
+      Tool::RUN_AFTER_LOAD,
       &NinjaMain::ToolCommands },
     { "inputs", "list all inputs required to rebuild given targets", Tool::RUN_AFTER_LOAD, &NinjaMain::ToolInputs },
     { "deps", "show dependencies stored in the deps log", Tool::RUN_AFTER_LOGS, &NinjaMain::ToolDeps },
-    { "missingdeps", "check deps log dependencies on generated files", Tool::RUN_AFTER_LOGS,
+    { "missingdeps",
+      "check deps log dependencies on generated files",
+      Tool::RUN_AFTER_LOGS,
       &NinjaMain::ToolMissingDeps },
     { "graph", "output graphviz dot file for targets", Tool::RUN_AFTER_LOAD, &NinjaMain::ToolGraph },
     { "query", "show inputs/outputs for a path", Tool::RUN_AFTER_LOGS, &NinjaMain::ToolQuery },
@@ -1069,7 +1079,9 @@ const Tool* ChooseTool(const string& tool_name) {
     { "recompact", "recompacts ninja-internal data structures", Tool::RUN_AFTER_LOAD, &NinjaMain::ToolRecompact },
     { "restat", "restats all outputs in the build log", Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolRestat },
     { "rules", "list all rules", Tool::RUN_AFTER_LOAD, &NinjaMain::ToolRules },
-    { "cleandead", "clean built files that are no longer produced by the manifest", Tool::RUN_AFTER_LOGS,
+    { "cleandead",
+      "clean built files that are no longer produced by the manifest",
+      Tool::RUN_AFTER_LOGS,
       &NinjaMain::ToolCleanDead },
     { "urtle", NULL, Tool::RUN_AFTER_FLAGS, &NinjaMain::ToolUrtle },
 #ifdef _WIN32
@@ -1109,15 +1121,15 @@ const Tool* ChooseTool(const string& tool_name) {
 bool DebugEnable(const string& name) {
   if (name == "list") {
     printf(
-        "debugging modes:\n"
-        "  stats        print operation counts/timing info\n"
-        "  explain      explain what caused a command to execute\n"
-        "  keepdepfile  don't delete depfiles after they're read by ninja\n"
-        "  keeprsp      don't delete @response files on success\n"
+      "debugging modes:\n"
+      "  stats        print operation counts/timing info\n"
+      "  explain      explain what caused a command to execute\n"
+      "  keepdepfile  don't delete depfiles after they're read by ninja\n"
+      "  keeprsp      don't delete @response files on success\n"
 #ifdef _WIN32
-        "  nostatcache  don't batch stat() calls per directory and cache them\n"
+      "  nostatcache  don't batch stat() calls per directory and cache them\n"
 #endif
-        "multiple modes can be enabled via -d FOO -d BAR\n");
+      "multiple modes can be enabled via -d FOO -d BAR\n");
     return false;
   } else if (name == "stats") {
     g_metrics = new Metrics;
@@ -1136,7 +1148,7 @@ bool DebugEnable(const string& name) {
     return true;
   } else {
     const char* suggestion =
-        SpellcheckString(name.c_str(), "stats", "explain", "keepdepfile", "keeprsp", "nostatcache", NULL);
+      SpellcheckString(name.c_str(), "stats", "explain", "keepdepfile", "keeprsp", "nostatcache", NULL);
     if (suggestion) {
       Error("unknown debug setting '%s', did you mean '%s'?", name.c_str(), suggestion);
     } else {
@@ -1151,8 +1163,8 @@ bool DebugEnable(const string& name) {
 bool WarningEnable(const string& name, Options* options) {
   if (name == "list") {
     printf(
-        "warning flags:\n"
-        "  phonycycle={err,warn}  phony build statement references itself\n");
+      "warning flags:\n"
+      "  phonycycle={err,warn}  phony build statement references itself\n");
     return false;
   } else if (name == "dupbuild=err") {
     options->dupe_edges_should_err = true;
@@ -1171,7 +1183,7 @@ bool WarningEnable(const string& name, Options* options) {
     return true;
   } else {
     const char* suggestion =
-        SpellcheckString(name.c_str(), "dupbuild=err", "dupbuild=warn", "phonycycle=err", "phonycycle=warn", NULL);
+      SpellcheckString(name.c_str(), "dupbuild=err", "dupbuild=warn", "phonycycle=err", "phonycycle=warn", NULL);
     if (suggestion) {
       Error("unknown warning flag '%s', did you mean '%s'?", name.c_str(), suggestion);
     } else {
@@ -1345,7 +1357,7 @@ int ExceptionFilter(unsigned int code, struct _EXCEPTION_POINTERS* ep) {
 #endif  // _MSC_VER
 
 class DeferGuessParallelism {
- public:
+public:
   bool needGuess;
   BuildConfig* config;
 
@@ -1367,82 +1379,82 @@ int ReadFlags(int* argc, char*** argv, Options* options, BuildConfig* config) {
 
   enum { OPT_VERSION = 1, OPT_QUIET = 2 };
   const option kLongOptions[] = { { "help", no_argument, NULL, 'h' },
-                                  { "version", no_argument, NULL, OPT_VERSION },
-                                  { "verbose", no_argument, NULL, 'v' },
-                                  { "quiet", no_argument, NULL, OPT_QUIET },
-                                  { NULL, 0, NULL, 0 } };
+    { "version", no_argument, NULL, OPT_VERSION },
+    { "verbose", no_argument, NULL, 'v' },
+    { "quiet", no_argument, NULL, OPT_QUIET },
+    { NULL, 0, NULL, 0 } };
 
   int opt;
   while (!options->tool && (opt = getopt_long(*argc, *argv, "d:f:j:k:l:nt:vw:C:h", kLongOptions, NULL)) != -1) {
     switch (opt) {
-    case 'd':
-      if (!DebugEnable(optarg))
-        return 1;
-      break;
-    case 'f':
-      options->input_file = optarg;
-      break;
-    case 'j': {
-      char* end;
-      int value = strtol(optarg, &end, 10);
-      if (*end != 0 || value < 0)
-        Fatal("invalid -j parameter");
+      case 'd':
+        if (!DebugEnable(optarg))
+          return 1;
+        break;
+      case 'f':
+        options->input_file = optarg;
+        break;
+      case 'j': {
+        char* end;
+        int value = strtol(optarg, &end, 10);
+        if (*end != 0 || value < 0)
+          Fatal("invalid -j parameter");
 
-      // We want to run N jobs in parallel. For N = 0, INT_MAX
-      // is close enough to infinite for most sane builds.
-      config->parallelism = value > 0 ? value : INT_MAX;
-      deferGuessParallelism.needGuess = false;
-      break;
-    }
-    case 'k': {
-      char* end;
-      int value = strtol(optarg, &end, 10);
-      if (*end != 0)
-        Fatal("-k parameter not numeric; did you mean -k 0?");
+        // We want to run N jobs in parallel. For N = 0, INT_MAX
+        // is close enough to infinite for most sane builds.
+        config->parallelism = value > 0 ? value : INT_MAX;
+        deferGuessParallelism.needGuess = false;
+        break;
+      }
+      case 'k': {
+        char* end;
+        int value = strtol(optarg, &end, 10);
+        if (*end != 0)
+          Fatal("-k parameter not numeric; did you mean -k 0?");
 
-      // We want to go until N jobs fail, which means we should allow
-      // N failures and then stop.  For N <= 0, INT_MAX is close enough
-      // to infinite for most sane builds.
-      config->failures_allowed = value > 0 ? value : INT_MAX;
-      break;
-    }
-    case 'l': {
-      char* end;
-      double value = strtod(optarg, &end);
-      if (end == optarg)
-        Fatal("-l parameter not numeric: did you mean -l 0.0?");
-      config->max_load_average = value;
-      break;
-    }
-    case 'n':
-      config->dry_run = true;
-      break;
-    case 't':
-      options->tool = ChooseTool(optarg);
-      if (!options->tool)
+        // We want to go until N jobs fail, which means we should allow
+        // N failures and then stop.  For N <= 0, INT_MAX is close enough
+        // to infinite for most sane builds.
+        config->failures_allowed = value > 0 ? value : INT_MAX;
+        break;
+      }
+      case 'l': {
+        char* end;
+        double value = strtod(optarg, &end);
+        if (end == optarg)
+          Fatal("-l parameter not numeric: did you mean -l 0.0?");
+        config->max_load_average = value;
+        break;
+      }
+      case 'n':
+        config->dry_run = true;
+        break;
+      case 't':
+        options->tool = ChooseTool(optarg);
+        if (!options->tool)
+          return 0;
+        break;
+      case 'v':
+        config->verbosity = BuildConfig::VERBOSE;
+        break;
+      case OPT_QUIET:
+        config->verbosity = BuildConfig::NO_STATUS_UPDATE;
+        break;
+      case 'w':
+        if (!WarningEnable(optarg, options))
+          return 1;
+        break;
+      case 'C':
+        options->working_dir = optarg;
+        break;
+      case OPT_VERSION:
+        printf("%s\n", kNinjaVersion);
         return 0;
-      break;
-    case 'v':
-      config->verbosity = BuildConfig::VERBOSE;
-      break;
-    case OPT_QUIET:
-      config->verbosity = BuildConfig::NO_STATUS_UPDATE;
-      break;
-    case 'w':
-      if (!WarningEnable(optarg, options))
+      case 'h':
+      default:
+        deferGuessParallelism.Refresh();
+        Usage(*config);
         return 1;
-      break;
-    case 'C':
-      options->working_dir = optarg;
-      break;
-    case OPT_VERSION:
-      printf("%s\n", kNinjaVersion);
-      return 0;
-    case 'h':
-    default:
-      deferGuessParallelism.Refresh();
-      Usage(*config);
-      return 1;
     }
   }
   *argv += optind;
@@ -1539,9 +1551,10 @@ NORETURN void real_main(int argc, char** argv) {
   }
 
   status->Error(
-      "manifest '%s' still dirty after %d tries, perhaps system time is not "
-      "set",
-      options.input_file, kCycleLimit);
+    "manifest '%s' still dirty after %d tries, perhaps system time is not "
+    "set",
+    options.input_file,
+    kCycleLimit);
   exit(1);
 }
 

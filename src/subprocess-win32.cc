@@ -38,8 +38,14 @@ HANDLE Subprocess::SetupPipe(HANDLE ioport) {
   char pipe_name[100];
   snprintf(pipe_name, sizeof(pipe_name), "\\\\.\\pipe\\ninja_pid%lu_sp%p", GetCurrentProcessId(), this);
 
-  pipe_ = ::CreateNamedPipeA(pipe_name, PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED, PIPE_TYPE_BYTE,
-                             PIPE_UNLIMITED_INSTANCES, 0, 0, INFINITE, NULL);
+  pipe_ = ::CreateNamedPipeA(pipe_name,
+    PIPE_ACCESS_INBOUND | FILE_FLAG_OVERLAPPED,
+    PIPE_TYPE_BYTE,
+    PIPE_UNLIMITED_INSTANCES,
+    0,
+    0,
+    INFINITE,
+    NULL);
   if (pipe_ == INVALID_HANDLE_VALUE)
     Win32Fatal("CreateNamedPipe");
 
@@ -54,8 +60,13 @@ HANDLE Subprocess::SetupPipe(HANDLE ioport) {
   // Get the write end of the pipe as a handle inheritable across processes.
   HANDLE output_write_handle = CreateFileA(pipe_name, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
   HANDLE output_write_child;
-  if (!DuplicateHandle(GetCurrentProcess(), output_write_handle, GetCurrentProcess(), &output_write_child, 0, TRUE,
-                       DUPLICATE_SAME_ACCESS)) {
+  if (!DuplicateHandle(GetCurrentProcess(),
+        output_write_handle,
+        GetCurrentProcess(),
+        &output_write_child,
+        0,
+        TRUE,
+        DUPLICATE_SAME_ACCESS)) {
     Win32Fatal("DuplicateHandle");
   }
   CloseHandle(output_write_handle);
@@ -71,8 +82,13 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
   security_attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
   security_attributes.bInheritHandle = TRUE;
   // Must be inheritable so subprocesses can dup to children.
-  HANDLE nul = CreateFileA("NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                           &security_attributes, OPEN_EXISTING, 0, NULL);
+  HANDLE nul = CreateFileA("NUL",
+    GENERIC_READ,
+    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+    &security_attributes,
+    OPEN_EXISTING,
+    0,
+    NULL);
   if (nul == INVALID_HANDLE_VALUE)
     Fatal("couldn't open nul");
 
@@ -96,8 +112,16 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
 
   // Do not prepend 'cmd /c' on Windows, this breaks command
   // lines greater than 8,191 chars.
-  if (!CreateProcessA(NULL, (char*)command.c_str(), NULL, NULL,
-                      /* inherit handles */ TRUE, process_flags, NULL, NULL, &startup_info, &process_info)) {
+  if (!CreateProcessA(NULL,
+        (char*)command.c_str(),
+        NULL,
+        NULL,
+        /* inherit handles */ TRUE,
+        process_flags,
+        NULL,
+        NULL,
+        &startup_info,
+        &process_info)) {
     DWORD error = GetLastError();
     if (error == ERROR_FILE_NOT_FOUND) {
       // File (program) not found error is treated as a normal build
@@ -109,8 +133,8 @@ bool Subprocess::Start(SubprocessSet* set, const string& command) {
       pipe_ = NULL;
       // child_ is already NULL;
       buf_ =
-          "CreateProcess failed: The system cannot find the file "
-          "specified.\n";
+        "CreateProcess failed: The system cannot find the file "
+        "specified.\n";
       return true;
     } else {
       fprintf(stderr, "\nCreateProcess failed. Command attempted:\n\"%s\"\n", command.c_str());

@@ -41,7 +41,7 @@ struct LinePrinter {
   /// console is locked will not be printed until it is unlocked.
   void SetConsoleLocked(bool locked);
 
- private:
+private:
   /// Whether we can do fancy terminal control codes.
   bool smart_terminal_;
 

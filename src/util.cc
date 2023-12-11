@@ -219,12 +219,12 @@ void CanonicalizePath(char* path, size_t* len, uint64_t* slash_bits) {
 
   for (char* c = start; c < start + *len; ++c) {
     switch (*c) {
-    case '\\':
-      bits |= bits_mask;
-      *c = '/';
-      NINJA_FALLTHROUGH;
-    case '/':
-      bits_mask <<= 1;
+      case '\\':
+        bits |= bits_mask;
+        *c = '/';
+        NINJA_FALLTHROUGH;
+      case '/':
+        bits_mask <<= 1;
     }
   }
 
@@ -243,24 +243,24 @@ static inline bool IsKnownShellSafeCharacter(char ch) {
     return true;
 
   switch (ch) {
-  case '_':
-  case '+':
-  case '-':
-  case '.':
-  case '/':
-    return true;
-  default:
-    return false;
+    case '_':
+    case '+':
+    case '-':
+    case '.':
+    case '/':
+      return true;
+    default:
+      return false;
   }
 }
 
 static inline bool IsKnownWin32SafeCharacter(char ch) {
   switch (ch) {
-  case ' ':
-  case '"':
-    return false;
-  default:
-    return true;
+    case ' ':
+    case '"':
+      return false;
+    default:
+      return true;
   }
 }
 
@@ -320,18 +320,18 @@ void GetWin32EscapedString(const string& input, string* result) {
   string::const_iterator span_begin = input.begin();
   for (string::const_iterator it = input.begin(), end = input.end(); it != end; ++it) {
     switch (*it) {
-    case kBackslash:
-      ++consecutive_backslash_count;
-      break;
-    case kQuote:
-      result->append(span_begin, it);
-      result->append(consecutive_backslash_count + 1, kBackslash);
-      span_begin = it;
-      consecutive_backslash_count = 0;
-      break;
-    default:
-      consecutive_backslash_count = 0;
-      break;
+      case kBackslash:
+        ++consecutive_backslash_count;
+        break;
+      case kQuote:
+        result->append(span_begin, it);
+        result->append(consecutive_backslash_count + 1, kBackslash);
+        span_begin = it;
+        consecutive_backslash_count = 0;
+        break;
+      default:
+        consecutive_backslash_count = 0;
+        break;
     }
   }
   result->append(span_begin, input.end());
@@ -345,7 +345,7 @@ int ReadFile(const string& path, string* contents, string* err) {
   // than using the generic fopen code below.
   err->clear();
   HANDLE f =
-      ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    ::CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL);
   if (f == INVALID_HANDLE_VALUE) {
     err->assign(GetLastErrorString());
     return -ENOENT;
@@ -455,8 +455,13 @@ string GetLastErrorString() {
   DWORD err = GetLastError();
 
   char* msg_buf;
-  FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, err,
-                 MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (char*)&msg_buf, 0, NULL);
+  FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    NULL,
+    err,
+    MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT),
+    (char*)&msg_buf,
+    0,
+    NULL);
   string msg = msg_buf;
   LocalFree(msg_buf);
   return msg;
@@ -656,12 +661,12 @@ int GetProcessorCount() {
   // Need to use GetLogicalProcessorInformationEx to get real core count on
   // machines with >64 cores. See https://stackoverflow.com/a/31209344/21475
   DWORD len = 0;
-  if (!GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &len) &&
-      GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
+  if (!GetLogicalProcessorInformationEx(RelationProcessorCore, nullptr, &len)
+      && GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
     std::vector<char> buf(len);
     int cores = 0;
     if (GetLogicalProcessorInformationEx(
-            RelationProcessorCore, reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buf.data()), &len)) {
+          RelationProcessorCore, reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buf.data()), &len)) {
       for (DWORD i = 0; i < len;) {
         auto info = reinterpret_cast<PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(buf.data() + i);
         if (info->Relationship == RelationProcessorCore && info->Processor.GroupCount == 1) {
@@ -818,14 +823,14 @@ double GetLoadAverage() {
 
 string ElideMiddle(const string& str, size_t width) {
   switch (width) {
-  case 0:
-    return "";
-  case 1:
-    return ".";
-  case 2:
-    return "..";
-  case 3:
-    return "...";
+    case 0:
+      return "";
+    case 1:
+      return ".";
+    case 2:
+      return "..";
+    case 3:
+      return "...";
   }
   const int kMargin = 3;  // Space for "...".
   string result = str;

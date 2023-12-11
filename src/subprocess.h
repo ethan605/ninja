@@ -50,7 +50,7 @@ struct Subprocess {
 
   const std::string& GetOutput() const;
 
- private:
+private:
   Subprocess(bool use_console);
   bool Start(struct SubprocessSet* set, const std::string& command);
   void OnPipeReady();

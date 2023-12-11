@@ -66,8 +66,8 @@ struct BuildLog {
 
     // Used by tests.
     bool operator==(const LogEntry& o) {
-      return output == o.output && command_hash == o.command_hash && start_time == o.start_time &&
-             end_time == o.end_time && mtime == o.mtime;
+      return output == o.output && command_hash == o.command_hash && start_time == o.start_time
+             && end_time == o.end_time && mtime == o.mtime;
     }
 
     explicit LogEntry(const std::string& output);
@@ -84,13 +84,16 @@ struct BuildLog {
   bool Recompact(const std::string& path, const BuildLogUser& user, std::string* err);
 
   /// Restat all outputs in the log
-  bool Restat(StringPiece path, const DiskInterface& disk_interface, int output_count, char** outputs,
-              std::string* err);
+  bool Restat(StringPiece path,
+    const DiskInterface& disk_interface,
+    int output_count,
+    char** outputs,
+    std::string* err);
 
   typedef ExternalStringHashMap<LogEntry*>::Type Entries;
   const Entries& entries() const { return entries_; }
 
- private:
+private:
   /// Should be called before using log_file_. When false is returned, errno
   /// will be set.
   bool OpenForWriteIfNeeded();

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "subprocess.h"
-
 #include "test.h"
 
 #ifndef _WIN32
@@ -68,9 +67,9 @@ TEST_F(SubprocessTest, NoSuchCommand) {
   EXPECT_NE("", subproc->GetOutput());
 #ifdef _WIN32
   ASSERT_EQ(
-      "CreateProcess failed: The system cannot find the file "
-      "specified.\n",
-      subproc->GetOutput());
+    "CreateProcess failed: The system cannot find the file "
+    "specified.\n",
+    subproc->GetOutput());
 #endif
 }
 

@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "graph.h"
-
 #include "build.h"
+#include "graph.h"
 #include "test.h"
 
 using namespace std;
@@ -58,10 +57,10 @@ TEST_F(GraphTest, ModifiedImplicit) {
 
 TEST_F(GraphTest, FunkyMakefilePath) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule catdep\n"
-                                      "  depfile = $out.d\n"
-                                      "  command = cat $in > $out\n"
-                                      "build out.o: catdep foo.cc\n"));
+    "rule catdep\n"
+    "  depfile = $out.d\n"
+    "  command = cat $in > $out\n"
+    "build out.o: catdep foo.cc\n"));
   fs_.Create("foo.cc", "");
   fs_.Create("out.o.d", "out.o: ./foo/../implicit.h\n");
   fs_.Create("out.o", "");
@@ -79,11 +78,11 @@ TEST_F(GraphTest, FunkyMakefilePath) {
 
 TEST_F(GraphTest, ExplicitImplicit) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule catdep\n"
-                                      "  depfile = $out.d\n"
-                                      "  command = cat $in > $out\n"
-                                      "build implicit.h: cat data\n"
-                                      "build out.o: catdep foo.cc || implicit.h\n"));
+    "rule catdep\n"
+    "  depfile = $out.d\n"
+    "  command = cat $in > $out\n"
+    "build implicit.h: cat data\n"
+    "build out.o: catdep foo.cc || implicit.h\n"));
   fs_.Create("implicit.h", "");
   fs_.Create("foo.cc", "");
   fs_.Create("out.o.d", "out.o: implicit.h\n");
@@ -176,10 +175,10 @@ TEST_F(GraphTest, ImplicitOutputOnlyOutOfDate) {
 
 TEST_F(GraphTest, PathWithCurrentDirectory) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule catdep\n"
-                                      "  depfile = $out.d\n"
-                                      "  command = cat $in > $out\n"
-                                      "build ./out.o: catdep ./foo.cc\n"));
+    "rule catdep\n"
+    "  depfile = $out.d\n"
+    "  command = cat $in > $out\n"
+    "build ./out.o: catdep ./foo.cc\n"));
   fs_.Create("foo.cc", "");
   fs_.Create("out.o.d", "out.o: foo.cc\n");
   fs_.Create("out.o", "");
@@ -193,10 +192,10 @@ TEST_F(GraphTest, PathWithCurrentDirectory) {
 
 TEST_F(GraphTest, RootNodes) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out1: cat in1\n"
-                                      "build mid1: cat in1\n"
-                                      "build out2: cat mid1\n"
-                                      "build out3 out4: cat mid1\n"));
+    "build out1: cat in1\n"
+    "build mid1: cat in1\n"
+    "build out2: cat mid1\n"
+    "build out3 out4: cat mid1\n"));
 
   string err;
   vector<Node*> root_nodes = state_.RootNodes(&err);
@@ -252,10 +251,10 @@ TEST_F(GraphTest, VarInOutPathEscaping) {
 // Regression test for https://github.com/ninja-build/ninja/issues/380
 TEST_F(GraphTest, DepfileWithCanonicalizablePath) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule catdep\n"
-                                      "  depfile = $out.d\n"
-                                      "  command = cat $in > $out\n"
-                                      "build ./out.o: catdep ./foo.cc\n"));
+    "rule catdep\n"
+    "  depfile = $out.d\n"
+    "  command = cat $in > $out\n"
+    "build ./out.o: catdep ./foo.cc\n"));
   fs_.Create("foo.cc", "");
   fs_.Create("out.o.d", "out.o: bar/../foo.cc\n");
   fs_.Create("out.o", "");
@@ -270,10 +269,10 @@ TEST_F(GraphTest, DepfileWithCanonicalizablePath) {
 // Regression test for https://github.com/ninja-build/ninja/issues/404
 TEST_F(GraphTest, DepfileRemoved) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule catdep\n"
-                                      "  depfile = $out.d\n"
-                                      "  command = cat $in > $out\n"
-                                      "build ./out.o: catdep ./foo.cc\n"));
+    "rule catdep\n"
+    "  depfile = $out.d\n"
+    "  command = cat $in > $out\n"
+    "build ./out.o: catdep ./foo.cc\n"));
   fs_.Create("foo.h", "");
   fs_.Create("foo.cc", "");
   fs_.Tick();
@@ -295,10 +294,10 @@ TEST_F(GraphTest, DepfileRemoved) {
 // Check that rule-level variables are in scope for eval.
 TEST_F(GraphTest, RuleVariablesInScope) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule r\n"
-                                      "  depfile = x\n"
-                                      "  command = depfile is $depfile\n"
-                                      "build out: r in\n"));
+    "rule r\n"
+    "  depfile = x\n"
+    "  command = depfile is $depfile\n"
+    "build out: r in\n"));
   Edge* edge = GetNode("out")->in_edge();
   EXPECT_EQ("depfile is x", edge->EvaluateCommand());
 }
@@ -306,11 +305,11 @@ TEST_F(GraphTest, RuleVariablesInScope) {
 // Check that build statements can override rule builtins like depfile.
 TEST_F(GraphTest, DepfileOverride) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule r\n"
-                                      "  depfile = x\n"
-                                      "  command = unused\n"
-                                      "build out: r in\n"
-                                      "  depfile = y\n"));
+    "rule r\n"
+    "  depfile = x\n"
+    "  command = unused\n"
+    "build out: r in\n"
+    "  depfile = y\n"));
   Edge* edge = GetNode("out")->in_edge();
   EXPECT_EQ("y", edge->GetBinding("depfile"));
 }
@@ -318,11 +317,11 @@ TEST_F(GraphTest, DepfileOverride) {
 // Check that overridden values show up in expansion of rule-level bindings.
 TEST_F(GraphTest, DepfileOverrideParent) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule r\n"
-                                      "  depfile = x\n"
-                                      "  command = depfile is $depfile\n"
-                                      "build out: r in\n"
-                                      "  depfile = y\n"));
+    "rule r\n"
+    "  depfile = x\n"
+    "  command = depfile is $depfile\n"
+    "build out: r in\n"
+    "  depfile = y\n"));
   Edge* edge = GetNode("out")->in_edge();
   EXPECT_EQ("depfile is y", edge->GetBinding("command"));
 }
@@ -330,8 +329,8 @@ TEST_F(GraphTest, DepfileOverrideParent) {
 // Verify that building a nested phony rule prints "no work to do"
 TEST_F(GraphTest, NestedPhonyPrintsDone) {
   AssertParse(&state_,
-              "build n1: phony \n"
-              "build n2: phony n1\n");
+    "build n1: phony \n"
+    "build n2: phony n1\n");
   string err;
   EXPECT_TRUE(scan_.RecomputeDirty(GetNode("n2"), NULL, &err));
   ASSERT_EQ("", err);
@@ -356,10 +355,10 @@ TEST_F(GraphTest, PhonySelfReferenceError) {
 
 TEST_F(GraphTest, DependencyCycle) {
   AssertParse(&state_,
-              "build out: cat mid\n"
-              "build mid: cat in\n"
-              "build in: cat pre\n"
-              "build pre: cat out\n");
+    "build out: cat mid\n"
+    "build mid: cat in\n"
+    "build in: cat pre\n"
+    "build pre: cat out\n");
 
   string err;
   EXPECT_FALSE(scan_.RecomputeDirty(GetNode("out"), NULL, &err));
@@ -383,8 +382,8 @@ TEST_F(GraphTest, CycleInEdgesButNotInNodes2) {
 TEST_F(GraphTest, CycleInEdgesButNotInNodes3) {
   string err;
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build a b: cat c\n"
-                                      "build c: cat a\n"));
+    "build a b: cat c\n"
+    "build c: cat a\n"));
   EXPECT_FALSE(scan_.RecomputeDirty(GetNode("b"), NULL, &err));
   ASSERT_EQ("dependency cycle: a -> c -> a", err);
 }
@@ -392,11 +391,11 @@ TEST_F(GraphTest, CycleInEdgesButNotInNodes3) {
 TEST_F(GraphTest, CycleInEdgesButNotInNodes4) {
   string err;
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build d: cat c\n"
-                                      "build c: cat b\n"
-                                      "build b: cat a\n"
-                                      "build a e: cat d\n"
-                                      "build f: cat e\n"));
+    "build d: cat c\n"
+    "build c: cat b\n"
+    "build b: cat a\n"
+    "build a e: cat d\n"
+    "build f: cat e\n"));
   EXPECT_FALSE(scan_.RecomputeDirty(GetNode("f"), NULL, &err));
   ASSERT_EQ("dependency cycle: a -> d -> c -> b -> a", err);
 }
@@ -405,10 +404,10 @@ TEST_F(GraphTest, CycleInEdgesButNotInNodes4) {
 // in RecomputeDirty() and don't cause deps to be loaded multiple times.
 TEST_F(GraphTest, CycleWithLengthZeroFromDepfile) {
   AssertParse(&state_,
-              "rule deprule\n"
-              "   depfile = dep.d\n"
-              "   command = unused\n"
-              "build a b: deprule\n");
+    "rule deprule\n"
+    "   depfile = dep.d\n"
+    "   command = unused\n"
+    "build a b: deprule\n");
   fs_.Create("dep.d", "a: b\n");
 
   string err;
@@ -426,13 +425,13 @@ TEST_F(GraphTest, CycleWithLengthZeroFromDepfile) {
 // Like CycleWithLengthZeroFromDepfile but with a higher cycle length.
 TEST_F(GraphTest, CycleWithLengthOneFromDepfile) {
   AssertParse(&state_,
-              "rule deprule\n"
-              "   depfile = dep.d\n"
-              "   command = unused\n"
-              "rule r\n"
-              "   command = unused\n"
-              "build a b: deprule\n"
-              "build c: r b\n");
+    "rule deprule\n"
+    "   depfile = dep.d\n"
+    "   command = unused\n"
+    "rule r\n"
+    "   command = unused\n"
+    "build a b: deprule\n"
+    "build c: r b\n");
   fs_.Create("dep.d", "a: c\n");
 
   string err;
@@ -451,14 +450,14 @@ TEST_F(GraphTest, CycleWithLengthOneFromDepfile) {
 // the cycle.
 TEST_F(GraphTest, CycleWithLengthOneFromDepfileOneHopAway) {
   AssertParse(&state_,
-              "rule deprule\n"
-              "   depfile = dep.d\n"
-              "   command = unused\n"
-              "rule r\n"
-              "   command = unused\n"
-              "build a b: deprule\n"
-              "build c: r b\n"
-              "build d: r a\n");
+    "rule deprule\n"
+    "   depfile = dep.d\n"
+    "   command = unused\n"
+    "rule r\n"
+    "   command = unused\n"
+    "build a b: deprule\n"
+    "build c: r b\n"
+    "build d: r a\n");
   fs_.Create("dep.d", "a: c\n");
 
   string err;
@@ -476,9 +475,9 @@ TEST_F(GraphTest, CycleWithLengthOneFromDepfileOneHopAway) {
 #ifdef _WIN32
 TEST_F(GraphTest, Decanonicalize) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out\\out1: cat src\\in1\n"
-                                      "build out\\out2/out3\\out4: cat mid1\n"
-                                      "build out3 out4\\foo: cat mid1\n"));
+    "build out\\out1: cat src\\in1\n"
+    "build out\\out2/out3\\out4: cat mid1\n"
+    "build out3 out4\\foo: cat mid1\n"));
 
   string err;
   vector<Node*> root_nodes = state_.RootNodes(&err);
@@ -496,13 +495,13 @@ TEST_F(GraphTest, Decanonicalize) {
 
 TEST_F(GraphTest, DyndepLoadTrivial) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r in || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r in || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
@@ -523,14 +522,14 @@ TEST_F(GraphTest, DyndepLoadTrivial) {
 
 TEST_F(GraphTest, DyndepLoadImplicit) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out1: r in || dd\n"
-              "  dyndep = dd\n"
-              "build out2: r in\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out1: r in || dd\n"
+    "  dyndep = dd\n"
+    "build out2: r in\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out1: dyndep | out2\n");
+    "ninja_dyndep_version = 1\n"
+    "build out1: dyndep | out2\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
@@ -552,10 +551,10 @@ TEST_F(GraphTest, DyndepLoadImplicit) {
 
 TEST_F(GraphTest, DyndepLoadMissingFile) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r in || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r in || dd\n"
+    "  dyndep = dd\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
@@ -565,10 +564,10 @@ TEST_F(GraphTest, DyndepLoadMissingFile) {
 
 TEST_F(GraphTest, DyndepLoadMissingEntry) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r in || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r in || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd", "ninja_dyndep_version = 1\n");
 
   string err;
@@ -579,35 +578,35 @@ TEST_F(GraphTest, DyndepLoadMissingEntry) {
 
 TEST_F(GraphTest, DyndepLoadExtraEntry) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r in || dd\n"
-              "  dyndep = dd\n"
-              "build out2: r in || dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r in || dd\n"
+    "  dyndep = dd\n"
+    "build out2: r in || dd\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out: dyndep\n"
-             "build out2: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n"
+    "build out2: dyndep\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
   EXPECT_FALSE(scan_.LoadDyndeps(GetNode("dd"), &err));
   EXPECT_EQ(
-      "dyndep file 'dd' mentions output 'out2' whose build statement "
-      "does not have a dyndep binding for the file",
-      err);
+    "dyndep file 'dd' mentions output 'out2' whose build statement "
+    "does not have a dyndep binding for the file",
+    err);
 }
 
 TEST_F(GraphTest, DyndepLoadOutputWithMultipleRules1) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out1 | out-twice.imp: r in1\n"
-              "build out2: r in2 || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out1 | out-twice.imp: r in1\n"
+    "build out2: r in2 || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out2 | out-twice.imp: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out2 | out-twice.imp: dyndep\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
@@ -617,18 +616,18 @@ TEST_F(GraphTest, DyndepLoadOutputWithMultipleRules1) {
 
 TEST_F(GraphTest, DyndepLoadOutputWithMultipleRules2) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out1: r in1 || dd1\n"
-              "  dyndep = dd1\n"
-              "build out2: r in2 || dd2\n"
-              "  dyndep = dd2\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out1: r in1 || dd1\n"
+    "  dyndep = dd1\n"
+    "build out2: r in2 || dd2\n"
+    "  dyndep = dd2\n");
   fs_.Create("dd1",
-             "ninja_dyndep_version = 1\n"
-             "build out1 | out-twice.imp: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out1 | out-twice.imp: dyndep\n");
   fs_.Create("dd2",
-             "ninja_dyndep_version = 1\n"
-             "build out2 | out-twice.imp: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out2 | out-twice.imp: dyndep\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd1")->dyndep_pending());
@@ -641,18 +640,18 @@ TEST_F(GraphTest, DyndepLoadOutputWithMultipleRules2) {
 
 TEST_F(GraphTest, DyndepLoadMultiple) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out1: r in1 || dd\n"
-              "  dyndep = dd\n"
-              "build out2: r in2 || dd\n"
-              "  dyndep = dd\n"
-              "build outNot: r in3 || dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out1: r in1 || dd\n"
+    "  dyndep = dd\n"
+    "build out2: r in2 || dd\n"
+    "  dyndep = dd\n"
+    "build outNot: r in3 || dd\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out1 | out1imp: dyndep | in1imp\n"
-             "build out2: dyndep | in2imp\n"
-             "  restat = 1\n");
+    "ninja_dyndep_version = 1\n"
+    "build out1 | out1imp: dyndep | in1imp\n"
+    "build out2: dyndep | in2imp\n"
+    "  restat = 1\n");
 
   string err;
   ASSERT_TRUE(GetNode("dd")->dyndep_pending());
@@ -695,10 +694,10 @@ TEST_F(GraphTest, DyndepLoadMultiple) {
 
 TEST_F(GraphTest, DyndepFileMissing) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
 
   string err;
   EXPECT_FALSE(scan_.RecomputeDirty(GetNode("out"), NULL, &err));
@@ -707,10 +706,10 @@ TEST_F(GraphTest, DyndepFileMissing) {
 
 TEST_F(GraphTest, DyndepFileError) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd", "ninja_dyndep_version = 1\n");
 
   string err;
@@ -720,13 +719,13 @@ TEST_F(GraphTest, DyndepFileError) {
 
 TEST_F(GraphTest, DyndepImplicitInputNewer) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out: dyndep | in\n");
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep | in\n");
   fs_.Create("out", "");
   fs_.Tick();
   fs_.Create("in", "");
@@ -744,15 +743,15 @@ TEST_F(GraphTest, DyndepImplicitInputNewer) {
 
 TEST_F(GraphTest, DyndepFileReady) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build dd: r dd-in\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build dd: r dd-in\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd-in", "");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out: dyndep | in\n");
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep | in\n");
   fs_.Create("out", "");
   fs_.Tick();
   fs_.Create("in", "");
@@ -771,11 +770,11 @@ TEST_F(GraphTest, DyndepFileReady) {
 
 TEST_F(GraphTest, DyndepFileNotClean) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build dd: r dd-in\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build dd: r dd-in\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd", "this-should-not-be-loaded");
   fs_.Tick();
   fs_.Create("dd-in", "");
@@ -795,12 +794,12 @@ TEST_F(GraphTest, DyndepFileNotClean) {
 
 TEST_F(GraphTest, DyndepFileNotReady) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build tmp: r\n"
-              "build dd: r dd-in || tmp\n"
-              "build out: r || dd\n"
-              "  dyndep = dd\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build tmp: r\n"
+    "build dd: r dd-in || tmp\n"
+    "build out: r || dd\n"
+    "  dyndep = dd\n");
   fs_.Create("dd", "this-should-not-be-loaded");
   fs_.Create("dd-in", "");
   fs_.Tick();
@@ -818,14 +817,14 @@ TEST_F(GraphTest, DyndepFileNotReady) {
 
 TEST_F(GraphTest, DyndepFileSecondNotReady) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build dd1: r dd1-in\n"
-              "build dd2-in: r || dd1\n"
-              "  dyndep = dd1\n"
-              "build dd2: r dd2-in\n"
-              "build out: r || dd2\n"
-              "  dyndep = dd2\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build dd1: r dd1-in\n"
+    "build dd2-in: r || dd1\n"
+    "  dyndep = dd1\n"
+    "build dd2: r dd2-in\n"
+    "build out: r || dd2\n"
+    "  dyndep = dd2\n");
   fs_.Create("dd1", "");
   fs_.Create("dd2", "");
   fs_.Create("dd2-in", "");
@@ -847,16 +846,16 @@ TEST_F(GraphTest, DyndepFileSecondNotReady) {
 
 TEST_F(GraphTest, DyndepFileCircular) {
   AssertParse(&state_,
-              "rule r\n"
-              "  command = unused\n"
-              "build out: r in || dd\n"
-              "  depfile = out.d\n"
-              "  dyndep = dd\n"
-              "build in: r circ\n");
+    "rule r\n"
+    "  command = unused\n"
+    "build out: r in || dd\n"
+    "  depfile = out.d\n"
+    "  dyndep = dd\n"
+    "build in: r circ\n");
   fs_.Create("out.d", "out: inimp\n");
   fs_.Create("dd",
-             "ninja_dyndep_version = 1\n"
-             "build out | circ: dyndep\n");
+    "ninja_dyndep_version = 1\n"
+    "build out | circ: dyndep\n");
   fs_.Create("out", "");
 
   Edge* edge = GetNode("out")->in_edge();
@@ -876,8 +875,8 @@ TEST_F(GraphTest, DyndepFileCircular) {
 
 TEST_F(GraphTest, Validation) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out: cat in |@ validate\n"
-                                      "build validate: cat in\n"));
+    "build out: cat in |@ validate\n"
+    "build validate: cat in\n"));
 
   fs_.Create("in", "");
   string err;
@@ -896,10 +895,10 @@ TEST_F(GraphTest, Validation) {
 TEST_F(GraphTest, PhonyDepsMtimes) {
   string err;
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "rule touch\n"
-                                      " command = touch $out\n"
-                                      "build in_ph: phony in1\n"
-                                      "build out1: touch in_ph\n"));
+    "rule touch\n"
+    " command = touch $out\n"
+    "build in_ph: phony in1\n"
+    "build out1: touch in_ph\n"));
   fs_.Create("in1", "");
   fs_.Create("out1", "");
   Node* out1 = GetNode("out1");

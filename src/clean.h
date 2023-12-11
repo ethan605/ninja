@@ -68,7 +68,7 @@ struct Cleaner {
     return (config_.verbosity != BuildConfig::QUIET && (config_.verbosity == BuildConfig::VERBOSE || config_.dry_run));
   }
 
- private:
+private:
   /// Remove the file @a path.
   /// @return whether the file has been removed.
   int RemoveFile(const std::string& path);

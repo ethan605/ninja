@@ -92,8 +92,10 @@ void LinePrinter::Print(string to_print, LineType type) {
       // but doesn't move the cursor position.
       COORD buf_size = { csbi.dwSize.X, 1 };
       COORD zero_zero = { 0, 0 };
-      SMALL_RECT target = { csbi.dwCursorPosition.X, csbi.dwCursorPosition.Y,
-                            static_cast<SHORT>(csbi.dwCursorPosition.X + csbi.dwSize.X - 1), csbi.dwCursorPosition.Y };
+      SMALL_RECT target = { csbi.dwCursorPosition.X,
+        csbi.dwCursorPosition.Y,
+        static_cast<SHORT>(csbi.dwCursorPosition.X + csbi.dwSize.X - 1),
+        csbi.dwCursorPosition.Y };
       vector<CHAR_INFO> char_data(csbi.dwSize.X);
       for (size_t i = 0; i < static_cast<size_t>(csbi.dwSize.X); ++i) {
         char_data[i].Char.AsciiChar = i < to_print.size() ? to_print[i] : ' ';

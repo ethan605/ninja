@@ -150,7 +150,7 @@ bool DiskInterface::MakeDirs(const string& path) {
 // RealDiskInterface -----------------------------------------------------------
 RealDiskInterface::RealDiskInterface()
 #ifdef _WIN32
-    : use_cache_(false), long_paths_enabled_(false) {
+  : use_cache_(false), long_paths_enabled_(false) {
   setlocale(LC_ALL, "");
 
   // Probe ntdll.dll for RtlAreLongPathsEnabled, and call it if it exists.
@@ -268,12 +268,12 @@ bool RealDiskInterface::MakeDir(const string& path) {
 
 FileReader::Status RealDiskInterface::ReadFile(const string& path, string* contents, string* err) {
   switch (::ReadFile(path, contents, err)) {
-  case 0:
-    return Okay;
-  case -ENOENT:
-    return NotFound;
-  default:
-    return OtherError;
+    case 0:
+      return Okay;
+    case -ENOENT:
+      return NotFound;
+    default:
+      return OtherError;
   }
 }
 
@@ -321,11 +321,11 @@ int RealDiskInterface::RemoveFile(const string& path) {
 #else
   if (remove(path.c_str()) < 0) {
     switch (errno) {
-    case ENOENT:
-      return 1;
-    default:
-      Error("remove(%s): %s", path.c_str(), strerror(errno));
-      return -1;
+      case ENOENT:
+        return 1;
+      default:
+        Error("remove(%s): %s", path.c_str(), strerror(errno));
+        return -1;
     }
   }
 #endif

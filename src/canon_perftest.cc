@@ -21,8 +21,8 @@
 using namespace std;
 
 const char kPath[] =
-    "../../third_party/WebKit/Source/WebCore/"
-    "platform/leveldb/LevelDBWriteBatch.cpp";
+  "../../third_party/WebKit/Source/WebCore/"
+  "platform/leveldb/LevelDBWriteBatch.cpp";
 
 int main() {
   vector<int> times;

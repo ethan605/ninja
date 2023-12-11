@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "status.h"
-
 #include "test.h"
 
 TEST(StatusTest, StatusFormatElapsed) {

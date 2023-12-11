@@ -53,8 +53,9 @@ int main() {
   for (int i = 1; i < N; ++i) {
     if (hashes[i - 1].first == hashes[i].first) {
       if (strcmp(commands[hashes[i - 1].second], commands[hashes[i].second]) != 0) {
-        printf("collision!\n  string 1: '%s'\n  string 2: '%s'\n", commands[hashes[i - 1].second],
-               commands[hashes[i].second]);
+        printf("collision!\n  string 1: '%s'\n  string 2: '%s'\n",
+          commands[hashes[i - 1].second],
+          commands[hashes[i].second]);
         collision_count++;
       }
     }

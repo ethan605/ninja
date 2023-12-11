@@ -18,14 +18,12 @@
 #include <cstdio>
 #include <map>
 #include <memory>
-#include <queue>
 #include <string>
 #include <vector>
 
 #include "depfile_parser.h"
 #include "exit_status.h"
 #include "graph.h"  // XXX needed for DependencyScan; should rearrange.
-#include "util.h"   // int64_t
 
 struct BuildLog;
 struct Builder;
@@ -77,7 +75,7 @@ struct Plan {
   /// by information loaded from a dyndep file.
   bool DyndepsLoaded(DependencyScan* scan, const Node* node, const DyndepFile& ddf, std::string* err);
 
- private:
+private:
   bool RefreshDyndepDependents(DependencyScan* scan, const Node* node, std::string* err);
   void UnmarkDependents(const Node* node, std::set<Node*>* dependents);
   bool AddSubTarget(const Node* node, const Node* dependent, std::string* err, std::set<Edge*>* dyndep_walk);
@@ -170,8 +168,13 @@ struct BuildConfig {
 
 /// Builder wraps the build process: starting commands, updating status.
 struct Builder {
-  Builder(State* state, const BuildConfig& config, BuildLog* build_log, DepsLog* deps_log,
-          DiskInterface* disk_interface, Status* status, int64_t start_time_millis);
+  Builder(State* state,
+    const BuildConfig& config,
+    BuildLog* build_log,
+    DepsLog* deps_log,
+    DiskInterface* disk_interface,
+    Status* status,
+    int64_t start_time_millis);
   ~Builder();
 
   /// Clean up after interrupted commands by deleting output files.
@@ -208,9 +211,12 @@ struct Builder {
   std::unique_ptr<CommandRunner> command_runner_;
   Status* status_;
 
- private:
-  bool ExtractDeps(CommandRunner::Result* result, const std::string& deps_type, const std::string& deps_prefix,
-                   std::vector<Node*>* deps_nodes, std::string* err);
+private:
+  bool ExtractDeps(CommandRunner::Result* result,
+    const std::string& deps_type,
+    const std::string& deps_prefix,
+    std::vector<Node*>* deps_nodes,
+    std::string* err);
 
   /// Map of running edge to time the edge started running.
   typedef std::map<const Edge*, int> RunningEdgeMap;

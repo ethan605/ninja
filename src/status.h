@@ -62,7 +62,7 @@ struct StatusPrinter : Status {
   /// @param status The status of the edge.
   std::string FormatProgressStatus(const char* progress_status_format, int64_t time_millis) const;
 
- private:
+private:
   void PrintStatus(const Edge* edge, int64_t time_millis);
 
   const BuildConfig& config_;
@@ -76,8 +76,7 @@ struct StatusPrinter : Status {
   /// The custom progress status format to use.
   const char* progress_status_format_;
 
-  template <size_t S>
-  void SnprintfRate(double rate, char (&buf)[S], const char* format) const {
+  template<size_t S> void SnprintfRate(double rate, char (&buf)[S], const char* format) const {
     if (rate == -1)
       snprintf(buf, S, "?");
     else
@@ -101,7 +100,7 @@ struct StatusPrinter : Status {
         rate_ = times_.size() / ((times_.back() - times_.front()) / 1e3);
     }
 
-   private:
+  private:
     double rate_;
     const size_t N;
     std::queue<double> times_;

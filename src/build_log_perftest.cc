@@ -92,9 +92,9 @@ bool WriteTestData(string* err) {
 
   for (int i = 0; i < kNumCommands; ++i) {
     log.RecordCommand(state.edges_[i],
-                      /*start_time=*/100 * i,
-                      /*end_time=*/100 * i + 1,
-                      /*mtime=*/0);
+      /*start_time=*/100 * i,
+      /*end_time=*/100 * i + 1,
+      /*mtime=*/0);
   }
 
   return true;

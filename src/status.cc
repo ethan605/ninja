@@ -27,8 +27,8 @@
 using namespace std;
 
 StatusPrinter::StatusPrinter(const BuildConfig& config)
-    : config_(config), started_edges_(0), finished_edges_(0), total_edges_(0), running_edges_(0), time_millis_(0),
-      progress_status_format_(NULL), current_rate_(config.parallelism) {
+  : config_(config), started_edges_(0), finished_edges_(0), total_edges_(0), running_edges_(0), time_millis_(0),
+    progress_status_format_(NULL), current_rate_(config.parallelism) {
   // Don't do anything fancy in verbose mode.
   if (config_.verbosity != BuildConfig::NORMAL)
     printer_.set_smart_terminal(false);
@@ -77,10 +77,10 @@ void StatusPrinter::BuildEdgeFinished(Edge* edge, int64_t end_time_millis, bool 
 
     if (printer_.supports_color()) {
       printer_.PrintOnNewLine(
-          "\x1B[31m"
-          "FAILED: "
-          "\x1B[0m" +
-          outputs + "\n");
+        "\x1B[31m"
+        "FAILED: "
+        "\x1B[0m"
+        + outputs + "\n");
     } else {
       printer_.PrintOnNewLine("FAILED: " + outputs + "\n");
     }
@@ -150,71 +150,71 @@ string StatusPrinter::FormatProgressStatus(const char* progress_status_format, i
     if (*s == '%') {
       ++s;
       switch (*s) {
-      case '%':
-        out.push_back('%');
-        break;
+        case '%':
+          out.push_back('%');
+          break;
 
-        // Started edges.
-      case 's':
-        snprintf(buf, sizeof(buf), "%d", started_edges_);
-        out += buf;
-        break;
+          // Started edges.
+        case 's':
+          snprintf(buf, sizeof(buf), "%d", started_edges_);
+          out += buf;
+          break;
 
-        // Total edges.
-      case 't':
-        snprintf(buf, sizeof(buf), "%d", total_edges_);
-        out += buf;
-        break;
+          // Total edges.
+        case 't':
+          snprintf(buf, sizeof(buf), "%d", total_edges_);
+          out += buf;
+          break;
 
-        // Running edges.
-      case 'r': {
-        snprintf(buf, sizeof(buf), "%d", running_edges_);
-        out += buf;
-        break;
-      }
+          // Running edges.
+        case 'r': {
+          snprintf(buf, sizeof(buf), "%d", running_edges_);
+          out += buf;
+          break;
+        }
 
-        // Unstarted edges.
-      case 'u':
-        snprintf(buf, sizeof(buf), "%d", total_edges_ - started_edges_);
-        out += buf;
-        break;
+          // Unstarted edges.
+        case 'u':
+          snprintf(buf, sizeof(buf), "%d", total_edges_ - started_edges_);
+          out += buf;
+          break;
 
-        // Finished edges.
-      case 'f':
-        snprintf(buf, sizeof(buf), "%d", finished_edges_);
-        out += buf;
-        break;
+          // Finished edges.
+        case 'f':
+          snprintf(buf, sizeof(buf), "%d", finished_edges_);
+          out += buf;
+          break;
 
-        // Overall finished edges per second.
-      case 'o':
-        SnprintfRate(finished_edges_ / (time_millis_ / 1e3), buf, "%.1f");
-        out += buf;
-        break;
+          // Overall finished edges per second.
+        case 'o':
+          SnprintfRate(finished_edges_ / (time_millis_ / 1e3), buf, "%.1f");
+          out += buf;
+          break;
 
-        // Current rate, average over the last '-j' jobs.
-      case 'c':
-        current_rate_.UpdateRate(finished_edges_, time_millis_);
-        SnprintfRate(current_rate_.rate(), buf, "%.1f");
-        out += buf;
-        break;
+          // Current rate, average over the last '-j' jobs.
+        case 'c':
+          current_rate_.UpdateRate(finished_edges_, time_millis_);
+          SnprintfRate(current_rate_.rate(), buf, "%.1f");
+          out += buf;
+          break;
 
-        // Percentage
-      case 'p': {
-        int percent = (100 * finished_edges_) / total_edges_;
-        snprintf(buf, sizeof(buf), "%3i%%", percent);
-        out += buf;
-        break;
-      }
+          // Percentage
+        case 'p': {
+          int percent = (100 * finished_edges_) / total_edges_;
+          snprintf(buf, sizeof(buf), "%3i%%", percent);
+          out += buf;
+          break;
+        }
 
-      case 'e': {
-        snprintf(buf, sizeof(buf), "%.3f", time_millis_ / 1e3);
-        out += buf;
-        break;
-      }
+        case 'e': {
+          snprintf(buf, sizeof(buf), "%.3f", time_millis_ / 1e3);
+          out += buf;
+          break;
+        }
 
-      default:
-        Fatal("unknown placeholder '%%%c' in $NINJA_STATUS", *s);
-        return "";
+        default:
+          Fatal("unknown placeholder '%%%c' in $NINJA_STATUS", *s);
+          return "";
       }
     } else {
       out.push_back(*s);

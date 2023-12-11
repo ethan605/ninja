@@ -82,27 +82,27 @@ inline uint64_t MurmurHash64A(const void* key, size_t len) {
     len -= 8;
   }
   switch (len & 7) {
-  case 7:
-    h ^= uint64_t(data[6]) << 48;
-    NINJA_FALLTHROUGH;
-  case 6:
-    h ^= uint64_t(data[5]) << 40;
-    NINJA_FALLTHROUGH;
-  case 5:
-    h ^= uint64_t(data[4]) << 32;
-    NINJA_FALLTHROUGH;
-  case 4:
-    h ^= uint64_t(data[3]) << 24;
-    NINJA_FALLTHROUGH;
-  case 3:
-    h ^= uint64_t(data[2]) << 16;
-    NINJA_FALLTHROUGH;
-  case 2:
-    h ^= uint64_t(data[1]) << 8;
-    NINJA_FALLTHROUGH;
-  case 1:
-    h ^= uint64_t(data[0]);
-    h *= m;
+    case 7:
+      h ^= uint64_t(data[6]) << 48;
+      NINJA_FALLTHROUGH;
+    case 6:
+      h ^= uint64_t(data[5]) << 40;
+      NINJA_FALLTHROUGH;
+    case 5:
+      h ^= uint64_t(data[4]) << 32;
+      NINJA_FALLTHROUGH;
+    case 4:
+      h ^= uint64_t(data[3]) << 24;
+      NINJA_FALLTHROUGH;
+    case 3:
+      h ^= uint64_t(data[2]) << 16;
+      NINJA_FALLTHROUGH;
+    case 2:
+      h ^= uint64_t(data[1]) << 8;
+      NINJA_FALLTHROUGH;
+    case 1:
+      h ^= uint64_t(data[0]);
+      h *= m;
   };
   h ^= h >> r;
   h *= m;
@@ -123,7 +123,7 @@ uint64_t BuildLog::LogEntry::HashCommand(StringPiece command) {
 BuildLog::LogEntry::LogEntry(const string& output) : output(output) {}
 
 BuildLog::LogEntry::LogEntry(const string& output, uint64_t command_hash, int start_time, int end_time, TimeStamp mtime)
-    : output(output), command_hash(command_hash), start_time(start_time), end_time(end_time), mtime(mtime) {}
+  : output(output), command_hash(command_hash), start_time(start_time), end_time(end_time), mtime(mtime) {}
 
 BuildLog::BuildLog() : log_file_(NULL), needs_recompaction_(false) {}
 
@@ -247,7 +247,7 @@ struct LineReader {
     return true;
   }
 
- private:
+private:
   FILE* file_;
   char buf_[256 << 10];
   char* buf_end_;  // Points one past the last valid byte in |buf_|.
@@ -368,8 +368,8 @@ LoadStatus BuildLog::Load(const string& path, string* err) {
   int kCompactionRatio = 3;
   if (log_version < kCurrentVersion) {
     needs_recompaction_ = true;
-  } else if (total_entry_count > kMinCompactionEntryCount &&
-             total_entry_count > unique_entry_count * kCompactionRatio) {
+  } else if (total_entry_count > kMinCompactionEntryCount
+             && total_entry_count > unique_entry_count * kCompactionRatio) {
     needs_recompaction_ = true;
   }
 
@@ -384,8 +384,14 @@ BuildLog::LogEntry* BuildLog::LookupByOutput(const string& path) {
 }
 
 bool BuildLog::WriteEntry(FILE* f, const LogEntry& entry) {
-  return fprintf(f, "%d\t%d\t%" PRId64 "\t%s\t%" PRIx64 "\n", entry.start_time, entry.end_time, entry.mtime,
-                 entry.output.c_str(), entry.command_hash) > 0;
+  return fprintf(f,
+           "%d\t%d\t%" PRId64 "\t%s\t%" PRIx64 "\n",
+           entry.start_time,
+           entry.end_time,
+           entry.mtime,
+           entry.output.c_str(),
+           entry.command_hash)
+         > 0;
 }
 
 bool BuildLog::Recompact(const string& path, const BuildLogUser& user, string* err) {
@@ -436,8 +442,11 @@ bool BuildLog::Recompact(const string& path, const BuildLogUser& user, string* e
   return true;
 }
 
-bool BuildLog::Restat(const StringPiece path, const DiskInterface& disk_interface, const int output_count,
-                      char** outputs, std::string* const err) {
+bool BuildLog::Restat(const StringPiece path,
+  const DiskInterface& disk_interface,
+  const int output_count,
+  char** outputs,
+  std::string* const err) {
   METRIC_RECORD(".ninja_log restat");
 
   Close();

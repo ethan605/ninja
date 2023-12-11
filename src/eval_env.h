@@ -49,9 +49,9 @@ struct EvalString {
   /// for use in tests.
   std::string Serialize() const;
 
- private:
+private:
   enum TokenType { RAW, SPECIAL };
-  typedef std::vector<std::pair<std::string, TokenType> > TokenList;
+  typedef std::vector<std::pair<std::string, TokenType>> TokenList;
   TokenList parsed_;
 };
 
@@ -67,7 +67,7 @@ struct Rule {
 
   const EvalString* GetBinding(const std::string& key) const;
 
- private:
+private:
   // Allow the parsers to reach into this object and fill out its fields.
   friend struct ManifestParser;
 
@@ -99,7 +99,7 @@ struct BindingEnv : public Env {
   /// This function takes as parameters the necessary info to do (2).
   std::string LookupWithFallback(const std::string& var, const EvalString* eval, Env* env);
 
- private:
+private:
   std::map<std::string, std::string> bindings_;
   std::map<std::string, const Rule*> rules_;
   BindingEnv* parent_;

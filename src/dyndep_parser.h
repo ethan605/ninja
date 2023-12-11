@@ -28,7 +28,7 @@ struct DyndepParser : public Parser {
   /// Parse a text string of input.  Used by tests.
   bool ParseTest(const std::string& input, std::string* err) { return Parse("input", input, err); }
 
- private:
+private:
   /// Parse a file, given its contents as a string.
   bool Parse(const std::string& filename, const std::string& input, std::string* err);
 

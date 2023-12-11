@@ -31,7 +31,7 @@ struct IncludesNormalize {
   /// path |input| relative to |this->relative_to_| and store to |result|.
   bool Normalize(const std::string& input, std::string* result, std::string* err) const;
 
- private:
+private:
   std::string relative_to_;
   std::vector<StringPiece> split_relative_to_;
 };

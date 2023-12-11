@@ -30,7 +30,7 @@ struct Parser {
   /// Load and parse a file.
   bool Load(const std::string& filename, std::string* err, Lexer* parent = NULL);
 
- protected:
+protected:
   /// If the next token is not \a expected, produce an error string
   /// saying "expected foo, got bar".
   bool ExpectToken(Lexer::Token expected, std::string* err);
@@ -39,7 +39,7 @@ struct Parser {
   FileReader* file_reader_;
   Lexer lexer_;
 
- private:
+private:
   /// Parse a file, given its contents as a string.
   virtual bool Parse(const std::string& filename, const std::string& input, std::string* err) = 0;
 };

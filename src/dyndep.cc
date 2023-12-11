@@ -104,8 +104,8 @@ bool DyndepLoader::UpdateEdge(Edge* edge, Dyndeps const* dyndeps, std::string* e
   }
 
   // Add the dyndep-discovered inputs to the edge.
-  edge->inputs_.insert(edge->inputs_.end() - edge->order_only_deps_, dyndeps->implicit_inputs_.begin(),
-                       dyndeps->implicit_inputs_.end());
+  edge->inputs_.insert(
+    edge->inputs_.end() - edge->order_only_deps_, dyndeps->implicit_inputs_.begin(), dyndeps->implicit_inputs_.end());
   edge->implicit_deps_ += dyndeps->implicit_inputs_.size();
 
   // Add this edge as outgoing from each new input.

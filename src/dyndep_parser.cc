@@ -25,7 +25,7 @@
 using namespace std;
 
 DyndepParser::DyndepParser(State* state, FileReader* file_reader, DyndepFile* dyndep_file)
-    : Parser(state, file_reader), dyndep_file_(dyndep_file) {}
+  : Parser(state, file_reader), dyndep_file_(dyndep_file) {}
 
 bool DyndepParser::Parse(const string& filename, const string& input, string* err) {
   lexer_.Start(filename, input);
@@ -37,32 +37,32 @@ bool DyndepParser::Parse(const string& filename, const string& input, string* er
   for (;;) {
     Lexer::Token token = lexer_.ReadToken();
     switch (token) {
-    case Lexer::BUILD: {
-      if (!haveDyndepVersion)
-        return lexer_.Error("expected 'ninja_dyndep_version = ...'", err);
-      if (!ParseEdge(err))
-        return false;
-      break;
-    }
-    case Lexer::IDENT: {
-      lexer_.UnreadToken();
-      if (haveDyndepVersion)
+      case Lexer::BUILD: {
+        if (!haveDyndepVersion)
+          return lexer_.Error("expected 'ninja_dyndep_version = ...'", err);
+        if (!ParseEdge(err))
+          return false;
+        break;
+      }
+      case Lexer::IDENT: {
+        lexer_.UnreadToken();
+        if (haveDyndepVersion)
+          return lexer_.Error(string("unexpected ") + Lexer::TokenName(token), err);
+        if (!ParseDyndepVersion(err))
+          return false;
+        haveDyndepVersion = true;
+        break;
+      }
+      case Lexer::ERROR:
+        return lexer_.Error(lexer_.DescribeLastError(), err);
+      case Lexer::TEOF:
+        if (!haveDyndepVersion)
+          return lexer_.Error("expected 'ninja_dyndep_version = ...'", err);
+        return true;
+      case Lexer::NEWLINE:
+        break;
+      default:
         return lexer_.Error(string("unexpected ") + Lexer::TokenName(token), err);
-      if (!ParseDyndepVersion(err))
-        return false;
-      haveDyndepVersion = true;
-      break;
-    }
-    case Lexer::ERROR:
-      return lexer_.Error(lexer_.DescribeLastError(), err);
-    case Lexer::TEOF:
-      if (!haveDyndepVersion)
-        return lexer_.Error("expected 'ninja_dyndep_version = ...'", err);
-      return true;
-    case Lexer::NEWLINE:
-      break;
-    default:
-      return lexer_.Error(string("unexpected ") + Lexer::TokenName(token), err);
     }
   }
   return false;  // not reached

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "depfile_parser.h"
-
 #include "test.h"
 
 using namespace std;
@@ -42,18 +41,18 @@ TEST_F(DepfileParserTest, Basic) {
 TEST_F(DepfileParserTest, EarlyNewlineAndWhitespace) {
   string err;
   EXPECT_TRUE(
-      Parse(" \\\n"
-            "  out: in\n",
-            &err));
+    Parse(" \\\n"
+          "  out: in\n",
+      &err));
   ASSERT_EQ("", err);
 }
 
 TEST_F(DepfileParserTest, Continuation) {
   string err;
   EXPECT_TRUE(
-      Parse("foo.o: \\\n"
-            "  bar.h baz.h\n",
-            &err));
+    Parse("foo.o: \\\n"
+          "  bar.h baz.h\n",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("foo.o", parser_.outs_[0].AsString());
@@ -63,9 +62,9 @@ TEST_F(DepfileParserTest, Continuation) {
 TEST_F(DepfileParserTest, CarriageReturnContinuation) {
   string err;
   EXPECT_TRUE(
-      Parse("foo.o: \\\r\n"
-            "  bar.h baz.h\r\n",
-            &err));
+    Parse("foo.o: \\\r\n"
+          "  bar.h baz.h\r\n",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("foo.o", parser_.outs_[0].AsString());
@@ -75,12 +74,12 @@ TEST_F(DepfileParserTest, CarriageReturnContinuation) {
 TEST_F(DepfileParserTest, BackSlashes) {
   string err;
   EXPECT_TRUE(
-      Parse("Project\\Dir\\Build\\Release8\\Foo\\Foo.res : \\\n"
-            "  Dir\\Library\\Foo.rc \\\n"
-            "  Dir\\Library\\Version\\Bar.h \\\n"
-            "  Dir\\Library\\Foo.ico \\\n"
-            "  Project\\Thing\\Bar.tlb \\\n",
-            &err));
+    Parse("Project\\Dir\\Build\\Release8\\Foo\\Foo.res : \\\n"
+          "  Dir\\Library\\Foo.rc \\\n"
+          "  Dir\\Library\\Version\\Bar.h \\\n"
+          "  Dir\\Library\\Foo.ico \\\n"
+          "  Project\\Thing\\Bar.tlb \\\n",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("Project\\Dir\\Build\\Release8\\Foo\\Foo.res", parser_.outs_[0].AsString());
@@ -131,9 +130,9 @@ TEST_F(DepfileParserTest, EscapedColons) {
   // Tests for correct parsing of depfiles produced on Windows
   // by both Clang, GCC pre 10 and GCC 10
   EXPECT_TRUE(
-      Parse("c\\:\\gcc\\x86_64-w64-mingw32\\include\\stddef.o: \\\n"
-            " c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.h \n",
-            &err));
+    Parse("c\\:\\gcc\\x86_64-w64-mingw32\\include\\stddef.o: \\\n"
+          " c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.h \n",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("c:\\gcc\\x86_64-w64-mingw32\\include\\stddef.o", parser_.outs_[0].AsString());
@@ -144,12 +143,12 @@ TEST_F(DepfileParserTest, EscapedColons) {
 TEST_F(DepfileParserTest, EscapedTargetColon) {
   std::string err;
   EXPECT_TRUE(
-      Parse("foo1\\: x\n"
-            "foo1\\:\n"
-            "foo1\\:\r\n"
-            "foo1\\:\t\n"
-            "foo1\\:",
-            &err));
+    Parse("foo1\\: x\n"
+          "foo1\\:\n"
+          "foo1\\:\r\n"
+          "foo1\\:\t\n"
+          "foo1\\:",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("foo1\\", parser_.outs_[0].AsString());
@@ -162,12 +161,12 @@ TEST_F(DepfileParserTest, SpecialChars) {
   // https://github.com/google/libcxx/tree/master/test/iterators/stream.iterators/istreambuf.iterator/
   string err;
   EXPECT_TRUE(
-      Parse("C:/Program\\ Files\\ (x86)/Microsoft\\ crtdefs.h: \\\n"
-            " en@quot.header~ t+t-x!=1 \\\n"
-            " openldap/slapd.d/cn=config/cn=schema/cn={0}core.ldif\\\n"
-            " Fu\303\244ball\\\n"
-            " a[1]b@2%c",
-            &err));
+    Parse("C:/Program\\ Files\\ (x86)/Microsoft\\ crtdefs.h: \\\n"
+          " en@quot.header~ t+t-x!=1 \\\n"
+          " openldap/slapd.d/cn=config/cn=schema/cn={0}core.ldif\\\n"
+          " Fu\303\244ball\\\n"
+          " a[1]b@2%c",
+      &err));
   ASSERT_EQ("", err);
   ASSERT_EQ(1u, parser_.outs_.size());
   EXPECT_EQ("C:/Program Files (x86)/Microsoft crtdefs.h", parser_.outs_[0].AsString());
@@ -207,10 +206,10 @@ TEST_F(DepfileParserTest, MultipleDifferentOutputs) {
 TEST_F(DepfileParserTest, MultipleEmptyRules) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\n"
-            "foo: \n"
-            "foo:\n",
-            &err));
+    Parse("foo: x\n"
+          "foo: \n"
+          "foo:\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(1u, parser_.ins_.size());
@@ -220,11 +219,11 @@ TEST_F(DepfileParserTest, MultipleEmptyRules) {
 TEST_F(DepfileParserTest, UnifyMultipleRulesLF) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\n"
-            "foo: y\n"
-            "foo \\\n"
-            "foo: z\n",
-            &err));
+    Parse("foo: x\n"
+          "foo: y\n"
+          "foo \\\n"
+          "foo: z\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -236,11 +235,11 @@ TEST_F(DepfileParserTest, UnifyMultipleRulesLF) {
 TEST_F(DepfileParserTest, UnifyMultipleRulesCRLF) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\r\n"
-            "foo: y\r\n"
-            "foo \\\r\n"
-            "foo: z\r\n",
-            &err));
+    Parse("foo: x\r\n"
+          "foo: y\r\n"
+          "foo \\\r\n"
+          "foo: z\r\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -252,11 +251,11 @@ TEST_F(DepfileParserTest, UnifyMultipleRulesCRLF) {
 TEST_F(DepfileParserTest, UnifyMixedRulesLF) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\\\n"
-            "     y\n"
-            "foo \\\n"
-            "foo: z\n",
-            &err));
+    Parse("foo: x\\\n"
+          "     y\n"
+          "foo \\\n"
+          "foo: z\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -268,11 +267,11 @@ TEST_F(DepfileParserTest, UnifyMixedRulesLF) {
 TEST_F(DepfileParserTest, UnifyMixedRulesCRLF) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\\\r\n"
-            "     y\r\n"
-            "foo \\\r\n"
-            "foo: z\r\n",
-            &err));
+    Parse("foo: x\\\r\n"
+          "     y\r\n"
+          "foo \\\r\n"
+          "foo: z\r\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -284,10 +283,10 @@ TEST_F(DepfileParserTest, UnifyMixedRulesCRLF) {
 TEST_F(DepfileParserTest, IndentedRulesLF) {
   string err;
   EXPECT_TRUE(
-      Parse(" foo: x\n"
-            " foo: y\n"
-            " foo: z\n",
-            &err));
+    Parse(" foo: x\n"
+          " foo: y\n"
+          " foo: z\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -299,10 +298,10 @@ TEST_F(DepfileParserTest, IndentedRulesLF) {
 TEST_F(DepfileParserTest, IndentedRulesCRLF) {
   string err;
   EXPECT_TRUE(
-      Parse(" foo: x\r\n"
-            " foo: y\r\n"
-            " foo: z\r\n",
-            &err));
+    Parse(" foo: x\r\n"
+          " foo: y\r\n"
+          " foo: z\r\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -314,11 +313,11 @@ TEST_F(DepfileParserTest, IndentedRulesCRLF) {
 TEST_F(DepfileParserTest, TolerateMP) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x y z\n"
-            "x:\n"
-            "y:\n"
-            "z:\n",
-            &err));
+    Parse("foo: x y z\n"
+          "x:\n"
+          "y:\n"
+          "z:\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -330,13 +329,13 @@ TEST_F(DepfileParserTest, TolerateMP) {
 TEST_F(DepfileParserTest, MultipleRulesTolerateMP) {
   string err;
   EXPECT_TRUE(
-      Parse("foo: x\n"
-            "x:\n"
-            "foo: y\n"
-            "y:\n"
-            "foo: z\n"
-            "z:\n",
-            &err));
+    Parse("foo: x\n"
+          "x:\n"
+          "foo: y\n"
+          "y:\n"
+          "foo: z\n"
+          "z:\n",
+      &err));
   ASSERT_EQ(1u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ(3u, parser_.ins_.size());
@@ -350,9 +349,9 @@ TEST_F(DepfileParserTest, MultipleRulesDifferentOutputs) {
   // when spread across multiple rules
   string err;
   EXPECT_TRUE(
-      Parse("foo: x y\n"
-            "bar: y z\n",
-            &err));
+    Parse("foo: x y\n"
+          "bar: y z\n",
+      &err));
   ASSERT_EQ(2u, parser_.outs_.size());
   ASSERT_EQ("foo", parser_.outs_[0].AsString());
   ASSERT_EQ("bar", parser_.outs_[1].AsString());
@@ -365,10 +364,10 @@ TEST_F(DepfileParserTest, MultipleRulesDifferentOutputs) {
 TEST_F(DepfileParserTest, BuggyMP) {
   std::string err;
   EXPECT_FALSE(
-      Parse("foo: x y z\n"
-            "x: alsoin\n"
-            "y:\n"
-            "z:\n",
-            &err));
+    Parse("foo: x y z\n"
+          "x: alsoin\n"
+          "y:\n"
+          "z:\n",
+      &err));
   ASSERT_EQ("inputs may not also have inputs", err);
 }

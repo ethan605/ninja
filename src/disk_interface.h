@@ -79,7 +79,7 @@ struct RealDiskInterface : public DiskInterface {
   bool AreLongPathsEnabled() const;
 #endif
 
- private:
+private:
 #ifdef _WIN32
   /// Whether stat information can be cached.
   bool use_cache_;

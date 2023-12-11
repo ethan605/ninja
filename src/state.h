@@ -65,7 +65,7 @@ struct Pool {
   /// Dump the Pool and its edges (useful for debugging).
   void Dump() const;
 
- private:
+private:
   std::string name_;
 
   /// |current_use_| is the total of the weights of the edges which are

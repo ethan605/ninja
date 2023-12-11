@@ -117,7 +117,7 @@ struct ScopedFilePath {
   const std::string& path() const { return path_; }
   bool released() const { return released_; }
 
- private:
+private:
   std::string path_;
   bool released_ = false;
 };

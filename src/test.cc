@@ -88,8 +88,8 @@ StateTestWithBuiltinRules::StateTestWithBuiltinRules() {
 
 void StateTestWithBuiltinRules::AddCatRule(State* state) {
   AssertParse(state,
-              "rule cat\n"
-              "  command = cat $in > $out\n");
+    "rule cat\n"
+    "  command = cat $in > $out\n");
 }
 
 Node* StateTestWithBuiltinRules::GetNode(const string& path) {
@@ -228,7 +228,7 @@ void ScopedTempDir::Cleanup() {
 }
 
 ScopedFilePath::ScopedFilePath(ScopedFilePath&& other) noexcept
-    : path_(std::move(other.path_)), released_(other.released_) {
+  : path_(std::move(other.path_)), released_(other.released_) {
   other.released_ = true;
 }
 

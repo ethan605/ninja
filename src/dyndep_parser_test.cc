@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "dyndep_parser.h"
-
 #include <map>
 #include <vector>
 
 #include "dyndep.h"
+#include "dyndep_parser.h"
 #include "graph.h"
 #include "state.h"
 #include "test.h"
@@ -34,9 +33,9 @@ struct DyndepParserTest : public testing::Test {
 
   virtual void SetUp() {
     ::AssertParse(&state_,
-                  "rule touch\n"
-                  "  command = touch $out\n"
-                  "build out otherout: touch\n");
+      "rule touch\n"
+      "  command = touch $out\n"
+      "build out otherout: touch\n");
   }
 
   State state_;
@@ -70,14 +69,14 @@ TEST_F(DyndepParserTest, Version1_0Extra) {
 
 TEST_F(DyndepParserTest, CommentVersion) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("# comment\n"
-                  "ninja_dyndep_version = 1\n"));
+    AssertParse("# comment\n"
+                "ninja_dyndep_version = 1\n"));
 }
 
 TEST_F(DyndepParserTest, BlankLineVersion) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("\n"
-                  "ninja_dyndep_version = 1\n"));
+    AssertParse("\n"
+                "ninja_dyndep_version = 1\n"));
 }
 
 TEST_F(DyndepParserTest, VersionCRLF) {
@@ -86,14 +85,14 @@ TEST_F(DyndepParserTest, VersionCRLF) {
 
 TEST_F(DyndepParserTest, CommentVersionCRLF) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("# comment\r\n"
-                  "ninja_dyndep_version = 1\r\n"));
+    AssertParse("# comment\r\n"
+                "ninja_dyndep_version = 1\r\n"));
 }
 
 TEST_F(DyndepParserTest, BlankLineVersionCRLF) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("\r\n"
-                  "ninja_dyndep_version = 1\r\n"));
+    AssertParse("\r\n"
+                "ninja_dyndep_version = 1\r\n"));
 }
 
 TEST_F(DyndepParserTest, VersionUnexpectedEOF) {
@@ -102,10 +101,10 @@ TEST_F(DyndepParserTest, VersionUnexpectedEOF) {
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:1: unexpected EOF\n"
-      "ninja_dyndep_version = 1.0\n"
-      "                          ^ near here",
-      err);
+    "input:1: unexpected EOF\n"
+    "ninja_dyndep_version = 1.0\n"
+    "                          ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, UnsupportedVersion0) {
@@ -114,10 +113,10 @@ TEST_F(DyndepParserTest, UnsupportedVersion0) {
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:1: unsupported 'ninja_dyndep_version = 0'\n"
-      "ninja_dyndep_version = 0\n"
-      "                        ^ near here",
-      err);
+    "input:1: unsupported 'ninja_dyndep_version = 0'\n"
+    "ninja_dyndep_version = 0\n"
+    "                        ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, UnsupportedVersion1_1) {
@@ -126,16 +125,16 @@ TEST_F(DyndepParserTest, UnsupportedVersion1_1) {
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:1: unsupported 'ninja_dyndep_version = 1.1'\n"
-      "ninja_dyndep_version = 1.1\n"
-      "                          ^ near here",
-      err);
+    "input:1: unsupported 'ninja_dyndep_version = 1.1'\n"
+    "ninja_dyndep_version = 1.1\n"
+    "                          ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, DuplicateVersion) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "ninja_dyndep_version = 1\n";
+    "ninja_dyndep_version = 1\n"
+    "ninja_dyndep_version = 1\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
@@ -148,10 +147,10 @@ TEST_F(DyndepParserTest, MissingVersionOtherVar) {
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:1: expected 'ninja_dyndep_version = ...'\n"
-      "not_ninja_dyndep_version = 1\n"
-      "                            ^ near here",
-      err);
+    "input:1: expected 'ninja_dyndep_version = ...'\n"
+    "not_ninja_dyndep_version = 1\n"
+    "                            ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, MissingVersionBuild) {
@@ -180,195 +179,195 @@ TEST_F(DyndepParserTest, UnexpectedIndent) {
 
 TEST_F(DyndepParserTest, OutDuplicate) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep\n"
-      "build out: dyndep\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n"
+    "build out: dyndep\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:3: multiple statements for 'out'\n"
-      "build out: dyndep\n"
-      "         ^ near here",
-      err);
+    "input:3: multiple statements for 'out'\n"
+    "build out: dyndep\n"
+    "         ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OutDuplicateThroughOther) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep\n"
-      "build otherout: dyndep\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n"
+    "build otherout: dyndep\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:3: multiple statements for 'otherout'\n"
-      "build otherout: dyndep\n"
-      "              ^ near here",
-      err);
+    "input:3: multiple statements for 'otherout'\n"
+    "build otherout: dyndep\n"
+    "              ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, NoOutEOF) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build";
+    "ninja_dyndep_version = 1\n"
+    "build";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: unexpected EOF\n"
-      "build\n"
-      "     ^ near here",
-      err);
+    "input:2: unexpected EOF\n"
+    "build\n"
+    "     ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, NoOutColon) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build :\n";
+    "ninja_dyndep_version = 1\n"
+    "build :\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: expected path\n"
-      "build :\n"
-      "      ^ near here",
-      err);
+    "input:2: expected path\n"
+    "build :\n"
+    "      ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OutNoStatement) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build missing: dyndep\n";
+    "ninja_dyndep_version = 1\n"
+    "build missing: dyndep\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: no build statement exists for 'missing'\n"
-      "build missing: dyndep\n"
-      "             ^ near here",
-      err);
+    "input:2: no build statement exists for 'missing'\n"
+    "build missing: dyndep\n"
+    "             ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OutEOF) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out";
+    "ninja_dyndep_version = 1\n"
+    "build out";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: unexpected EOF\n"
-      "build out\n"
-      "         ^ near here",
-      err);
+    "input:2: unexpected EOF\n"
+    "build out\n"
+    "         ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OutNoRule) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out:";
+    "ninja_dyndep_version = 1\n"
+    "build out:";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: expected build command name 'dyndep'\n"
-      "build out:\n"
-      "          ^ near here",
-      err);
+    "input:2: expected build command name 'dyndep'\n"
+    "build out:\n"
+    "          ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OutBadRule) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: touch";
+    "ninja_dyndep_version = 1\n"
+    "build out: touch";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: expected build command name 'dyndep'\n"
-      "build out: touch\n"
-      "           ^ near here",
-      err);
+    "input:2: expected build command name 'dyndep'\n"
+    "build out: touch\n"
+    "           ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, BuildEOF) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: unexpected EOF\n"
-      "build out: dyndep\n"
-      "                 ^ near here",
-      err);
+    "input:2: unexpected EOF\n"
+    "build out: dyndep\n"
+    "                 ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, ExplicitOut) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out exp: dyndep\n";
+    "ninja_dyndep_version = 1\n"
+    "build out exp: dyndep\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: explicit outputs not supported\n"
-      "build out exp: dyndep\n"
-      "             ^ near here",
-      err);
+    "input:2: explicit outputs not supported\n"
+    "build out exp: dyndep\n"
+    "             ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, ExplicitIn) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep exp\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep exp\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: explicit inputs not supported\n"
-      "build out: dyndep exp\n"
-      "                     ^ near here",
-      err);
+    "input:2: explicit inputs not supported\n"
+    "build out: dyndep exp\n"
+    "                     ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, OrderOnlyIn) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep ||\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep ||\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:2: order-only inputs not supported\n"
-      "build out: dyndep ||\n"
-      "                  ^ near here",
-      err);
+    "input:2: order-only inputs not supported\n"
+    "build out: dyndep ||\n"
+    "                  ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, BadBinding) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep\n"
-      "  not_restat = 1\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n"
+    "  not_restat = 1\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
   EXPECT_EQ(
-      "input:3: binding is not 'restat'\n"
-      "  not_restat = 1\n"
-      "                ^ near here",
-      err);
+    "input:3: binding is not 'restat'\n"
+    "  not_restat = 1\n"
+    "                ^ near here",
+    err);
 }
 
 TEST_F(DyndepParserTest, RestatTwice) {
   const char kInput[] =
-      "ninja_dyndep_version = 1\n"
-      "build out: dyndep\n"
-      "  restat = 1\n"
-      "  restat = 1\n";
+    "ninja_dyndep_version = 1\n"
+    "build out: dyndep\n"
+    "  restat = 1\n"
+    "  restat = 1\n";
   DyndepParser parser(&state_, &fs_, &dyndep_file_);
   string err;
   EXPECT_FALSE(parser.ParseTest(kInput, &err));
@@ -377,8 +376,8 @@ TEST_F(DyndepParserTest, RestatTwice) {
 
 TEST_F(DyndepParserTest, NoImplicit) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out: dyndep\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out: dyndep\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -390,8 +389,8 @@ TEST_F(DyndepParserTest, NoImplicit) {
 
 TEST_F(DyndepParserTest, EmptyImplicit) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out | : dyndep |\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out | : dyndep |\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -403,8 +402,8 @@ TEST_F(DyndepParserTest, EmptyImplicit) {
 
 TEST_F(DyndepParserTest, ImplicitIn) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out: dyndep | impin\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out: dyndep | impin\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -417,8 +416,8 @@ TEST_F(DyndepParserTest, ImplicitIn) {
 
 TEST_F(DyndepParserTest, ImplicitIns) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out: dyndep | impin1 impin2\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out: dyndep | impin1 impin2\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -432,8 +431,8 @@ TEST_F(DyndepParserTest, ImplicitIns) {
 
 TEST_F(DyndepParserTest, ImplicitOut) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out | impout: dyndep\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out | impout: dyndep\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -446,8 +445,8 @@ TEST_F(DyndepParserTest, ImplicitOut) {
 
 TEST_F(DyndepParserTest, ImplicitOuts) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out | impout1 impout2 : dyndep\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out | impout1 impout2 : dyndep\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -461,8 +460,8 @@ TEST_F(DyndepParserTest, ImplicitOuts) {
 
 TEST_F(DyndepParserTest, ImplicitInsAndOuts) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out | impout1 impout2: dyndep | impin1 impin2\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out | impout1 impout2: dyndep | impin1 impin2\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -478,9 +477,9 @@ TEST_F(DyndepParserTest, ImplicitInsAndOuts) {
 
 TEST_F(DyndepParserTest, Restat) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out: dyndep\n"
-                  "  restat = 1\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out: dyndep\n"
+                "  restat = 1\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -492,8 +491,8 @@ TEST_F(DyndepParserTest, Restat) {
 
 TEST_F(DyndepParserTest, OtherOutput) {
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build otherout: dyndep\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build otherout: dyndep\n"));
 
   EXPECT_EQ(1u, dyndep_file_.size());
   DyndepFile::iterator i = dyndep_file_.find(state_.edges_[0]);
@@ -511,10 +510,10 @@ TEST_F(DyndepParserTest, MultipleEdges) {
   EXPECT_EQ(0u, state_.edges_[0]->inputs_.size());
 
   ASSERT_NO_FATAL_FAILURE(
-      AssertParse("ninja_dyndep_version = 1\n"
-                  "build out: dyndep\n"
-                  "build out2: dyndep\n"
-                  "  restat = 1\n"));
+    AssertParse("ninja_dyndep_version = 1\n"
+                "build out: dyndep\n"
+                "build out2: dyndep\n"
+                "  restat = 1\n"));
 
   EXPECT_EQ(2u, dyndep_file_.size());
   {

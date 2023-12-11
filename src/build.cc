@@ -51,7 +51,7 @@ struct DryRunCommandRunner : public CommandRunner {
   virtual bool StartCommand(Edge* edge);
   virtual bool WaitForCommand(Result* result);
 
- private:
+private:
   queue<Edge*> finished_;
 };
 
@@ -456,9 +456,9 @@ void RealCommandRunner::Abort() {
 
 bool RealCommandRunner::CanRunMore() const {
   size_t subproc_number = subprocs_.running_.size() + subprocs_.finished_.size();
-  return (int)subproc_number < config_.parallelism &&
-         ((subprocs_.running_.empty() || config_.max_load_average <= 0.0f) ||
-          GetLoadAverage() < config_.max_load_average);
+  return (int)subproc_number < config_.parallelism
+         && ((subprocs_.running_.empty() || config_.max_load_average <= 0.0f)
+             || GetLoadAverage() < config_.max_load_average);
 }
 
 bool RealCommandRunner::StartCommand(Edge* edge) {
@@ -490,11 +490,16 @@ bool RealCommandRunner::WaitForCommand(Result* result) {
   return true;
 }
 
-Builder::Builder(State* state, const BuildConfig& config, BuildLog* build_log, DepsLog* deps_log,
-                 DiskInterface* disk_interface, Status* status, int64_t start_time_millis)
-    : state_(state), config_(config), plan_(this), status_(status), start_time_millis_(start_time_millis),
-      disk_interface_(disk_interface),
-      scan_(state, build_log, deps_log, disk_interface, &config_.depfile_parser_options) {
+Builder::Builder(State* state,
+  const BuildConfig& config,
+  BuildLog* build_log,
+  DepsLog* deps_log,
+  DiskInterface* disk_interface,
+  Status* status,
+  int64_t start_time_millis)
+  : state_(state), config_(config), plan_(this), status_(status), start_time_millis_(start_time_millis),
+    disk_interface_(disk_interface),
+    scan_(state, build_log, deps_log, disk_interface, &config_.depfile_parser_options) {
   lock_file_path_ = ".ninja_lock";
   string build_dir = state_->bindings_.LookupVariable("builddir");
   if (!build_dir.empty())
@@ -825,8 +830,11 @@ bool Builder::FinishCommand(CommandRunner::Result* result, string* err) {
   return true;
 }
 
-bool Builder::ExtractDeps(CommandRunner::Result* result, const string& deps_type, const string& deps_prefix,
-                          vector<Node*>* deps_nodes, string* err) {
+bool Builder::ExtractDeps(CommandRunner::Result* result,
+  const string& deps_type,
+  const string& deps_prefix,
+  vector<Node*>* deps_nodes,
+  string* err) {
   if (deps_type == "msvc") {
     CLParser parser;
     string output;
@@ -850,13 +858,13 @@ bool Builder::ExtractDeps(CommandRunner::Result* result, const string& deps_type
     // Read depfile content.  Treat a missing depfile as empty.
     string content;
     switch (disk_interface_->ReadFile(depfile, &content, err)) {
-    case DiskInterface::Okay:
-      break;
-    case DiskInterface::NotFound:
-      err->clear();
-      break;
-    case DiskInterface::OtherError:
-      return false;
+      case DiskInterface::Okay:
+        break;
+      case DiskInterface::NotFound:
+        err->clear();
+        break;
+      case DiskInterface::OtherError:
+        return false;
     }
     if (content.empty())
       return true;

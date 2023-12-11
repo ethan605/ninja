@@ -102,7 +102,7 @@ struct DepsLog {
   const std::vector<Node*>& nodes() const { return nodes_; }
   const std::vector<Deps*>& deps() const { return deps_; }
 
- private:
+private:
   // Updates the in-memory representation.  Takes ownership of |deps|.
   // Returns true if a prior deps record was deleted.
   bool UpdateDeps(int out_id, Deps* deps);

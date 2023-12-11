@@ -249,7 +249,9 @@ TEST_F(DiskInterfaceTest, RemoveDirectory) {
   EXPECT_EQ(1, disk_.RemoveFile("does not exist"));
 }
 
-struct StatTest : public StateTestWithBuiltinRules, public DiskInterface {
+struct StatTest
+  : public StateTestWithBuiltinRules
+  , public DiskInterface {
   StatTest() : scan_(&state_, NULL, NULL, this, NULL) {}
 
   // DiskInterface implementation.
@@ -300,8 +302,8 @@ TEST_F(StatTest, Simple) {
 
 TEST_F(StatTest, TwoStep) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out: cat mid\n"
-                                      "build mid: cat in\n"));
+    "build out: cat mid\n"
+    "build mid: cat in\n"));
 
   Node* out = GetNode("out");
   string err;
@@ -319,9 +321,9 @@ TEST_F(StatTest, TwoStep) {
 
 TEST_F(StatTest, Tree) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out: cat mid1 mid2\n"
-                                      "build mid1: cat in11 in12\n"
-                                      "build mid2: cat in21 in22\n"));
+    "build out: cat mid1 mid2\n"
+    "build mid1: cat in11 in12\n"
+    "build mid2: cat in21 in22\n"));
 
   Node* out = GetNode("out");
   string err;
@@ -337,8 +339,8 @@ TEST_F(StatTest, Tree) {
 
 TEST_F(StatTest, Middle) {
   ASSERT_NO_FATAL_FAILURE(AssertParse(&state_,
-                                      "build out: cat mid\n"
-                                      "build mid: cat in\n"));
+    "build out: cat mid\n"
+    "build mid: cat in\n"));
 
   mtimes_["in"] = 1;
   mtimes_["mid"] = 0;  // missing

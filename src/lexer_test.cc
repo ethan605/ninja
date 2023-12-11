@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "lexer.h"
-
 #include "eval_env.h"
+#include "lexer.h"
 #include "test.h"
 
 using namespace std;
@@ -71,10 +70,10 @@ TEST(Lexer, Error) {
   string err;
   ASSERT_FALSE(lexer.ReadVarValue(&eval, &err));
   EXPECT_EQ(
-      "input:2: bad $-escape (literal $ must be written as $$)\n"
-      "bad $\n"
-      "    ^ near here",
-      err);
+    "input:2: bad $-escape (literal $ must be written as $$)\n"
+    "bad $\n"
+    "    ^ near here",
+    err);
 }
 
 TEST(Lexer, CommentEOF) {

@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "missing_deps.h"
-
 #include <memory>
 
 #include "deps_log.h"
 #include "graph.h"
+#include "missing_deps.h"
 #include "state.h"
 #include "test.h"
 
@@ -29,8 +28,8 @@ class MissingDependencyTestDelegate : public MissingDependencyScannerDelegate {
 
 struct MissingDependencyScannerTest : public testing::Test {
   MissingDependencyScannerTest()
-      : generator_rule_("generator_rule"), compile_rule_("compile_rule"),
-        scanner_(&delegate_, &deps_log_, &state_, &filesystem_) {
+    : generator_rule_("generator_rule"), compile_rule_("compile_rule"),
+      scanner_(&delegate_, &deps_log_, &state_, &filesystem_) {
     std::string err;
     deps_log_.OpenForWrite(kTestDepsLogFilename, &err);
     EXPECT_EQ("", err);

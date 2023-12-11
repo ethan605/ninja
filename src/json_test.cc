@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "json.h"
-
 #include "test.h"
 
 TEST(JSONTest, RegularAscii) {
@@ -22,9 +21,9 @@ TEST(JSONTest, RegularAscii) {
 
 TEST(JSONTest, EscapedChars) {
   EXPECT_EQ(EncodeJSONString("\"\\\b\f\n\r\t"),
-            "\\\""
-            "\\\\"
-            "\\b\\f\\n\\r\\t");
+    "\\\""
+    "\\\\"
+    "\\b\\f\\n\\r\\t");
 }
 
 // codepoints between 0 and 0x1f should be escaped

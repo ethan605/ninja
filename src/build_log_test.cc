@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "build_log.h"
-
 #include <sys/stat.h>
 
+#include "build_log.h"
 #include "test.h"
 #include "util.h"
 #ifdef _WIN32
@@ -33,7 +32,9 @@ namespace {
 
 const char kTestFilename[] = "BuildLogTest-tempfile";
 
-struct BuildLogTest : public StateTestWithBuiltinRules, public BuildLogUser {
+struct BuildLogTest
+  : public StateTestWithBuiltinRules
+  , public BuildLogUser {
   virtual void SetUp() {
     // In case a crashing test left a stale file behind.
     unlink(kTestFilename);
@@ -44,8 +45,8 @@ struct BuildLogTest : public StateTestWithBuiltinRules, public BuildLogUser {
 
 TEST_F(BuildLogTest, WriteRead) {
   AssertParse(&state_,
-              "build out: cat mid\n"
-              "build mid: cat in\n");
+    "build out: cat mid\n"
+    "build mid: cat in\n");
 
   BuildLog log1;
   string err;
@@ -119,8 +120,8 @@ TEST_F(BuildLogTest, DoubleEntry) {
 
 TEST_F(BuildLogTest, Truncate) {
   AssertParse(&state_,
-              "build out: cat mid\n"
-              "build mid: cat in\n");
+    "build out: cat mid\n"
+    "build mid: cat in\n");
 
   {
     BuildLog log1;
@@ -244,8 +245,8 @@ struct TestDiskInterface : public DiskInterface {
 TEST_F(BuildLogTest, Restat) {
   FILE* f = fopen(kTestFilename, "wb");
   fprintf(f,
-          "# ninja log v6\n"
-          "1\t2\t3\tout\tcommand\n");
+    "# ninja log v6\n"
+    "1\t2\t3\tout\tcommand\n");
   fclose(f);
   std::string err;
   BuildLog log;
@@ -321,8 +322,8 @@ struct BuildLogRecompactTest : public BuildLogTest {
 
 TEST_F(BuildLogRecompactTest, Recompact) {
   AssertParse(&state_,
-              "build out: cat in\n"
-              "build out2: cat in\n");
+    "build out: cat in\n"
+    "build out2: cat in\n");
 
   BuildLog log1;
   string err;

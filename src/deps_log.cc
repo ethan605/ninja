@@ -275,8 +275,8 @@ LoadStatus DepsLog::Load(const string& path, State* state, string* err) {
   // Rebuild the log if there are too many dead records.
   int kMinCompactionEntryCount = 1000;
   int kCompactionRatio = 3;
-  if (total_dep_record_count > kMinCompactionEntryCount &&
-      total_dep_record_count > unique_dep_record_count * kCompactionRatio) {
+  if (total_dep_record_count > kMinCompactionEntryCount
+      && total_dep_record_count > unique_dep_record_count * kCompactionRatio) {
     needs_recompaction_ = true;
   }
 
